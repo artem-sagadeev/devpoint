@@ -19,5 +19,7 @@ namespace Domain.Content.Entities
             User = user;
             Project = project;
         }
+        
+        private Post() {}
     }
 }

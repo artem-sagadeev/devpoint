@@ -16,4 +16,6 @@ public class Bill
         Wallet = wallet;
         Subscription = subscription;
     }
+    
+    private Bill() {}
 }

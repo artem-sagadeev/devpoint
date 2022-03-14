@@ -26,5 +26,7 @@ namespace Domain.Developers.Entities
         {
             Tags.AddRange(tags);
         }
+        
+        private Project() {}
     }
 }

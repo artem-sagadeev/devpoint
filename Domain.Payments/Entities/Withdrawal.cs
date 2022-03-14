@@ -12,4 +12,6 @@ public class Withdrawal
         Amount = amount;
         Wallet = wallet;
     }
+    
+    private Withdrawal() {}
 }

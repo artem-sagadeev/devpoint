@@ -12,4 +12,6 @@ public class Replenishment
         Amount = amount;
         Wallet = wallet;
     }
+    
+    private Replenishment() {}
 }

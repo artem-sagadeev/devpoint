@@ -14,4 +14,6 @@ public class Wallet
         Amount = amount;
         User = user;
     }
+    
+    private Wallet() {}
 }

@@ -16,5 +16,7 @@ namespace Domain.Content.Entities
             Text = text;
             Post = post;
         }
+        
+        private Comment() {}
     }
 }

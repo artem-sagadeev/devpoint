@@ -20,4 +20,6 @@ public class Tariff
         SubscriptionType = subscriptionType;
         SubscriptionLevel = subscriptionLevel;
     }
+    
+    private Tariff() {}
 }
