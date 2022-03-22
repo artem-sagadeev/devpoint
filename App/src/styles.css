@@ -1,1 +1,67 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap');
+
+*
+{
+  font-family: var(--font-main);
+  font-weight: normal;
+}
+
+html,body {
+  position: relative;
+  height: 100%;
+}
+
+header{
+  width: 100%;
+}
+
+footer{
+  color: #d7d7d7;
+  background-color: #181818;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.container-fluid{
+  padding: 0;
+}
+
+.btn-main{
+  margin: 27px auto 14px auto;
+  display: block;
+  background-color: var(--btn-main-color) !important;
+  color: white;
+  font-weight: bold;
+}
+
+.text-center{
+  text-align: center !important;
+}
+
+.main {
+  position: relative;
+  min-height: 100%;
+}
+
+.content {
+  min-height: calc(100vh - 70px);
+}
+
+.price{
+  background-color: #f6f6f6;
+  border: 10px;
+  border-radius: 20px;
+  margin: 4px;
+  text-align: center;
+}
+
+:root{
+    --background-main-color: #ffffff;
+    --btn-main-color: #4c45c2;
+    --font-main: 'Montserrat', sans-serif;
+    --font-main-size: 20px;
+}
