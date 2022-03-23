@@ -9,6 +9,10 @@ import { HomeComponent } from './home/home.component';
 import { FooterComponent } from './footer/footer.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import { AboutUsComponent } from './about-us/about-us.component';
+import { PricingComponent } from './pricing/pricing.component';
+import { CreatorsComponent } from './creators/creators.component';
+import { UserPreviewComponent } from './user-preview/user-preview.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +21,11 @@ import { RegisterComponent } from './register/register.component';
     HomeComponent,
     FooterComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    AboutUsComponent,
+    PricingComponent,
+    CreatorsComponent,
+    UserPreviewComponent
   ],
   imports: [
     BrowserModule,
@@ -25,7 +33,10 @@ import { RegisterComponent } from './register/register.component';
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'login', component: LoginComponent },
-      { path: 'register', component: RegisterComponent }
+      { path: 'register', component: RegisterComponent },
+      { path: 'about-us', component: AboutUsComponent },
+      { path: 'pricing', component: PricingComponent },
+      { path: 'creators', component: CreatorsComponent }
     ])
   ],
   providers: [],
