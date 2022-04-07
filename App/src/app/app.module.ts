@@ -4,15 +4,22 @@ import { RouterModule } from '@angular/router';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HeaderComponent } from './header/header.component';
-import { HomeComponent } from './home/home.component';
-import { FooterComponent } from './footer/footer.component';
-import { LoginComponent } from './login/login.component';
-import { RegisterComponent } from './register/register.component';
-import { AboutUsComponent } from './about-us/about-us.component';
-import { PricingComponent } from './pricing/pricing.component';
-import { CreatorsComponent } from './creators/creators.component';
-import { UserPreviewComponent } from './user-preview/user-preview.component';
+import { HeaderComponent } from './components/shared/header/header.component';
+import { HomeComponent } from './components/main/home/home.component';
+import { FooterComponent } from './components/shared/footer/footer.component';
+import { LoginComponent } from './components/login/login.component';
+import { RegisterComponent } from './components/register/register.component';
+import { AboutUsComponent } from './components/main/about-us/about-us.component';
+import { PricingComponent } from './components/main/pricing/pricing.component';
+import { Service } from './services/shared.service';
+import { HttpClientModule } from '@angular/common/http';
+import { DeveloperPreviewComponent } from './components/developers/developer-preview/developer-preview.component';
+import { DeveloperComponent } from './components/developers/developer/developer.component';
+import { SearchComponent } from './components/search/search.component';
+import { ProjectComponent } from './components/projects/project/project.component';
+import { ProjectPreviewComponent } from './components/projects/project-preview/project-preview.component';
+import { CompanyComponent } from './components/companies/company/company.component';
+import { CompanyPreviewComponent } from './components/companies/company-preview/company-preview.component';
 
 @NgModule({
   declarations: [
@@ -24,10 +31,17 @@ import { UserPreviewComponent } from './user-preview/user-preview.component';
     RegisterComponent,
     AboutUsComponent,
     PricingComponent,
-    CreatorsComponent,
-    UserPreviewComponent
+    DeveloperPreviewComponent,
+    DeveloperComponent,
+    DeveloperPreviewComponent,
+    SearchComponent,
+    ProjectComponent,
+    ProjectPreviewComponent,
+    CompanyComponent,
+    CompanyPreviewComponent
   ],
   imports: [
+    HttpClientModule,
     BrowserModule,
     AppRoutingModule,
     RouterModule.forRoot([
@@ -36,10 +50,13 @@ import { UserPreviewComponent } from './user-preview/user-preview.component';
       { path: 'register', component: RegisterComponent },
       { path: 'about-us', component: AboutUsComponent },
       { path: 'pricing', component: PricingComponent },
-      { path: 'creators', component: CreatorsComponent }
+      { path: 'search', component: SearchComponent },
+      { path: 'developer/:id', component: DeveloperComponent},
+      { path: 'project/:id', component: DeveloperComponent},
+      { path: 'company/:id', component: DeveloperComponent},
     ])
   ],
-  providers: [],
+  providers: [Service],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
