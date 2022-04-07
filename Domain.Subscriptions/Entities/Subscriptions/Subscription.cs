@@ -9,9 +9,9 @@ public class Subscription : ISubscription
     public DateTime EndTime { get; set; }
     public bool IsAutoRenewal { get; set; }
     public Tariff Tariff { get; set; }
-    public IUser Subscriber { get; set; }
+    public IDeveloper Subscriber { get; set; }
 
-    protected Subscription(DateTime endTime, bool isAutoRenewal, Tariff tariff, IUser subscriber)
+    protected Subscription(DateTime endTime, bool isAutoRenewal, Tariff tariff, IDeveloper subscriber)
     {
         EndTime = endTime;
         IsAutoRenewal = isAutoRenewal;

@@ -8,7 +8,7 @@ public class ProjectSubscription : Subscription
 {
     public IProject Project { get; set; }
 
-    public ProjectSubscription(DateTime endTime, bool isAutoRenewal, Tariff tariff, IUser subscriber, IProject project)
+    public ProjectSubscription(DateTime endTime, bool isAutoRenewal, Tariff tariff, IDeveloper subscriber, IProject project)
         : base(endTime, isAutoRenewal, tariff, subscriber)
     {
         Project = project;

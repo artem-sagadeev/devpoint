@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Data.Core.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220314191339_Initial")]
+    [Migration("20220407225818_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,10 +24,25 @@ namespace Data.Core.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("CompanyDeveloper", b =>
+                {
+                    b.Property<Guid>("CompaniesId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("DevelopersId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("CompaniesId", "DevelopersId");
+
+                    b.HasIndex("DevelopersId");
+
+                    b.ToTable("CompanyDeveloper");
+                });
+
             modelBuilder.Entity("CompanyTag", b =>
                 {
-                    b.Property<int>("CompaniesId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("CompaniesId")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("TagsId")
                         .HasColumnType("integer");
@@ -39,19 +54,34 @@ namespace Data.Core.Migrations
                     b.ToTable("CompanyTag");
                 });
 
-            modelBuilder.Entity("CompanyUser", b =>
+            modelBuilder.Entity("DeveloperProject", b =>
                 {
-                    b.Property<int>("CompaniesId")
+                    b.Property<Guid>("DevelopersId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ProjectsId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("DevelopersId", "ProjectsId");
+
+                    b.HasIndex("ProjectsId");
+
+                    b.ToTable("DeveloperProject");
+                });
+
+            modelBuilder.Entity("DeveloperTag", b =>
+                {
+                    b.Property<Guid>("DevelopersId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("TagsId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("UsersId")
-                        .HasColumnType("integer");
+                    b.HasKey("DevelopersId", "TagsId");
 
-                    b.HasKey("CompaniesId", "UsersId");
+                    b.HasIndex("TagsId");
 
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("CompanyUser");
+                    b.ToTable("DeveloperTag");
                 });
 
             modelBuilder.Entity("Domain.Content.Entities.Comment", b =>
@@ -62,6 +92,9 @@ namespace Data.Core.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<Guid>("DeveloperId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("PostId")
                         .HasColumnType("integer");
 
@@ -69,14 +102,11 @@ namespace Data.Core.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("PostId");
+                    b.HasIndex("DeveloperId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("PostId");
 
                     b.ToTable("Comments");
                 });
@@ -89,8 +119,11 @@ namespace Data.Core.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("DeveloperId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("RequiredSubscriptionLevelId")
                         .HasColumnType("integer");
@@ -99,27 +132,22 @@ namespace Data.Core.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("DeveloperId");
 
                     b.HasIndex("ProjectId");
 
                     b.HasIndex("RequiredSubscriptionLevelId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("Domain.Developers.Entities.Company", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<decimal>("Latitude")
                         .HasColumnType("numeric");
@@ -136,16 +164,29 @@ namespace Data.Core.Migrations
                     b.ToTable("Companies");
                 });
 
+            modelBuilder.Entity("Domain.Developers.Entities.Developer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Developers");
+                });
+
             modelBuilder.Entity("Domain.Developers.Entities.Project", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("uuid");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -173,23 +214,6 @@ namespace Data.Core.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Tags");
-                });
-
-            modelBuilder.Entity("Domain.Developers.Entities.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Domain.Payments.Entities.Bill", b =>
@@ -250,12 +274,12 @@ namespace Data.Core.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("integer");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("DeveloperId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("DeveloperId");
 
                     b.ToTable("Wallets");
                 });
@@ -316,8 +340,8 @@ namespace Data.Core.Migrations
                     b.Property<bool>("IsAutoRenewal")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("SubscriberId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("SubscriberId")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("TariffId")
                         .HasColumnType("integer");
@@ -359,8 +383,8 @@ namespace Data.Core.Migrations
 
             modelBuilder.Entity("ProjectTag", b =>
                 {
-                    b.Property<int>("ProjectsId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("ProjectsId")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("TagsId")
                         .HasColumnType("integer");
@@ -372,70 +396,55 @@ namespace Data.Core.Migrations
                     b.ToTable("ProjectTag");
                 });
 
-            modelBuilder.Entity("ProjectUser", b =>
-                {
-                    b.Property<int>("ProjectsId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UsersId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("ProjectsId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("ProjectUser");
-                });
-
-            modelBuilder.Entity("TagUser", b =>
-                {
-                    b.Property<int>("TagsId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UsersId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("TagsId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("TagUser");
-                });
-
             modelBuilder.Entity("Domain.Subscriptions.Entities.Subscriptions.CompanySubscription", b =>
                 {
                     b.HasBaseType("Domain.Subscriptions.Entities.Subscriptions.Subscription");
 
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid");
 
                     b.HasIndex("CompanyId");
 
                     b.HasDiscriminator().HasValue("CompanySubscription");
                 });
 
+            modelBuilder.Entity("Domain.Subscriptions.Entities.Subscriptions.DeveloperSubscription", b =>
+                {
+                    b.HasBaseType("Domain.Subscriptions.Entities.Subscriptions.Subscription");
+
+                    b.Property<Guid>("DeveloperId")
+                        .HasColumnType("uuid");
+
+                    b.HasIndex("DeveloperId");
+
+                    b.HasDiscriminator().HasValue("DeveloperSubscription");
+                });
+
             modelBuilder.Entity("Domain.Subscriptions.Entities.Subscriptions.ProjectSubscription", b =>
                 {
                     b.HasBaseType("Domain.Subscriptions.Entities.Subscriptions.Subscription");
 
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid");
 
                     b.HasIndex("ProjectId");
 
                     b.HasDiscriminator().HasValue("ProjectSubscription");
                 });
 
-            modelBuilder.Entity("Domain.Subscriptions.Entities.Subscriptions.UserSubscription", b =>
+            modelBuilder.Entity("CompanyDeveloper", b =>
                 {
-                    b.HasBaseType("Domain.Subscriptions.Entities.Subscriptions.Subscription");
+                    b.HasOne("Domain.Developers.Entities.Company", null)
+                        .WithMany()
+                        .HasForeignKey("CompaniesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasIndex("UserId");
-
-                    b.HasDiscriminator().HasValue("UserSubscription");
+                    b.HasOne("Domain.Developers.Entities.Developer", null)
+                        .WithMany()
+                        .HasForeignKey("DevelopersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CompanyTag", b =>
@@ -453,42 +462,63 @@ namespace Data.Core.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("CompanyUser", b =>
+            modelBuilder.Entity("DeveloperProject", b =>
                 {
-                    b.HasOne("Domain.Developers.Entities.Company", null)
+                    b.HasOne("Domain.Developers.Entities.Developer", null)
                         .WithMany()
-                        .HasForeignKey("CompaniesId")
+                        .HasForeignKey("DevelopersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Developers.Entities.User", null)
+                    b.HasOne("Domain.Developers.Entities.Project", null)
                         .WithMany()
-                        .HasForeignKey("UsersId")
+                        .HasForeignKey("ProjectsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DeveloperTag", b =>
+                {
+                    b.HasOne("Domain.Developers.Entities.Developer", null)
+                        .WithMany()
+                        .HasForeignKey("DevelopersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Developers.Entities.Tag", null)
+                        .WithMany()
+                        .HasForeignKey("TagsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Content.Entities.Comment", b =>
                 {
+                    b.HasOne("Domain.Developers.Entities.Developer", "Developer")
+                        .WithMany()
+                        .HasForeignKey("DeveloperId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Domain.Content.Entities.Post", "Post")
                         .WithMany("Comments")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Developers.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Developer");
 
                     b.Navigation("Post");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Content.Entities.Post", b =>
                 {
+                    b.HasOne("Domain.Developers.Entities.Developer", "Developer")
+                        .WithMany()
+                        .HasForeignKey("DeveloperId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Domain.Developers.Entities.Project", "Project")
                         .WithMany()
                         .HasForeignKey("ProjectId")
@@ -501,17 +531,11 @@ namespace Data.Core.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Developers.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Developer");
 
                     b.Navigation("Project");
 
                     b.Navigation("RequiredSubscriptionLevel");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Developers.Entities.Project", b =>
@@ -557,13 +581,13 @@ namespace Data.Core.Migrations
 
             modelBuilder.Entity("Domain.Payments.Entities.Wallet", b =>
                 {
-                    b.HasOne("Domain.Developers.Entities.User", "User")
+                    b.HasOne("Domain.Developers.Entities.Developer", "Developer")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("DeveloperId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("Developer");
                 });
 
             modelBuilder.Entity("Domain.Payments.Entities.Withdrawal", b =>
@@ -579,7 +603,7 @@ namespace Data.Core.Migrations
 
             modelBuilder.Entity("Domain.Subscriptions.Entities.Subscriptions.Subscription", b =>
                 {
-                    b.HasOne("Domain.Developers.Entities.User", "Subscriber")
+                    b.HasOne("Domain.Developers.Entities.Developer", "Subscriber")
                         .WithMany()
                         .HasForeignKey("SubscriberId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -622,36 +646,6 @@ namespace Data.Core.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ProjectUser", b =>
-                {
-                    b.HasOne("Domain.Developers.Entities.Project", null)
-                        .WithMany()
-                        .HasForeignKey("ProjectsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Developers.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("TagUser", b =>
-                {
-                    b.HasOne("Domain.Developers.Entities.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Developers.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Domain.Subscriptions.Entities.Subscriptions.CompanySubscription", b =>
                 {
                     b.HasOne("Domain.Developers.Entities.Company", "Company")
@@ -663,6 +657,17 @@ namespace Data.Core.Migrations
                     b.Navigation("Company");
                 });
 
+            modelBuilder.Entity("Domain.Subscriptions.Entities.Subscriptions.DeveloperSubscription", b =>
+                {
+                    b.HasOne("Domain.Developers.Entities.Developer", "Developer")
+                        .WithMany()
+                        .HasForeignKey("DeveloperId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Developer");
+                });
+
             modelBuilder.Entity("Domain.Subscriptions.Entities.Subscriptions.ProjectSubscription", b =>
                 {
                     b.HasOne("Domain.Developers.Entities.Project", "Project")
@@ -672,17 +677,6 @@ namespace Data.Core.Migrations
                         .IsRequired();
 
                     b.Navigation("Project");
-                });
-
-            modelBuilder.Entity("Domain.Subscriptions.Entities.Subscriptions.UserSubscription", b =>
-                {
-                    b.HasOne("Domain.Developers.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Content.Entities.Post", b =>

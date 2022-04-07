@@ -14,8 +14,7 @@ namespace Data.Core.Migrations
                 name: "Companies",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Latitude = table.Column<decimal>(type: "numeric", nullable: false),
                     Longitude = table.Column<decimal>(type: "numeric", nullable: false)
@@ -23,6 +22,18 @@ namespace Data.Core.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Companies", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Developers",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Developers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -52,26 +63,12 @@ namespace Data.Core.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Users",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Projects",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    CompanyId = table.Column<int>(type: "integer", nullable: false)
+                    CompanyId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -80,6 +77,50 @@ namespace Data.Core.Migrations
                         name: "FK_Projects_Companies_CompanyId",
                         column: x => x.CompanyId,
                         principalTable: "Companies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CompanyDeveloper",
+                columns: table => new
+                {
+                    CompaniesId = table.Column<Guid>(type: "uuid", nullable: false),
+                    DevelopersId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CompanyDeveloper", x => new { x.CompaniesId, x.DevelopersId });
+                    table.ForeignKey(
+                        name: "FK_CompanyDeveloper_Companies_CompaniesId",
+                        column: x => x.CompaniesId,
+                        principalTable: "Companies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CompanyDeveloper_Developers_DevelopersId",
+                        column: x => x.DevelopersId,
+                        principalTable: "Developers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Wallets",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Amount = table.Column<int>(type: "integer", nullable: false),
+                    DeveloperId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Wallets", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Wallets_Developers_DeveloperId",
+                        column: x => x.DeveloperId,
+                        principalTable: "Developers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -109,7 +150,7 @@ namespace Data.Core.Migrations
                 name: "CompanyTag",
                 columns: table => new
                 {
-                    CompaniesId = table.Column<int>(type: "integer", nullable: false),
+                    CompaniesId = table.Column<Guid>(type: "uuid", nullable: false),
                     TagsId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -130,69 +171,49 @@ namespace Data.Core.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CompanyUser",
+                name: "DeveloperTag",
                 columns: table => new
                 {
-                    CompaniesId = table.Column<int>(type: "integer", nullable: false),
-                    UsersId = table.Column<int>(type: "integer", nullable: false)
+                    DevelopersId = table.Column<Guid>(type: "uuid", nullable: false),
+                    TagsId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CompanyUser", x => new { x.CompaniesId, x.UsersId });
+                    table.PrimaryKey("PK_DeveloperTag", x => new { x.DevelopersId, x.TagsId });
                     table.ForeignKey(
-                        name: "FK_CompanyUser_Companies_CompaniesId",
-                        column: x => x.CompaniesId,
-                        principalTable: "Companies",
+                        name: "FK_DeveloperTag_Developers_DevelopersId",
+                        column: x => x.DevelopersId,
+                        principalTable: "Developers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CompanyUser_Users_UsersId",
-                        column: x => x.UsersId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TagUser",
-                columns: table => new
-                {
-                    TagsId = table.Column<int>(type: "integer", nullable: false),
-                    UsersId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TagUser", x => new { x.TagsId, x.UsersId });
-                    table.ForeignKey(
-                        name: "FK_TagUser_Tags_TagsId",
+                        name: "FK_DeveloperTag_Tags_TagsId",
                         column: x => x.TagsId,
                         principalTable: "Tags",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TagUser_Users_UsersId",
-                        column: x => x.UsersId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Wallets",
+                name: "DeveloperProject",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Amount = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<int>(type: "integer", nullable: false)
+                    DevelopersId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ProjectsId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Wallets", x => x.Id);
+                    table.PrimaryKey("PK_DeveloperProject", x => new { x.DevelopersId, x.ProjectsId });
                     table.ForeignKey(
-                        name: "FK_Wallets_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
+                        name: "FK_DeveloperProject_Developers_DevelopersId",
+                        column: x => x.DevelopersId,
+                        principalTable: "Developers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DeveloperProject_Projects_ProjectsId",
+                        column: x => x.ProjectsId,
+                        principalTable: "Projects",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -205,12 +226,18 @@ namespace Data.Core.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Text = table.Column<string>(type: "text", nullable: false),
                     RequiredSubscriptionLevelId = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    ProjectId = table.Column<int>(type: "integer", nullable: false)
+                    DeveloperId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ProjectId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Posts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Posts_Developers_DeveloperId",
+                        column: x => x.DeveloperId,
+                        principalTable: "Developers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Posts_Projects_ProjectId",
                         column: x => x.ProjectId,
@@ -223,19 +250,13 @@ namespace Data.Core.Migrations
                         principalTable: "SubscriptionLevels",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Posts_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "ProjectTag",
                 columns: table => new
                 {
-                    ProjectsId = table.Column<int>(type: "integer", nullable: false),
+                    ProjectsId = table.Column<Guid>(type: "uuid", nullable: false),
                     TagsId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -251,80 +272,6 @@ namespace Data.Core.Migrations
                         name: "FK_ProjectTag_Tags_TagsId",
                         column: x => x.TagsId,
                         principalTable: "Tags",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ProjectUser",
-                columns: table => new
-                {
-                    ProjectsId = table.Column<int>(type: "integer", nullable: false),
-                    UsersId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProjectUser", x => new { x.ProjectsId, x.UsersId });
-                    table.ForeignKey(
-                        name: "FK_ProjectUser_Projects_ProjectsId",
-                        column: x => x.ProjectsId,
-                        principalTable: "Projects",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ProjectUser_Users_UsersId",
-                        column: x => x.UsersId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Subscription",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    EndTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    IsAutoRenewal = table.Column<bool>(type: "boolean", nullable: false),
-                    TariffId = table.Column<int>(type: "integer", nullable: false),
-                    SubscriberId = table.Column<int>(type: "integer", nullable: false),
-                    Discriminator = table.Column<string>(type: "text", nullable: false),
-                    CompanyId = table.Column<int>(type: "integer", nullable: true),
-                    ProjectId = table.Column<int>(type: "integer", nullable: true),
-                    UserId = table.Column<int>(type: "integer", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Subscription", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Subscription_Companies_CompanyId",
-                        column: x => x.CompanyId,
-                        principalTable: "Companies",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Subscription_Projects_ProjectId",
-                        column: x => x.ProjectId,
-                        principalTable: "Projects",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Subscription_Tariffs_TariffId",
-                        column: x => x.TariffId,
-                        principalTable: "Tariffs",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Subscription_Users_SubscriberId",
-                        column: x => x.SubscriberId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Subscription_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -370,12 +317,62 @@ namespace Data.Core.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Subscription",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    EndTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    IsAutoRenewal = table.Column<bool>(type: "boolean", nullable: false),
+                    TariffId = table.Column<int>(type: "integer", nullable: false),
+                    SubscriberId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Discriminator = table.Column<string>(type: "text", nullable: false),
+                    CompanyId = table.Column<Guid>(type: "uuid", nullable: true),
+                    DeveloperId = table.Column<Guid>(type: "uuid", nullable: true),
+                    ProjectId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Subscription", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Subscription_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Subscription_Developers_DeveloperId",
+                        column: x => x.DeveloperId,
+                        principalTable: "Developers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Subscription_Developers_SubscriberId",
+                        column: x => x.SubscriberId,
+                        principalTable: "Developers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Subscription_Projects_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "Projects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Subscription_Tariffs_TariffId",
+                        column: x => x.TariffId,
+                        principalTable: "Tariffs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Comments",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    DeveloperId = table.Column<Guid>(type: "uuid", nullable: false),
                     Text = table.Column<string>(type: "text", nullable: false),
                     PostId = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -383,15 +380,15 @@ namespace Data.Core.Migrations
                 {
                     table.PrimaryKey("PK_Comments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Comments_Posts_PostId",
-                        column: x => x.PostId,
-                        principalTable: "Posts",
+                        name: "FK_Comments_Developers_DeveloperId",
+                        column: x => x.DeveloperId,
+                        principalTable: "Developers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Comments_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
+                        name: "FK_Comments_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -434,14 +431,19 @@ namespace Data.Core.Migrations
                 column: "WalletId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Comments_DeveloperId",
+                table: "Comments",
+                column: "DeveloperId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Comments_PostId",
                 table: "Comments",
                 column: "PostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comments_UserId",
-                table: "Comments",
-                column: "UserId");
+                name: "IX_CompanyDeveloper_DevelopersId",
+                table: "CompanyDeveloper",
+                column: "DevelopersId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CompanyTag_TagsId",
@@ -449,9 +451,19 @@ namespace Data.Core.Migrations
                 column: "TagsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CompanyUser_UsersId",
-                table: "CompanyUser",
-                column: "UsersId");
+                name: "IX_DeveloperProject_ProjectsId",
+                table: "DeveloperProject",
+                column: "ProjectsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DeveloperTag_TagsId",
+                table: "DeveloperTag",
+                column: "TagsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_DeveloperId",
+                table: "Posts",
+                column: "DeveloperId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_ProjectId",
@@ -464,11 +476,6 @@ namespace Data.Core.Migrations
                 column: "RequiredSubscriptionLevelId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Posts_UserId",
-                table: "Posts",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Projects_CompanyId",
                 table: "Projects",
                 column: "CompanyId");
@@ -479,11 +486,6 @@ namespace Data.Core.Migrations
                 column: "TagsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProjectUser_UsersId",
-                table: "ProjectUser",
-                column: "UsersId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Replenishments_WalletId",
                 table: "Replenishments",
                 column: "WalletId");
@@ -492,6 +494,11 @@ namespace Data.Core.Migrations
                 name: "IX_Subscription_CompanyId",
                 table: "Subscription",
                 column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Subscription_DeveloperId",
+                table: "Subscription",
+                column: "DeveloperId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Subscription_ProjectId",
@@ -509,24 +516,14 @@ namespace Data.Core.Migrations
                 column: "TariffId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Subscription_UserId",
-                table: "Subscription",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TagUser_UsersId",
-                table: "TagUser",
-                column: "UsersId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Tariffs_SubscriptionLevelId",
                 table: "Tariffs",
                 column: "SubscriptionLevelId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Wallets_UserId",
+                name: "IX_Wallets_DeveloperId",
                 table: "Wallets",
-                column: "UserId");
+                column: "DeveloperId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Withdrawals_WalletId",
@@ -543,22 +540,22 @@ namespace Data.Core.Migrations
                 name: "Comments");
 
             migrationBuilder.DropTable(
+                name: "CompanyDeveloper");
+
+            migrationBuilder.DropTable(
                 name: "CompanyTag");
 
             migrationBuilder.DropTable(
-                name: "CompanyUser");
+                name: "DeveloperProject");
+
+            migrationBuilder.DropTable(
+                name: "DeveloperTag");
 
             migrationBuilder.DropTable(
                 name: "ProjectTag");
 
             migrationBuilder.DropTable(
-                name: "ProjectUser");
-
-            migrationBuilder.DropTable(
                 name: "Replenishments");
-
-            migrationBuilder.DropTable(
-                name: "TagUser");
 
             migrationBuilder.DropTable(
                 name: "Withdrawals");
@@ -582,7 +579,7 @@ namespace Data.Core.Migrations
                 name: "Projects");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "Developers");
 
             migrationBuilder.DropTable(
                 name: "SubscriptionLevels");

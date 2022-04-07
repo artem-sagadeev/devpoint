@@ -6,13 +6,13 @@ public class Wallet
 {
     public int Id { get; set; }
     public int Amount { get; set; }
-    public IUser User { get; set; }
+    public IDeveloper Developer { get; set; }
     
-    public Wallet(int id, int amount, IUser user)
+    public Wallet(int id, int amount, IDeveloper developer)
     {
         Id = id;
         Amount = amount;
-        User = user;
+        Developer = developer;
     }
     
     private Wallet() {}

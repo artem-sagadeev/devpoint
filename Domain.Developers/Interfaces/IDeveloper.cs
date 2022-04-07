@@ -1,7 +1,7 @@
 namespace Domain.Developers.Interfaces;
 
-public interface IUser
+public interface IDeveloper
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public string Name { get; set; }
 }

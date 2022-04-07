@@ -2,25 +2,27 @@
 
 namespace Domain.Developers.Entities
 {
-    public class User : IUser
+    public class Developer : IDeveloper
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public List<Project> Projects { get; set; }
         public List<Company> Companies { get; set; }
         public List<Tag> Tags { get; set; }
 
-        public User(string name, IEnumerable<Tag> tags)
+        public Developer(string name, List<Tag> tags)
         {
+            Id = Guid.NewGuid();
             Name = name;
-            Tags = new List<Tag>(tags);
+            Tags = tags;
         }
 
-        public void AddTags(IEnumerable<Tag> tags)
+        public void Update(string name, List<Tag> tags)
         {
-            Tags.AddRange(tags);   
+            Name = name;
+            Tags = tags;
         }
         
-        private User() {}
+        private Developer() {}
     }
 }

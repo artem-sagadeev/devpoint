@@ -8,15 +8,15 @@ namespace Domain.Content.Entities
         public int Id { get; set; }
         public string Text { get; set; }
         public ISubscriptionLevel RequiredSubscriptionLevel { get; set; }
-        public IUser User { get; set; }
+        public IDeveloper Developer { get; set; }
         public IProject Project { get; set; }
         public List<Comment> Comments { get; set; }
 
-        public Post(string text, ISubscriptionLevel requiredSubscriptionLevel, IUser user, IProject project)
+        public Post(string text, ISubscriptionLevel requiredSubscriptionLevel, IDeveloper developer, IProject project)
         {
             Text = text;
             RequiredSubscriptionLevel = requiredSubscriptionLevel;
-            User = user;
+            Developer = developer;
             Project = project;
         }
         

@@ -8,7 +8,7 @@ public class CompanySubscription : Subscription
 {
     public ICompany Company { get; set; }
 
-    public CompanySubscription(DateTime endTime, bool isAutoRenewal, Tariff tariff, IUser subscriber, ICompany company)
+    public CompanySubscription(DateTime endTime, bool isAutoRenewal, Tariff tariff, IDeveloper subscriber, ICompany company)
         : base(endTime, isAutoRenewal, tariff, subscriber)
     {
         Company = company;

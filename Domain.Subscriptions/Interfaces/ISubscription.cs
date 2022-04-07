@@ -10,5 +10,5 @@ public interface ISubscription
     public DateTime EndTime { get; set; }
     public bool IsAutoRenewal { get; set; }
     public Tariff Tariff { get; set; }
-    public IUser Subscriber { get; set; }
+    public IDeveloper Subscriber { get; set; }
 }
