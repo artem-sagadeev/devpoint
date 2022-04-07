@@ -20,6 +20,10 @@ import { ProjectComponent } from './components/projects/project/project.componen
 import { ProjectPreviewComponent } from './components/projects/project-preview/project-preview.component';
 import { CompanyComponent } from './components/companies/company/company.component';
 import { CompanyPreviewComponent } from './components/companies/company-preview/company-preview.component';
+import { ProfileComponent } from './components/account/profile/profile.component';
+import { WalletComponent } from './components/account/wallet/wallet.component';
+import { SettingsComponent } from './components/account/settings/settings.component';
+import { SubscriptionsComponent } from './components/account/subscriptions/subscriptions.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +42,11 @@ import { CompanyPreviewComponent } from './components/companies/company-preview/
     ProjectComponent,
     ProjectPreviewComponent,
     CompanyComponent,
-    CompanyPreviewComponent
+    CompanyPreviewComponent,
+    ProfileComponent,
+    WalletComponent,
+    SettingsComponent,
+    SubscriptionsComponent
   ],
   imports: [
     HttpClientModule,
@@ -54,6 +62,7 @@ import { CompanyPreviewComponent } from './components/companies/company-preview/
       { path: 'developer/:id', component: DeveloperComponent},
       { path: 'project/:id', component: DeveloperComponent},
       { path: 'company/:id', component: DeveloperComponent},
+      { path: 'wallet', component: WalletComponent }
     ])
   ],
   providers: [Service],
