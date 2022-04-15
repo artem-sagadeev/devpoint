@@ -7,7 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HeaderComponent implements OnInit {
 
-  isAuthenticated = true;
+  isAuthenticated = false;
 
   constructor() { }
 

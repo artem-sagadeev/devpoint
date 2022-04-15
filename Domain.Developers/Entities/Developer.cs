@@ -9,7 +9,7 @@ namespace Domain.Developers.Entities
         public List<Project> Projects { get; set; }
         public List<Company> Companies { get; set; }
         public List<Tag> Tags { get; set; }
-
+        
         public Developer(string name, List<Tag> tags)
         {
             Id = Guid.NewGuid();

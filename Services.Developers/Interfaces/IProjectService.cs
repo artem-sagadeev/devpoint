@@ -5,9 +5,9 @@ namespace Services.Developers.Interfaces;
 
 public interface IProjectService
 {
-    public IProject GetProject(Guid id);
+    public Task<IProject?> GetProject(Guid id);
 
-    public IProject CreateProject(ProjectDto dto);
+    public Task<IProject?> CreateProject(ProjectDto dto);
 
-    public IProject UpdateProject(ProjectDto dto);
+    public Task<IProject?> UpdateProject(ProjectDto dto);
 }

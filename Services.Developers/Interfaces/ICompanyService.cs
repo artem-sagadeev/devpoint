@@ -5,9 +5,9 @@ namespace Services.Developers.Interfaces;
 
 public interface ICompanyService
 {
-    public ICompany GetCompany(Guid id);
+    public Task<ICompany> GetCompany(Guid id);
 
-    public ICompany CreateCompany(CompanyDto dto);
+    public Task<ICompany> CreateCompany(CompanyDto dto);
 
-    public ICompany UpdateCompany(CompanyDto dto);
+    public Task<ICompany> UpdateCompany(CompanyDto dto);
 }
