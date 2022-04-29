@@ -1,14 +1,12 @@
 using Domain.Developers.Entities;
-using Domain.Developers.Interfaces;
-using Domain.Subscriptions.Interfaces;
 
 namespace Domain.Subscriptions.Entities.Subscriptions;
 
 public class CompanySubscription : Subscription
 {
-    public ICompany Company { get; set; }
+    public Company Company { get; set; }
 
-    public CompanySubscription(DateTime endTime, bool isAutoRenewal, Tariff tariff, IDeveloper subscriber, ICompany company)
+    public CompanySubscription(DateTime endTime, bool isAutoRenewal, Tariff tariff, Developer subscriber, Company company)
         : base(endTime, isAutoRenewal, tariff, subscriber)
     {
         Company = company;

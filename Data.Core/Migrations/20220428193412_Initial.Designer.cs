@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Data.Core.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220407225818_Initial")]
+    [Migration("20220428193412_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -149,17 +149,22 @@ namespace Data.Core.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<decimal>("Latitude")
+                    b.Property<decimal?>("Latitude")
                         .HasColumnType("numeric");
 
-                    b.Property<decimal>("Longitude")
+                    b.Property<decimal?>("Longitude")
                         .HasColumnType("numeric");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("Companies");
                 });
@@ -185,16 +190,21 @@ namespace Data.Core.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("CompanyId")
+                    b.Property<Guid?>("CompanyId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyId");
+
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("Projects");
                 });
@@ -538,15 +548,32 @@ namespace Data.Core.Migrations
                     b.Navigation("RequiredSubscriptionLevel");
                 });
 
+            modelBuilder.Entity("Domain.Developers.Entities.Company", b =>
+                {
+                    b.HasOne("Domain.Developers.Entities.Developer", "Owner")
+                        .WithMany("OwnedCompanies")
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Owner");
+                });
+
             modelBuilder.Entity("Domain.Developers.Entities.Project", b =>
                 {
                     b.HasOne("Domain.Developers.Entities.Company", "Company")
                         .WithMany("Projects")
-                        .HasForeignKey("CompanyId")
+                        .HasForeignKey("CompanyId");
+
+                    b.HasOne("Domain.Developers.Entities.Developer", "Owner")
+                        .WithMany("OwnedProjects")
+                        .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Company");
+
+                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("Domain.Payments.Entities.Bill", b =>
@@ -687,6 +714,13 @@ namespace Data.Core.Migrations
             modelBuilder.Entity("Domain.Developers.Entities.Company", b =>
                 {
                     b.Navigation("Projects");
+                });
+
+            modelBuilder.Entity("Domain.Developers.Entities.Developer", b =>
+                {
+                    b.Navigation("OwnedCompanies");
+
+                    b.Navigation("OwnedProjects");
                 });
 #pragma warning restore 612, 618
         }

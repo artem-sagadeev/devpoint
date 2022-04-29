@@ -1,6 +1,9 @@
 using Data.Core;
 using Services.Developers;
-using Services.Developers.Interfaces;
+using Services.Developers.Companies;
+using Services.Developers.Developers;
+using Services.Developers.Projects;
+using Services.Developers.Tags;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +28,8 @@ builder.Services.AddDbContext<ApplicationContext>();
 
 builder.Services.AddScoped<IDeveloperService, DeveloperService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<ICompanyService, CompanyService>();
+builder.Services.AddScoped<ITagService, TagService>();
 
 var app = builder.Build();
 

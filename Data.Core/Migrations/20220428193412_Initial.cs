@@ -11,20 +11,6 @@ namespace Data.Core.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Companies",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Latitude = table.Column<decimal>(type: "numeric", nullable: false),
-                    Longitude = table.Column<decimal>(type: "numeric", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Companies", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Developers",
                 columns: table => new
                 {
@@ -63,43 +49,21 @@ namespace Data.Core.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Projects",
+                name: "Companies",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    CompanyId = table.Column<Guid>(type: "uuid", nullable: false)
+                    Latitude = table.Column<decimal>(type: "numeric", nullable: true),
+                    Longitude = table.Column<decimal>(type: "numeric", nullable: true),
+                    OwnerId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Projects", x => x.Id);
+                    table.PrimaryKey("PK_Companies", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Projects_Companies_CompanyId",
-                        column: x => x.CompanyId,
-                        principalTable: "Companies",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CompanyDeveloper",
-                columns: table => new
-                {
-                    CompaniesId = table.Column<Guid>(type: "uuid", nullable: false),
-                    DevelopersId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CompanyDeveloper", x => new { x.CompaniesId, x.DevelopersId });
-                    table.ForeignKey(
-                        name: "FK_CompanyDeveloper_Companies_CompaniesId",
-                        column: x => x.CompaniesId,
-                        principalTable: "Companies",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CompanyDeveloper_Developers_DevelopersId",
-                        column: x => x.DevelopersId,
+                        name: "FK_Companies_Developers_OwnerId",
+                        column: x => x.OwnerId,
                         principalTable: "Developers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -147,6 +111,54 @@ namespace Data.Core.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DeveloperTag",
+                columns: table => new
+                {
+                    DevelopersId = table.Column<Guid>(type: "uuid", nullable: false),
+                    TagsId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DeveloperTag", x => new { x.DevelopersId, x.TagsId });
+                    table.ForeignKey(
+                        name: "FK_DeveloperTag_Developers_DevelopersId",
+                        column: x => x.DevelopersId,
+                        principalTable: "Developers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DeveloperTag_Tags_TagsId",
+                        column: x => x.TagsId,
+                        principalTable: "Tags",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CompanyDeveloper",
+                columns: table => new
+                {
+                    CompaniesId = table.Column<Guid>(type: "uuid", nullable: false),
+                    DevelopersId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CompanyDeveloper", x => new { x.CompaniesId, x.DevelopersId });
+                    table.ForeignKey(
+                        name: "FK_CompanyDeveloper_Companies_CompaniesId",
+                        column: x => x.CompaniesId,
+                        principalTable: "Companies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CompanyDeveloper_Developers_DevelopersId",
+                        column: x => x.DevelopersId,
+                        principalTable: "Developers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CompanyTag",
                 columns: table => new
                 {
@@ -171,25 +183,66 @@ namespace Data.Core.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DeveloperTag",
+                name: "Projects",
                 columns: table => new
                 {
-                    DevelopersId = table.Column<Guid>(type: "uuid", nullable: false),
-                    TagsId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    OwnerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CompanyId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DeveloperTag", x => new { x.DevelopersId, x.TagsId });
+                    table.PrimaryKey("PK_Projects", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DeveloperTag_Developers_DevelopersId",
-                        column: x => x.DevelopersId,
+                        name: "FK_Projects_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Projects_Developers_OwnerId",
+                        column: x => x.OwnerId,
                         principalTable: "Developers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Replenishments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Amount = table.Column<int>(type: "integer", nullable: false),
+                    WalletId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Replenishments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DeveloperTag_Tags_TagsId",
-                        column: x => x.TagsId,
-                        principalTable: "Tags",
+                        name: "FK_Replenishments_Wallets_WalletId",
+                        column: x => x.WalletId,
+                        principalTable: "Wallets",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Withdrawals",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Amount = table.Column<int>(type: "integer", nullable: false),
+                    WalletId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Withdrawals", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Withdrawals_Wallets_WalletId",
+                        column: x => x.WalletId,
+                        principalTable: "Wallets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -272,46 +325,6 @@ namespace Data.Core.Migrations
                         name: "FK_ProjectTag_Tags_TagsId",
                         column: x => x.TagsId,
                         principalTable: "Tags",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Replenishments",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Amount = table.Column<int>(type: "integer", nullable: false),
-                    WalletId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Replenishments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Replenishments_Wallets_WalletId",
-                        column: x => x.WalletId,
-                        principalTable: "Wallets",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Withdrawals",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Amount = table.Column<int>(type: "integer", nullable: false),
-                    WalletId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Withdrawals", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Withdrawals_Wallets_WalletId",
-                        column: x => x.WalletId,
-                        principalTable: "Wallets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -441,6 +454,11 @@ namespace Data.Core.Migrations
                 column: "PostId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Companies_OwnerId",
+                table: "Companies",
+                column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CompanyDeveloper_DevelopersId",
                 table: "CompanyDeveloper",
                 column: "DevelopersId");
@@ -479,6 +497,11 @@ namespace Data.Core.Migrations
                 name: "IX_Projects_CompanyId",
                 table: "Projects",
                 column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Projects_OwnerId",
+                table: "Projects",
+                column: "OwnerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProjectTag_TagsId",
@@ -579,13 +602,13 @@ namespace Data.Core.Migrations
                 name: "Projects");
 
             migrationBuilder.DropTable(
-                name: "Developers");
-
-            migrationBuilder.DropTable(
                 name: "SubscriptionLevels");
 
             migrationBuilder.DropTable(
                 name: "Companies");
+
+            migrationBuilder.DropTable(
+                name: "Developers");
         }
     }
 }

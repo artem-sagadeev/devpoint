@@ -43,38 +43,18 @@ public class ApplicationContext : DbContext
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<CompanySubscription>()
-            .HasOne(companySubscription => (Company) companySubscription.Company);
-        modelBuilder.Entity<CompanySubscription>()
-            .HasOne(companySubscription => (Developer) companySubscription.Subscriber);
+        modelBuilder.Entity<Company>()
+            .HasOne(company => company.Owner)
+            .WithMany(owner => owner.OwnedCompanies);
+        modelBuilder.Entity<Company>()
+            .HasMany(company => company.Developers)
+            .WithMany(developer => developer.Companies);
         
-        modelBuilder.Entity<ProjectSubscription>()
-            .HasOne(projectSubscription => (Project) projectSubscription.Project);
-        modelBuilder.Entity<ProjectSubscription>()
-            .HasOne(projectSubscription => (Developer) projectSubscription.Subscriber);
-        
-        modelBuilder.Entity<DeveloperSubscription>()
-            .HasOne(developerSubscription => (Developer) developerSubscription.Developer);
-        modelBuilder.Entity<DeveloperSubscription>()
-            .HasOne(developerSubscription => (Developer) developerSubscription.Subscriber);
-        
-        modelBuilder.Entity<Comment>()
-            .HasOne(comment => (Developer) comment.Developer);
-        
-        modelBuilder.Entity<Post>()
-            .HasOne(post => (Project) post.Project);
-        modelBuilder.Entity<Post>()
-            .HasOne(post => (SubscriptionLevel) post.RequiredSubscriptionLevel);
-        modelBuilder.Entity<Post>()
-            .HasOne(post => (Developer) post.Developer);
-        
-        modelBuilder.Entity<Bill>()
-            .HasOne(comment => (Subscription) comment.Subscription);
-        
-        modelBuilder.Entity<Wallet>()
-            .HasOne(wallet => (Developer) wallet.Developer);
-        
-        modelBuilder.Entity<Subscription>()
-            .HasOne(subscription => (Developer) subscription.Subscriber);
+        modelBuilder.Entity<Project>()
+            .HasOne(project => project.Owner)
+            .WithMany(owner => owner.OwnedProjects);
+        modelBuilder.Entity<Project>()
+            .HasMany(project => project.Developers)
+            .WithMany(developer => developer.Projects);
     }
 }

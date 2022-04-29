@@ -1,8 +1,6 @@
-using Domain.Subscriptions.Interfaces;
-
 namespace Domain.Subscriptions.Entities;
 
-public class SubscriptionLevel : ISubscriptionLevel
+public class SubscriptionLevel
 {
     public int Id { get; set; }
     public string Name { get; set; }
