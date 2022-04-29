@@ -76,6 +76,15 @@ public class ProjectController : Controller
 
         return Ok(tags);
     }
+    
+    [HttpGet]
+    [Route("{projectId:guid}/posts")]
+    public async Task<IActionResult> GetProjectPosts(Guid projectId)
+    {
+        var posts = await _projectService.GetProjectPosts(projectId);
+
+        return Ok(posts);
+    }
 
     [HttpPost]
     [Route("create")]

@@ -1,4 +1,5 @@
-﻿using Domain.Developers.Entities;
+﻿using Domain.Content.Entities;
+using Domain.Developers.Entities;
 
 namespace Services.Developers.Projects;
 
@@ -17,6 +18,8 @@ public interface IProjectService
     public Task<List<Developer>> GetProjectDevelopers(Guid projectId);
 
     public Task<List<Tag>> GetProjectTags(Guid projectId);
+
+    public Task<List<Post>> GetProjectPosts(Guid projectId);
 
     public Task<Guid> CreateProject(string name, Guid ownerId, Guid? companyId);
 

@@ -1,4 +1,5 @@
 using Data.Core;
+using Domain.Content.Entities;
 using Domain.Developers.Entities;
 using Microsoft.EntityFrameworkCore;
 using Services.Developers.Tags;
@@ -67,6 +68,13 @@ public class ProjectService : IProjectService
         await _context.Entry(project).Collection(p => p.Tags).LoadAsync();
 
         return project.Tags;
+    }
+
+    public async Task<List<Post>> GetProjectPosts(Guid projectId)
+    {
+        var posts = await _context.Posts.Where(p => p.Project.Id == projectId).ToListAsync();
+
+        return posts;
     }
 
     public async Task<Guid> CreateProject(string name, Guid ownerId, Guid? companyId)

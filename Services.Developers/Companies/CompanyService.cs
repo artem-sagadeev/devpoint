@@ -1,8 +1,6 @@
 using Data.Core;
 using Domain.Developers.Entities;
 using Microsoft.EntityFrameworkCore;
-using Services.Developers.Developers;
-using Services.Developers.Projects;
 using Services.Developers.Tags;
 
 namespace Services.Developers.Companies;
