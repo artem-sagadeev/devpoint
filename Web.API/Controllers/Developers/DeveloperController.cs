@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Services.Developers.Developers;
 
-namespace Web.API.Controllers;
+namespace Web.API.Controllers.Developers;
 
 [ApiController]
 [Route("developers")]
