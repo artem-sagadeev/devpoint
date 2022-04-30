@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Services.Developers.Projects;
+using Web.API.Controllers.Content.DTOs;
+using Web.API.Controllers.Developers.DTOs;
 
 namespace Web.API.Controllers.Developers;
 
@@ -19,8 +21,9 @@ public class ProjectController : Controller
     public async Task<IActionResult> GetAllProjects()
     {
         var projects = await _projectService.GetAllProjects();
-
-        return Ok(projects);
+        var result = projects.Select(p => new ProjectDto(p));
+        
+        return Ok(result);
     }
 
     [HttpGet]
@@ -28,8 +31,9 @@ public class ProjectController : Controller
     public async Task<IActionResult> GetProjects(List<Guid> projectIds)
     {
         var projects = await _projectService.GetProjects(projectIds);
-
-        return Ok(projects);
+        var result = projects.Select(p => new ProjectDto(p));
+        
+        return Ok(result);
     }
 
     [HttpGet]
@@ -37,8 +41,9 @@ public class ProjectController : Controller
     public async Task<IActionResult> GetProject(Guid projectId)
     {
         var project = await _projectService.GetProject(projectId);
-
-        return Ok(project);
+        var result = new ProjectDto(project);
+        
+        return Ok(result);
     }
 
     [HttpGet]
@@ -46,8 +51,9 @@ public class ProjectController : Controller
     public async Task<IActionResult> GetOwner(Guid projectId)
     {
         var owner = await _projectService.GetOwner(projectId);
+        var result = new DeveloperDto(owner);
 
-        return Ok(owner);
+        return Ok(result);
     }
 
     [HttpGet]
@@ -55,8 +61,9 @@ public class ProjectController : Controller
     public async Task<IActionResult> GetProjectCompany(Guid projectId)
     {
         var company = await _projectService.GetProjectCompany(projectId);
-
-        return Ok(company);
+        var result = new CompanyDto(company);
+        
+        return Ok(result);
     }
 
     [HttpGet]
@@ -64,8 +71,9 @@ public class ProjectController : Controller
     public async Task<IActionResult> GetProjectDevelopers(Guid projectId)
     {
         var developers = await _projectService.GetProjectDevelopers(projectId);
-
-        return Ok(developers);
+        var result = developers.Select(d => new DeveloperDto(d));
+        
+        return Ok(result);
     }
 
     [HttpGet]
@@ -73,8 +81,9 @@ public class ProjectController : Controller
     public async Task<IActionResult> GetProjectTags(Guid projectId)
     {
         var tags = await _projectService.GetProjectTags(projectId);
+        var result = tags.Select(t => new TagDto(t));
 
-        return Ok(tags);
+        return Ok(result);
     }
     
     [HttpGet]
@@ -82,8 +91,9 @@ public class ProjectController : Controller
     public async Task<IActionResult> GetProjectPosts(Guid projectId)
     {
         var posts = await _projectService.GetProjectPosts(projectId);
-
-        return Ok(posts);
+        var result = posts.Select(p => new PostDto(p));
+        
+        return Ok(result);
     }
 
     [HttpPost]

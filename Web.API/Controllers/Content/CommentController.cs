@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Services.Content.Comments;
+using Web.API.Controllers.Content.DTOs;
+using Web.API.Controllers.Developers.DTOs;
 
 namespace Web.API.Controllers.Content;
 
@@ -19,8 +21,9 @@ public class CommentController : Controller
     public async Task<IActionResult> GetAllComments()
     {
         var comments = await _commentService.GetAllComments();
+        var result = comments.Select(c => new CommentDto(c));
 
-        return Ok(comments);
+        return Ok(result);
     }
 
     [HttpGet]
@@ -28,8 +31,9 @@ public class CommentController : Controller
     public async Task<IActionResult> GetComments(List<int> commentIds)
     {
         var comments = await _commentService.GetComments(commentIds);
+        var result = comments.Select(c => new CommentDto(c));
 
-        return Ok(comments);
+        return Ok(result);
     }
 
     [HttpGet]
@@ -37,8 +41,9 @@ public class CommentController : Controller
     public async Task<IActionResult> GetComment(int commentId)
     {
         var comment = await _commentService.GetComment(commentId);
+        var result = new CommentDto(comment);
 
-        return Ok(comment);
+        return Ok(result);
     }
 
     [HttpGet]
@@ -46,8 +51,9 @@ public class CommentController : Controller
     public async Task<IActionResult> GetCommentAuthor(int commentId)
     {
         var author = await _commentService.GetCommentAuthor(commentId);
+        var result = new DeveloperDto(author);
 
-        return Ok(author);
+        return Ok(result);
     }
 
     [HttpGet]
@@ -55,8 +61,9 @@ public class CommentController : Controller
     public async Task<IActionResult> GetCommentPost(int commentId)
     {
         var post = await _commentService.GetCommentPost(commentId);
+        var result = new PostDto(post);
 
-        return Ok(post);
+        return Ok(result);
     }
 
     [HttpPost]

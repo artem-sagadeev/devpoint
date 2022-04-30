@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.Content", "Service
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.Subscriptions", "Services.Subscriptions\Services.Subscriptions.csproj", "{96B6B870-2C6F-4D33-AA0B-101C4B5EBAAD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.Payments", "Services.Payments\Services.Payments.csproj", "{F7D6C988-2B93-40EF-93CC-39B97C3827DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,7 @@ Global
 		{AB2913B4-F6D2-46C5-AF9A-2BDA90759BF1} = {9C9B7CAD-90E1-4112-8FCA-3FD2CADFAE12}
 		{99D64B53-BC79-4EF5-ABED-72A3B84F5ACD} = {2B1AF4D4-0F5C-4C5E-AF7B-EC175F55DAF1}
 		{96B6B870-2C6F-4D33-AA0B-101C4B5EBAAD} = {F2B4D6E0-E2A6-49B7-B753-3BEA6FFE3133}
+		{F7D6C988-2B93-40EF-93CC-39B97C3827DE} = {A42BAD73-FF84-41E7-9C62-3D79A948BE4C}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{DF4A5F0B-E367-45DA-B8BD-D24F719770B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -77,5 +80,9 @@ Global
 		{96B6B870-2C6F-4D33-AA0B-101C4B5EBAAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96B6B870-2C6F-4D33-AA0B-101C4B5EBAAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96B6B870-2C6F-4D33-AA0B-101C4B5EBAAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7D6C988-2B93-40EF-93CC-39B97C3827DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7D6C988-2B93-40EF-93CC-39B97C3827DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7D6C988-2B93-40EF-93CC-39B97C3827DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7D6C988-2B93-40EF-93CC-39B97C3827DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

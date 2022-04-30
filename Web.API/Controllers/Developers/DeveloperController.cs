@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Services.Developers.Developers;
+using Web.API.Controllers.Developers.DTOs;
 
 namespace Web.API.Controllers.Developers;
 
@@ -19,8 +20,9 @@ public class DeveloperController : Controller
     public async Task<IActionResult> GetAllDevelopers()
     {
         var developers = await _developerService.GetAllDevelopers();
+        var result = developers.Select(d => new DeveloperDto(d));
         
-        return Ok(developers);
+        return Ok(result);
     }
 
     [HttpGet]
@@ -28,8 +30,9 @@ public class DeveloperController : Controller
     public async Task<IActionResult> GetDevelopers(List<Guid> developerIds)
     {
         var developers = await _developerService.GetDevelopers(developerIds);
-
-        return Ok(developers);
+        var result = developers.Select(d => new DeveloperDto(d));
+        
+        return Ok(result);
     }
 
     [HttpGet]
@@ -37,8 +40,9 @@ public class DeveloperController : Controller
     public async Task<IActionResult> GetDeveloper(Guid developerId)
     {
         var developer = await _developerService.GetDeveloper(developerId);
-
-        return Ok(developer);
+        var result = new DeveloperDto(developer);
+        
+        return Ok(result);
     }
 
     [HttpGet]
@@ -46,8 +50,9 @@ public class DeveloperController : Controller
     public async Task<IActionResult> GetOwnedProjects(Guid developerId)
     {
         var projects = await _developerService.GetOwnedProjects(developerId);
+        var result = projects.Select(p => new ProjectDto(p));
 
-        return Ok(projects);
+        return Ok(result);
     }
     
     [HttpGet]
@@ -55,8 +60,9 @@ public class DeveloperController : Controller
     public async Task<IActionResult> GetDeveloperProjects(Guid developerId)
     {
         var projects = await _developerService.GetDeveloperProjects(developerId);
+        var result = projects.Select(p => new ProjectDto(p));
 
-        return Ok(projects);
+        return Ok(result);
     }
     
     [HttpGet]
@@ -64,8 +70,9 @@ public class DeveloperController : Controller
     public async Task<IActionResult> GetOwnedCompanies(Guid developerId)
     {
         var companies = await _developerService.GetOwnedCompanies(developerId);
+        var result = companies.Select(c => new CompanyDto(c));
 
-        return Ok(companies);
+        return Ok(result);
     }
     
     [HttpGet]
@@ -73,8 +80,9 @@ public class DeveloperController : Controller
     public async Task<IActionResult> GetDeveloperCompanies(Guid developerId)
     {
         var companies = await _developerService.GetDeveloperCompanies(developerId);
+        var result = companies.Select(c => new CompanyDto(c));
 
-        return Ok(companies);
+        return Ok(result);
     }
     
     [HttpGet]
@@ -82,8 +90,9 @@ public class DeveloperController : Controller
     public async Task<IActionResult> GetDeveloperTags(Guid developerId)
     {
         var tags = await _developerService.GetDeveloperTags(developerId);
-
-        return Ok(tags);
+        var result = tags.Select(t => new TagDto(t));
+        
+        return Ok(result);
     }
 
     [HttpPost]

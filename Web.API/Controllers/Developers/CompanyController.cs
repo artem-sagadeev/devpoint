@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Services.Developers.Companies;
+using Web.API.Controllers.Developers.DTOs;
 
 namespace Web.API.Controllers.Developers;
 
@@ -19,8 +20,9 @@ public class CompanyController : Controller
     public async Task<IActionResult> GetAllCompanies()
     {
         var companies = await _companyService.GetAllCompanies();
+        var result = companies.Select(c => new CompanyDto(c));
         
-        return Ok(companies);
+        return Ok(result);
     }
 
     [HttpGet]
@@ -28,8 +30,9 @@ public class CompanyController : Controller
     public async Task<IActionResult> GetCompanies(List<Guid> companyIds)
     {
         var companies = await _companyService.GetCompanies(companyIds);
-
-        return Ok(companies);
+        var result = companies.Select(c => new CompanyDto(c));
+        
+        return Ok(result);
     }
 
     [HttpGet]
@@ -37,8 +40,9 @@ public class CompanyController : Controller
     public async Task<IActionResult> GetCompany(Guid companyId)
     {
         var company = await _companyService.GetCompany(companyId);
-
-        return Ok(company);
+        var result = new CompanyDto(company);
+        
+        return Ok(result);
     }
 
     [HttpGet]
@@ -46,8 +50,9 @@ public class CompanyController : Controller
     public async Task<IActionResult> GetOwner(Guid companyId)
     {
         var owner = await _companyService.GetOwner(companyId);
-
-        return Ok(owner);
+        var result = new DeveloperDto(owner);
+        
+        return Ok(result);
     }
     
     [HttpGet]
@@ -55,8 +60,9 @@ public class CompanyController : Controller
     public async Task<IActionResult> GetCompanyDevelopers(Guid companyId)
     {
         var developers = await _companyService.GetCompanyDevelopers(companyId);
+        var result = developers.Select(d => new DeveloperDto(d));
 
-        return Ok(developers);
+        return Ok(result);
     }
     
     [HttpGet]
@@ -64,8 +70,9 @@ public class CompanyController : Controller
     public async Task<IActionResult> GetCompanyProjects(Guid companyId)
     {
         var projects = await _companyService.GetCompanyProjects(companyId);
-
-        return Ok(projects);
+        var result = projects.Select(p => new ProjectDto(p));
+        
+        return Ok(result);
     }
     
     [HttpGet]
@@ -73,8 +80,9 @@ public class CompanyController : Controller
     public async Task<IActionResult> GetCompanyTags(Guid companyId)
     {
         var tags = await _companyService.GetCompanyTags(companyId);
-
-        return Ok(tags);
+        var result = tags.Select(t => new TagDto(t));
+        
+        return Ok(result);
     }
 
     [HttpPost]

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Services.Developers.Tags;
+using Web.API.Controllers.Developers.DTOs;
 
 namespace Web.API.Controllers.Developers;
 
@@ -19,8 +20,9 @@ public class TagController : Controller
     public async Task<IActionResult> GetAllTags()
     {
         var tags = await _tagService.GetAllTags();
+        var result = tags.Select(t => new TagDto(t));
 
-        return Ok(tags);
+        return Ok(result);
     }
 
     [HttpGet]
@@ -28,8 +30,9 @@ public class TagController : Controller
     public async Task<IActionResult> GetTags(List<int> tagIds)
     {
         var tags = await _tagService.GetTags(tagIds);
-
-        return Ok(tags);
+        var result = tags.Select(t => new TagDto(t));
+        
+        return Ok(result);
     }
 
     [HttpGet]
@@ -37,8 +40,9 @@ public class TagController : Controller
     public async Task<IActionResult> GetTag(int tagId)
     {
         var tag = await _tagService.GetTag(tagId);
-
-        return Ok(tag);
+        var result = new TagDto(tag);
+        
+        return Ok(result);
     }
 
     [HttpGet]
@@ -46,8 +50,9 @@ public class TagController : Controller
     public async Task<IActionResult> GetTagDevelopers(int tagId)
     {
         var developers = await _tagService.GetTagDevelopers(tagId);
-
-        return Ok(developers);
+        var result = developers.Select(d => new DeveloperDto(d));
+        
+        return Ok(result);
     }
 
     [HttpGet]
@@ -55,8 +60,9 @@ public class TagController : Controller
     public async Task<IActionResult> GetTagProjects(int tagId)
     {
         var projects = await _tagService.GetTagProjects(tagId);
+        var result = projects.Select(p => new ProjectDto(p));
 
-        return Ok(projects);
+        return Ok(result);
     }
 
     [HttpGet]
@@ -64,8 +70,9 @@ public class TagController : Controller
     public async Task<IActionResult> GetTagCompanies(int tagId)
     {
         var companies = await _tagService.GetTagCompanies(tagId);
-
-        return Ok(companies);
+        var result = companies.Select(c => new CompanyDto(c));
+        
+        return Ok(result);
     }
 
     [HttpPost]

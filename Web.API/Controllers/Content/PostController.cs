@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Services.Content.Posts;
+using Web.API.Controllers.Content.DTOs;
+using Web.API.Controllers.Developers.DTOs;
+using Web.API.Controllers.Subscriptions.DTOs;
 
 namespace Web.API.Controllers.Content;
 
@@ -19,8 +22,9 @@ public class PostController : Controller
     public async Task<IActionResult> GetAllPosts()
     {
         var posts = await _postService.GetAllPosts();
+        var result = posts.Select(p => new PostDto(p));
 
-        return Ok(posts);
+        return Ok(result);
     }
 
     [HttpGet]
@@ -28,8 +32,9 @@ public class PostController : Controller
     public async Task<IActionResult> GetPosts(List<int> postIds)
     {
         var posts = await _postService.GetPosts(postIds);
-
-        return Ok(posts);
+        var result = posts.Select(p => new PostDto(p));
+        
+        return Ok(result);
     }
 
     [HttpGet]
@@ -37,8 +42,9 @@ public class PostController : Controller
     public async Task<IActionResult> GetPost(int postId)
     {
         var post = await _postService.GetPost(postId);
-
-        return Ok(post);
+        var result = new PostDto(post);
+        
+        return Ok(result);
     }
 
     [HttpGet]
@@ -46,8 +52,9 @@ public class PostController : Controller
     public async Task<IActionResult> GetRequiredSubscriptionLevel(int postId)
     {
         var subscriptionLevel = await _postService.GetRequiredSubscriptionLevel(postId);
+        var result = new SubscriptionLevelDto(subscriptionLevel);
 
-        return Ok(subscriptionLevel);
+        return Ok(result);
     }
 
     [HttpGet]
@@ -55,8 +62,9 @@ public class PostController : Controller
     public async Task<IActionResult> GetPostAuthor(int postId)
     {
         var author = await _postService.GetPostAuthor(postId);
+        var result = new DeveloperDto(author);
 
-        return Ok(author);
+        return Ok(result);
     }
     
     [HttpGet]
@@ -64,8 +72,9 @@ public class PostController : Controller
     public async Task<IActionResult> GetPostProject(int postId)
     {
         var project = await _postService.GetPostProject(postId);
-
-        return Ok(project);
+        var result = new ProjectDto(project);
+        
+        return Ok(result);
     }
     
     [HttpGet]
@@ -73,8 +82,9 @@ public class PostController : Controller
     public async Task<IActionResult> GetPostComments(int postId)
     {
         var comments = await _postService.GetPostComments(postId);
+        var result = comments.Select(c => new CommentDto(c));
 
-        return Ok(comments);
+        return Ok(result);
     }
 
     [HttpPost]
