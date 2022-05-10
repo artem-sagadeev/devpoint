@@ -1,4 +1,5 @@
 using Data.Core;
+using Domain.Payments.Entities;
 using Services.Content.Comments;
 using Services.Content.Posts;
 using Services.Developers;
@@ -6,6 +7,10 @@ using Services.Developers.Companies;
 using Services.Developers.Developers;
 using Services.Developers.Projects;
 using Services.Developers.Tags;
+using Services.Payments.Bills;
+using Services.Payments.Replenishments;
+using Services.Payments.Wallets;
+using Services.Payments.Withdrawals;
 using Services.Subscriptions.SubscriptionLevels;
 using Services.Subscriptions.Subscriptions;
 using Services.Subscriptions.Tariffs;
@@ -42,6 +47,11 @@ builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<ISubscriptionLevelService, SubscriptionLevelService>();
 builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
 builder.Services.AddScoped<ITariffService, TariffService>();
+
+builder.Services.AddScoped<IBillService, BillService>();
+builder.Services.AddScoped<IReplenishmentService, ReplenishmentService>();
+builder.Services.AddScoped<IWalletService, WalletService>();
+builder.Services.AddScoped<IWithdrawalService, WithdrawalService>();
 
 var app = builder.Build();
 

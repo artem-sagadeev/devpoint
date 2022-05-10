@@ -9,9 +9,8 @@ public class Bill
     public Wallet Wallet { get; set; }
     public Subscription Subscription { get; set; }
     
-    public Bill(int id, int amount, Wallet wallet, Subscription subscription)
+    public Bill(int amount, Wallet wallet, Subscription subscription)
     {
-        Id = id;
         Amount = amount;
         Wallet = wallet;
         Subscription = subscription;

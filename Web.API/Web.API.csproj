@@ -19,6 +19,7 @@
       <ProjectReference Include="..\Data.Core\Data.Core.csproj" />
       <ProjectReference Include="..\Services.Content\Services.Content.csproj" />
       <ProjectReference Include="..\Services.Developers\Services.Developers.csproj" />
+      <ProjectReference Include="..\Services.Payments\Services.Payments.csproj" />
     </ItemGroup>
 
 </Project>

@@ -8,10 +8,9 @@ public class Wallet
     public int Amount { get; set; }
     public Developer Developer { get; set; }
     
-    public Wallet(int id, int amount, Developer developer)
+    public Wallet(Developer developer)
     {
-        Id = id;
-        Amount = amount;
+        Amount = 0;
         Developer = developer;
     }
     

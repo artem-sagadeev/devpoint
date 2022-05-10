@@ -6,9 +6,8 @@ public class Replenishment
     public int Amount { get; set; }
     public Wallet Wallet { get; set; }
     
-    public Replenishment(int id, int amount, Wallet wallet)
+    public Replenishment(int amount, Wallet wallet)
     {
-        Id = id;
         Amount = amount;
         Wallet = wallet;
     }
