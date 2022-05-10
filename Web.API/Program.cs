@@ -1,9 +1,14 @@
 using Data.Core;
+using Services.Content.Comments;
+using Services.Content.Posts;
 using Services.Developers;
 using Services.Developers.Companies;
 using Services.Developers.Developers;
 using Services.Developers.Projects;
 using Services.Developers.Tags;
+using Services.Subscriptions.SubscriptionLevels;
+using Services.Subscriptions.Subscriptions;
+using Services.Subscriptions.Tariffs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +35,13 @@ builder.Services.AddScoped<IDeveloperService, DeveloperService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<ICompanyService, CompanyService>();
 builder.Services.AddScoped<ITagService, TagService>();
+
+builder.Services.AddScoped<IPostService, PostService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
+
+builder.Services.AddScoped<ISubscriptionLevelService, SubscriptionLevelService>();
+builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+builder.Services.AddScoped<ITariffService, TariffService>();
 
 var app = builder.Build();
 

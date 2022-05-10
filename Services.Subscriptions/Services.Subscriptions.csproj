@@ -3,11 +3,12 @@
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Data.Core\Data.Core.csproj" />
       <ProjectReference Include="..\Domain.Subscriptions\Domain.Subscriptions.csproj" />
+      <ProjectReference Include="..\Services.Developers\Services.Developers.csproj" />
     </ItemGroup>
 
 </Project>
