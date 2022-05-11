@@ -20,7 +20,7 @@ public interface ISubscriptionService
 
     public Task<Tariff> GetSubscriptionTariff(int subscriptionId);
 
-    public Task<Developer> GetSubscriber(int subscriptionId);
+    public Task<Developer> GetSubscriptionSubscriber(int subscriptionId);
 
     public Task<int> CreateProjectSubscription(DateTime endTime, bool isAutoRenewal, int tariffId, Guid subscriberId,
         Guid projectId);

@@ -103,7 +103,7 @@ public class SubscriptionService : ISubscriptionService
         return subscription.Tariff;
     }
 
-    public async Task<Developer> GetSubscriber(int subscriptionId)
+    public async Task<Developer> GetSubscriptionSubscriber(int subscriptionId)
     {
         var subscription = await GetSubscription(subscriptionId);
         _context.Entry(subscription).Reference(s => s.Subscriber);
