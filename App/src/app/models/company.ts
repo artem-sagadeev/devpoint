@@ -1,7 +1,7 @@
-import { Tag } from "./tag";
+import { Tag } from './tag';
 
 export class Company {
-    id: string = ""
-    name: string = "";
-    tags: Tag[] = []
+  id: string = '';
+  name: string = '';
+  tags: Tag[] = [];
 }

@@ -4,13 +4,12 @@ import { Developer } from 'src/app/models/developer';
 @Component({
   selector: 'app-developer',
   templateUrl: './developer.component.html',
-  styleUrls: ['./developer.component.css']
+  styleUrls: ['./developer.component.css'],
 })
 export class DeveloperComponent implements OnInit {
-  developer: Developer = new Developer()
+  developer: Developer = new Developer();
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 }

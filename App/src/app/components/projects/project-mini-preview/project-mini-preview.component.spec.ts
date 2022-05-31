@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { HeaderComponent } from './header.component';
+import { ProjectMiniPreviewComponent } from './project-mini-preview.component';
 
-describe('HeaderComponent', () => {
-  let component: HeaderComponent;
-  let fixture: ComponentFixture<HeaderComponent>;
+describe('ProjectMiniPreviewComponent', () => {
+  let component: ProjectMiniPreviewComponent;
+  let fixture: ComponentFixture<ProjectMiniPreviewComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ HeaderComponent ]
+      declarations: [ ProjectMiniPreviewComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(HeaderComponent);
+    fixture = TestBed.createComponent(ProjectMiniPreviewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

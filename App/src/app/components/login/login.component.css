@@ -28,13 +28,6 @@
     border-style: solid;
 }
 
-.btn-github{
-    background-color: white;
-    font-weight: bold;
-    margin: 27px auto 14px auto;
-    display: block;
-}
-
 #account{
     max-width: 343px;
     margin: auto;
@@ -51,4 +44,7 @@
     font-size: 16px;
 }
 
-
+app-devpoint-button {
+  display: flex;
+  justify-content: center;
+}

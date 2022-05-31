@@ -1,0 +1,64 @@
+button {
+  display: flex;
+  width: 300px;
+  justify-content: center;
+  align-items: center;
+}
+
+.content-wrapper {
+  display: grid;
+  width: auto;
+  column-gap: 6px;
+  grid-auto-flow: column;
+  align-items: center;
+  justify-items: center;
+}
+
+.bold { 
+  font-weight: bold;
+}
+
+.auto-width {
+  width: auto;
+}
+
+.style-main {
+  background-color: var(--btn-main-color);
+  color: white;
+}
+
+.style-white {
+  background-color: white;
+  color: black;
+}
+
+.style-white:focus {
+  box-shadow: 0 0 0 0.2rem rgb(255 255 255 / 25%);
+}
+
+.style-black {
+  background-color: #1E1E2C;
+  color: white;
+}
+
+.style-black:focus {
+  box-shadow: 0 0 0 0.2rem rgb(0 0 0 / 25%);
+}
+
+.style-transparent-white {
+  background-color: transparent;
+  color: white;
+}
+
+.style-transparent-white:focus {
+  box-shadow: 0 0 0 0.2rem rgb(255 255 255 / 25%);
+}
+
+.style-transparent-black {
+  background-color: transparent;
+  color: black;
+}
+
+.style-transparent-black:focus {
+  box-shadow: 0 0 0 0.2rem rgb(0 0 0 / 25%);
+}

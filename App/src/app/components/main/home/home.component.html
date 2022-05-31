@@ -1,9 +1,26 @@
-<div class="container-fluid home-main">
-    <div class="container">
-        <h2>It's easy to find like-minded people</h2>
-        <p>Devpoint is a web application for developers that allows you to conveniently place your work, development processes, code details and other information in your profile.</p>
-        <p>Receive funding from subscribers and create even cooler projects. Chat in chats and leave comments.</p>
-        <a class="btn register" id="register" style="max-width:220px" routerLink="/register">Create an account</a>
-        <a class="btn login" style="max-width:220px" routerLink="/login">Log In</a>
-    </div>
-</div>
+ <div class="container-fluid home-main">
+  <div class="container">
+    <h2>It's easy to find like-minded people</h2>
+    <p>
+      Devpoint is a web application for developers that allows you to
+      conveniently place your work, development processes, code details and
+      other information in your profile.
+    </p>
+    <p>
+      Receive funding from subscribers and create even cooler projects. Chat in
+      chats and leave comments.
+    </p>
+    <app-devpoint-button
+      [maxWidth]=220
+      routerLink='/register'
+    >
+      Create an account
+    </app-devpoint-button>
+    <app-devpoint-button
+      [maxWidth]=220
+      routerLink='/login'
+    >
+      Log In
+    </app-devpoint-button>
+  </div>
+</div>;

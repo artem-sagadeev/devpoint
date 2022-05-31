@@ -4,14 +4,12 @@ import { Project } from 'src/app/models/project';
 @Component({
   selector: 'app-project-preview',
   templateUrl: './project-preview.component.html',
-  styleUrls: ['./project-preview.component.css']
+  styleUrls: ['./project-preview.component.css'],
 })
 export class ProjectPreviewComponent implements OnInit {
   @Input() project: Project = new Project();
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

@@ -1,0 +1,55 @@
+.container {
+    padding: 0 160px;
+}
+
+.projects-container {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.projects-swiper {
+    margin-top: 6px;
+}
+
+a {
+    color: black
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+.nav-button {
+    position: absolute;
+    background-color: transparent;
+    outline: none;
+    border-style: none;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.button-prev {
+    top: calc(50%);
+    left: calc(10% + 6px);;
+    right: auto;
+}
+
+.button-next {
+    top: calc(50%);
+    right: calc(10% + 12px);
+    left: auto;
+}
+
+.posts-container {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.posts {
+    margin-top: 6px;
+}

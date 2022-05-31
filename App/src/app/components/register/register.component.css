@@ -32,10 +32,8 @@
     margin: auto;
 }
 
-.btn-github{
-    background-color: white;
-    font-weight: bold;
-    margin: 27px auto 14px auto;
-    display: block;
+app-devpoint-button {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
 }
-

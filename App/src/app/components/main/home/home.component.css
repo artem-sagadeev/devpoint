@@ -32,20 +32,10 @@
     margin: auto;
 }
 
-.home-main .container .register{
-    margin: 27px auto 0px auto;
-    display: block;
-    background-color: var(--btn-main-color);
-    color: white;
-    width: 300px;
-}
-
-.home-main .container .login{
-    margin: 14px auto 0px auto;
-    display: block;
-    background-color: var(--btn-main-color);
-    color: white;
-    width: 300px;
+.home-main .container app-devpoint-button{
+    display: flex;
+    justify-content: center;
+    margin-top: 14px;
 }
 
 .home-main .container .btn{

@@ -1,21 +1,22 @@
-<div class="container-xl" style="margin-top: 20px">
+<div class="container-xl" style="margin-top: 70px">
     <div class="row justify-content-center">
         <div class="col-4 align-self-center">
-            <p>Wallet: 123456$</p>
+            <div class="funds-label">Your funds:</div>
+            <div class="funds">123456$</div>
             <div style="margin-bottom: 15px;">
-                <form method="post" asp-route-money="@money">
+                <form method="post">
                     <input type ="number" name="money" placeholder="Money" class="form-control input-search"/>
-                    <button type="submit" class="btn" style="background-color: var(--btn-main-color); color: white; margin-top: 10px">Deposit</button>
+                    <app-devpoint-button autoWidth [bold]="false">Deposit</app-devpoint-button>
                 </form>
             </div>
             <div>
-                <form method="post" asp-route-money="@money">
+                <form method="post">
                     <input type ="number" name="money" placeholder="Money" class="form-control input-search"/>
-                    <button type="submit" class="btn" style="background-color: var(--btn-main-color); color: white; margin-top: 10px">Withdrawal</button>
+                    <app-devpoint-button autoWidth [bold]="false">Withdrawl</app-devpoint-button>
                 </form>
             </div>
         </div>
-        <div class="col-auto align-self-center" style="margin-top: 30px">
+        <div class="col-auto align-self-center" style="margin-top: 30px; margin-left: 20px;">
             <img src="assets/img/undraw_Receipt_re_fre3.svg" alt="" style="max-width: 300px">
         </div>
     </div>

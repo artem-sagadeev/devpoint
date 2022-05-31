@@ -6,18 +6,20 @@
                     <input type="text" name="searchString" placeholder="What are you searching for?" class="input-search form-control" autocomplete="off">
                 </div>
                 <div class="col-auto">
-                    <button class="btn btn-search">Search</button>
+                    <app-devpoint-button autoWidth>
+                        Search
+                    </app-devpoint-button>
                 </div>
                 <div class="round col-auto">
-                    <input type="checkbox" name="searching" class="checkbox" id="checkbox-1" (change)="toggleDevelopersSearch()">
+                    <input type="checkbox" name="searching" class="checkbox" id="checkbox-1" [checked]="searchingDevelopers" (change)="toggleDevelopersSearch()">
                     <label for="checkbox-1" class="checkbox-label">Developers</label>
                 </div>
                 <div class="round col-auto">
-                    <input type="checkbox" name="searching" class="checkbox" id="checkbox-2" (change)="toggleProjectsSearch()">
+                    <input type="checkbox" name="searching" class="checkbox" id="checkbox-2" [checked]="searchingProjects" (change)="toggleProjectsSearch()">
                     <label for="checkbox-2" class="checkbox-label">Projects</label>
                 </div>
                 <div class="round col-auto">
-                    <input type="checkbox" name="searching" class="checkbox" id="checkbox-3" (change)="toggleCompaniesSearch()">
+                    <input type="checkbox" name="searching" class="checkbox" id="checkbox-3" [checked]="searchingCompanies" (change)="toggleCompaniesSearch()">
                     <label for="checkbox-3" class="checkbox-label">Companies</label>
                 </div>
             </div>

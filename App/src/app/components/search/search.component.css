@@ -33,12 +33,7 @@
 .round label{
     font-weight: bold;
     color: var(--btn-main-color);
-}
-
-.btn-search{
-    background-color: var(--btn-main-color) !important;
-    color: white;
-    font-weight: bold;
+    cursor: pointer;
 }
 
 .input-search{

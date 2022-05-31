@@ -1,0 +1,22 @@
+form {
+    margin-top: 40px;
+}
+
+form > input {
+    margin-bottom: 10px;
+}
+
+.funds-label {
+    text-align: center;
+    font-weight: bold;
+    color: var(--btn-main-color);
+    font-size: 1.25rem;
+}
+
+.funds {
+    margin-top: 16px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 4rem;
+    line-height: 4rem;
+}

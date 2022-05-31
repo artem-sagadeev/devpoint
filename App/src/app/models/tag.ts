@@ -1,3 +1,3 @@
 export class Tag {
-    name: string = "";
+  name: string = '';
 }

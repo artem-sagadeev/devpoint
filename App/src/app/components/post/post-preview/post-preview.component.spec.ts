@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DeveloperPreviewComponent } from './developer-preview.component';
+import { PostPreviewComponent } from './post-preview.component';
 
-describe('DeveloperPreviewComponent', () => {
-  let component: DeveloperPreviewComponent;
-  let fixture: ComponentFixture<DeveloperPreviewComponent>;
+describe('PostPreviewComponent', () => {
+  let component: PostPreviewComponent;
+  let fixture: ComponentFixture<PostPreviewComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DeveloperPreviewComponent ]
+      declarations: [ PostPreviewComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DeveloperPreviewComponent);
+    fixture = TestBed.createComponent(PostPreviewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

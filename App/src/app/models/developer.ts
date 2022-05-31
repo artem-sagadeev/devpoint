@@ -1,7 +1,5 @@
-import { Tag } from "./tag";
+import { Entity } from './entity';
+import { Tag } from './tag';
 
-export class Developer {
-    id: string = ""
-    name: string = "";
-    tags: Tag[] = []
+export class Developer extends Entity {
 }

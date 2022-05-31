@@ -1,0 +1,11 @@
+<button
+  class='btn'
+  [style.maxWidth.px]="maxWidth"
+  [class.auto-width]='autoWidth'
+  [class]='devpointStyleClassMap'
+  type='{{type}}'
+>
+  <div class="content-wrapper" [class.bold]='bold'>
+    <ng-content></ng-content>
+  </div>
+</button>
