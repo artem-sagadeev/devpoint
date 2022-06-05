@@ -38,23 +38,14 @@ public class ApplicationContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql(_configuration["devpoint_core_db"]);
+        optionsBuilder.UseNpgsql(_configuration.GetConnectionString("devpoint_core_db"));
     }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Company>()
-            .HasOne(company => company.Owner)
-            .WithMany(owner => owner.OwnedCompanies);
-        modelBuilder.Entity<Company>()
-            .HasMany(company => company.Developers)
-            .WithMany(developer => developer.Companies);
+        Configurations.Execute(modelBuilder);
         
-        modelBuilder.Entity<Project>()
-            .HasOne(project => project.Owner)
-            .WithMany(owner => owner.OwnedProjects);
-        modelBuilder.Entity<Project>()
-            .HasMany(project => project.Developers)
-            .WithMany(developer => developer.Projects);
+        Seed.AddSubscriptionLevels(modelBuilder);
+        Seed.AddTariffs(modelBuilder);
     }
 }
