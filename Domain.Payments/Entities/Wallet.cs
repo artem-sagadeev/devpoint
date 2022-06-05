@@ -1,4 +1,4 @@
-using Domain.Developers.Interfaces;
+using Domain.Developers.Entities;
 
 namespace Domain.Payments.Entities;
 
@@ -6,12 +6,11 @@ public class Wallet
 {
     public int Id { get; set; }
     public int Amount { get; set; }
-    public IDeveloper Developer { get; set; }
+    public Developer Developer { get; set; }
     
-    public Wallet(int id, int amount, IDeveloper developer)
+    public Wallet(Developer developer)
     {
-        Id = id;
-        Amount = amount;
+        Amount = 0;
         Developer = developer;
     }
     

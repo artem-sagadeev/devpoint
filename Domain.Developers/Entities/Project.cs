@@ -1,36 +1,20 @@
-﻿using Domain.Developers.Interfaces;
-
-namespace Domain.Developers.Entities
+﻿namespace Domain.Developers.Entities
 {
-    public class Project : IProject
+    public class Project
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public Developer Owner { get; set; }
         public Company? Company { get; set; }
         public List<Developer> Developers { get; set; }
         public List<Tag> Tags { get; set; }
 
-        public Project(string name, Developer owner, List<Tag> tags)
+        public Project(string name, Developer owner, Company? company)
         {
             Name = name;
+            Owner = owner;
+            Company = company;
             Developers = new List<Developer> {owner};
-            Tags = tags;
-        }
-        
-        public void Update(string name, List<Tag> tags)
-        {
-            Name = name;
-            Tags = tags;
-        }
-
-        public void AddUser(Developer developer)
-        {
-            Developers.Add(developer);
-        }
-
-        public void AddTags(IEnumerable<Tag> tags)
-        {
-            Tags.AddRange(tags);
         }
         
         private Project() {}
