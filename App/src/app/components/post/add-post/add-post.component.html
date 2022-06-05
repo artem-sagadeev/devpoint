@@ -1,0 +1,66 @@
+<div class='container'>
+  <div class='cover' *ngIf='page === "editor"'>
+    <div class='post-wrapper'>
+      <div class='post-header'>
+        <span class='username'>Username</span>
+        <span class='date'>{{ date?.format('DD.MM.YYYY') }}</span>
+      </div>
+      <div class='post-editor'>
+        <input [(ngModel)]='title' class='post-title empty-input' type='text' placeholder='Title'
+               (input)='cacheTitle()'>
+        <nu-markdown id='post' [(ngModel)]='content' ngpreservewhitespaces
+                     [options]='options'
+        ></nu-markdown>
+      </div>
+      <mat-divider></mat-divider>
+      <div class='post-footer'>
+        <app-devpoint-button devpoint-style='transparent-outline'
+                             (click)='page = "settings"'
+        >Continue
+        </app-devpoint-button>
+        <div class='saved' *ngIf='saved'>Saved at {{ saved.format('HH:mm') }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class='cover' *ngIf='page === "settings"'>
+    <div class='post-wrapper post-wrapper-settings'>
+      <div class='post-header'>
+        <h1>Post settings</h1>
+      </div>
+      <mat-divider></mat-divider>
+      <div class='post-editor'>
+        <div class='sub-type-container'>
+          <div class='label'>
+            Subscription type
+          </div>
+          <div class='sub-type'>
+            <section>
+              <mat-button-toggle-group [(ngModel)]='subType' aria-label='Font Style'>
+                <mat-button-toggle value='free'>Free</mat-button-toggle>
+                <mat-button-toggle value='basic'>Basic</mat-button-toggle>
+                <mat-button-toggle value='improved'>Improved</mat-button-toggle>
+                <mat-button-toggle value='pro'>Pro</mat-button-toggle>
+              </mat-button-toggle-group>
+            </section>
+          </div>
+          <app-devpoint-upload-image label='Add cover here'
+                                     description='Drop a file with 820×350 size here (jpg, gif, png) or click'
+                                     buttonLabel='Upload cover'
+                                     (fileChange)='onFileChanged($event)'
+                                     ></app-devpoint-upload-image>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+      <div class='post-footer'>
+        <app-devpoint-button devpoint-style='transparent-outline'
+                             (click)='page = "editor"'
+        >Back to editor
+        </app-devpoint-button>
+        <app-devpoint-button class='create-post'>
+          Create post
+        </app-devpoint-button>
+      </div>
+    </div>
+  </div>
+</div>

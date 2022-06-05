@@ -1,0 +1,112 @@
+<div class='container'>
+  <app-devpoint-side-nav [pages]='["Profile", "Security"]'
+                         [(page)]='page'
+  ></app-devpoint-side-nav>
+  <div class='body'>
+    <div class='page-wrapper' *ngIf='page === 0'>
+      <h1>
+        Profile
+      </h1>
+      <mat-divider></mat-divider>
+      <div class='wrapper'>
+        <h2>General information</h2>
+        <div class='input-wrapper'>
+          <div class='input-label-wrapper'>
+            <label class='input-label'>Name</label>
+            <label class='sym-count'>32</label>
+          </div>
+          <input type='text' class='input-field' />
+        </div>
+        <div class='input-wrapper'>
+          <div class='input-label-wrapper'>
+            <label class='input-label'>Description</label>
+            <label class='sym-count'>256</label>
+          </div>
+          <div class='input-field input-textarea'>
+            <textarea type='text' class='empty-input'
+                      cdkTextareaAutosize
+                      cdkAutosizeMinRows="3"
+            ></textarea>
+          </div>
+          <div class='input-wrapper'>
+            <div class='input-label-wrapper'>
+              <label class='input-label'>Tags</label>
+              <label class='sym-count'>32</label>
+            </div>
+            <div class='input-field input-tags'>
+              <app-tags-input [(tags)]='tags'></app-tags-input>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class='wrapper mt32'>
+        <h2>Avatar</h2>
+        <app-devpoint-upload-image label='Add avatar here'
+                                   description='Drop a file with 150×150 size here (jpg, gif, png) or click'
+                                   buttonLabel='Upload avatar'
+                                   (fileChange)='onFileChanged($event)'
+                                   [background]='false'
+                                   noMargin
+                                   fullWidth
+        ></app-devpoint-upload-image>
+      </div>
+    </div>
+
+    <div class='page-wrapper' *ngIf='page === 1'>
+      <h1>
+        Security
+      </h1>
+      <mat-divider></mat-divider>
+      <div class='wrapper'>
+        <h2>Change password</h2>
+        <div class='input-wrapper'>
+          <div class='input-label-wrapper'>
+            <label class='input-label'>Current password</label>
+            <label class='sym-count'>32</label>
+          </div>
+          <input type='password' class='input-field' />
+        </div>
+        <div class='input-wrapper'>
+          <div class='input-label-wrapper'>
+            <label class='input-label'>New password</label>
+            <label class='sym-count'>32</label>
+          </div>
+          <input type='password' class='input-field' />
+        </div>
+        <div class='input-wrapper'>
+          <div class='input-label-wrapper'>
+            <label class='input-label'>Reenter new password</label>
+            <label class='sym-count'>32</label>
+          </div>
+          <input type='password' class='input-field' />
+        </div>
+
+        <div class='input-wrapper'>
+          <app-devpoint-button fullWidth>
+            Change
+          </app-devpoint-button>
+        </div>
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class='buttons'>
+      <div class='button'>
+        <app-devpoint-button devpoint-style='transparent-outline'
+                             routerLink='/profile'
+                             buttonFontColor='gray'
+                             [bold]='false'
+        >
+          Back to profile
+        </app-devpoint-button>
+      </div>
+      <div class='button'>
+        <app-devpoint-button>
+          Save
+        </app-devpoint-button>
+      </div>
+    </div>
+  </div>
+</div>

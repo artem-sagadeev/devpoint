@@ -1,0 +1,74 @@
+.devpoint-swiper {
+  margin-top: 6px;
+}
+
+a {
+  color: black
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+.nav-button {
+  position: absolute;
+  background-color: transparent;
+  outline: none;
+  border-style: none;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.on-hover {
+  fill: transparent;
+  position: absolute;
+  transition: fill 0.16s ease-in-out;
+}
+
+.nav-button:hover .on-hover {
+  fill: black;
+}
+
+.button-prev {
+  top: calc(50%);
+  left: calc(10% + 6px);;
+  right: auto;
+}
+
+.button-next {
+  top: calc(50%);
+  right: calc(10% + 12px);
+  left: auto;
+}
+
+.swiper-info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.swiper-info div {
+  background-color: #F3F3F3;
+  padding: 1px 5px 1px 5px;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+
+.swiper-info > div:first-child {
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.swiper-info > div:last-child {
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+}
+
+.swiper-info .swiper-count {
+  background-color: #E6E6E6;
+  padding: 1px 7px 1px 6px;
+}

@@ -62,6 +62,13 @@ footer{
 :root{
     --background-main-color: #ffffff;
     --btn-main-color: #4c45c2;
+    --btn-main-color-hover: #413ca4;
     --font-main: 'Montserrat', sans-serif;
     --font-main-size: 20px;
+}
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.mat-autocomplete-panel {
+  border-radius: 25px!important;
 }

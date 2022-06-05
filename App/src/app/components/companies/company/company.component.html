@@ -1,11 +1,36 @@
 <div class="container">
-    <app-company-preview [company]="company"></app-company-preview>
+  <app-company-preview [company]="company" [isOwned]='isOwned' large></app-company-preview>
 </div>
 
-<div class="projects-slider container">
-    Projects
+<div class="projects-container container">
+  <app-devpoint-swiper createLink='/create-project'
+                       [routerParams]="{type: 'company', id: company.id }"
+                       [addLink]='isOwned'
+                       [items]='projects'
+                       label='Projects'
+  >
+  </app-devpoint-swiper>
 </div>
 
-<div class="container">
-    Posts
+<div class="developers-container container">
+  <app-devpoint-swiper createLink="/company/{{company.id}}/edit"
+                       [routerParams]="{ page: 1 }"
+                       [addLink]='isOwned'
+                       [items]='developers'
+                       label='Developers'
+  >
+  </app-devpoint-swiper>
 </div>
+
+<div class='container' *ngIf='isOwned'>
+  <app-devpoint-button fullWidth
+                       routerLink='/add-post'
+                       [queryParams]="{type: 'company', id: company.id }"
+  >
+    Add post
+  </app-devpoint-button>
+</div>
+
+<app-posts-container [getRequest]='getPostsRequest'
+                     [totalCount]='13'>
+</app-posts-container>

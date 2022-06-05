@@ -9,9 +9,9 @@
 
 .login {
     background-image: url('/assets/img/login-background.png');
-    height: 843px;
     background-repeat: round;
     background-size: 100%;
+    min-height: calc(100vh - 70px);
 }
 
 /*.login-main{

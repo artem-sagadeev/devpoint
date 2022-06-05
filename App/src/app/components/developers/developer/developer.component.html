@@ -1,11 +1,26 @@
 <div class="container">
-    <app-developer-preview [developer]="developer"></app-developer-preview>
+  <app-developer-preview [developer]="developer" [isCurrent]='isProfile' large></app-developer-preview>
 </div>
 
-<div class="projects-slider container">
-    Projects
+<div class="projects-container container">
+  <app-devpoint-swiper createLink='/create-project'
+                       [routerParams]="{type: 'developer', id: developer.id }"
+                       [addLink]='isProfile'
+                       [items]='projects'
+                       label='Projects'
+  >
+  </app-devpoint-swiper>
 </div>
 
-<div class="container">
-    Posts
+<div class='container' *ngIf='isProfile'>
+  <app-devpoint-button fullWidth
+                       routerLink='/add-post'
+                       [queryParams]="{type: 'developer', id: developer.id }"
+  >
+    Add post
+  </app-devpoint-button>
 </div>
+
+<app-posts-container [getRequest]='getPostsRequest'
+                     [totalCount]='13'>
+</app-posts-container>

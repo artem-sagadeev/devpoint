@@ -1,14 +1,25 @@
-import { HomeComponent } from './components/main/home/home.component';
-import { LoginComponent } from './components/login/login.component';
-import { RegisterComponent } from './components/register/register.component';
-import { AboutUsComponent } from './components/main/about-us/about-us.component';
-import { PricingComponent } from './components/main/pricing/pricing.component';
-import { SearchComponent } from './components/search/search.component';
-import { DeveloperComponent } from './components/developers/developer/developer.component';
-import { WalletComponent } from './components/account/wallet/wallet.component';
-import { ProfileComponent } from './components/account/profile/profile.component';
-import { SubscriptionsComponent } from './components/account/subscriptions/subscriptions.component';
-import { SettingsComponent } from './components/account/settings/settings.component';
+import {
+  AboutUsComponent,
+  CompanyComponent,
+  DeveloperComponent,
+  HomeComponent,
+  LoginComponent,
+  PostComponent,
+  PricingComponent,
+  ProfileComponent,
+  ProjectComponent,
+  RegisterComponent,
+  SearchComponent,
+  SubscriptionsComponent,
+  WalletComponent,
+} from './components';
+import { AddPostComponent } from './components/post/add-post/add-post.component';
+import { CreateProjectComponent } from './components/projects/create-project/create-project.component';
+import { CreateCompanyComponent } from './components/companies/create-company/create-company.component';
+import { EditPostComponent } from './components/post/edit-post/edit-post.component';
+import { EditCompanyComponent } from './components/companies/edit-company/edit-company.component';
+import { EditProjectComponent } from './components/projects/edit-project/edit-project.component';
+import { ProfileEditComponent } from './components/account/profile-edit/profile-edit.component';
 
 export const routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
@@ -18,10 +29,17 @@ export const routes = [
   { path: 'pricing', component: PricingComponent },
   { path: 'search', component: SearchComponent },
   { path: 'developer/:id', component: DeveloperComponent },
-  { path: 'project/:id', component: DeveloperComponent },
-  { path: 'company/:id', component: DeveloperComponent },
+  { path: 'project/:id', component: ProjectComponent },
+  { path: 'company/:id', component: CompanyComponent },
+  { path: 'post/:id', component: PostComponent },
   { path: 'wallet', component: WalletComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'subscriptions', component: SubscriptionsComponent },
-  { path: 'settings', component: SettingsComponent },
+  { path: 'add-post', component: AddPostComponent },
+  { path: 'create-project', component: CreateProjectComponent },
+  { path: 'create-company', component: CreateCompanyComponent },
+  { path: 'profile/edit', component: ProfileEditComponent },
+  { path: 'company/:id/edit', component: EditCompanyComponent },
+  { path: 'project/:id/edit', component: EditProjectComponent },
+  { path: 'post/:id/edit', component: EditPostComponent },
 ];

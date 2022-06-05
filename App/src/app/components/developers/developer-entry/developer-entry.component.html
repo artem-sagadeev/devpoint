@@ -1,0 +1,25 @@
+<div class='wrapper' *ngIf='developer'>
+  <div>
+  <div *ngIf="loading" routerLink="/developer/{{developer.id}}" class='loading-preview'>
+    <mat-spinner [diameter]='32'></mat-spinner>
+  </div>
+  <img [hidden]="loading" (load)="onLoad()"
+       routerLink="/developer/{{developer.id}}"
+       [src]="developer.imgPath ?? '/assets/img/avatar.jpg'"
+       class="img-preview" alt='avatar'/>
+  </div>
+  <div class='name-wrapper'>
+    <a routerLink="/developer/{{developer.id}}"s class='name'>{{ developer.name }}</a>
+    <span class='email'>{{ developer.email }}</span>
+  </div>
+  <div class='remove-button'>
+    <app-devpoint-button devpoint-style='transparent-outline-red'
+                         devpoint-border-style='more'
+                         autoWidth
+                         size='small'
+                         (buttonClick)='remove.emit(developer)'
+    >
+      Remove
+    </app-devpoint-button>
+  </div>
+</div>

@@ -9,15 +9,16 @@ import { Developer } from 'src/app/models/developer';
 export class DeveloperPreviewComponent implements OnInit {
   private _isLarge: boolean = false;
 
-  @Input('large')
-  set isLarge(value: boolean | '') {
+  @Input()
+  set large(value: boolean | '') {
     this._isLarge = value === '' || value;
   }
-  get isLarge(): boolean {
+  get large(): boolean {
     return this._isLarge;
   }
-  
+
   @Input() developer: Developer = new Developer();
+  @Input() isCurrent: boolean = false;
 
   constructor() {}
 

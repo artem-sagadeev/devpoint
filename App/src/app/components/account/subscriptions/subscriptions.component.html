@@ -1,1 +1,5 @@
-<p>subscriptions works!</p>;
+<div class='container'>
+  <ng-container *ngFor='let subscription of subscriptions'>
+    <app-subscription-partial [subscription]='subscription'></app-subscription-partial>
+  </ng-container>
+</div>

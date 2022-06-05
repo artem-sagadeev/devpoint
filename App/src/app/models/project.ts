@@ -1,7 +1,8 @@
 import { Tag } from './tag';
+import { Entity, EntityType } from './entity';
 
-export class Project {
-  id: string = '';
-  name: string = '';
-  tags: Tag[] = [];
+export class Project extends Entity {
+  override get type(): EntityType {
+    return EntityType.Project;
+  }
 }

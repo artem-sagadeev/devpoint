@@ -1,0 +1,27 @@
+<div class='container'>
+  <div class='cover'>
+    <div class='wrapper'>
+      <div class='header'>
+        <h1>Create project</h1>
+      </div>
+      <mat-divider></mat-divider>
+      <div class='body'>
+        <input [(ngModel)]='title' class='title empty-input' type='text' placeholder='Name'>
+        <app-tags-input [(tags)]='tags'></app-tags-input>
+        <textarea cdkTextareaAutosize [(ngModel)]='description' class='description empty-input' type='text' placeholder='Description'></textarea>
+        <app-devpoint-upload-image label='Add image here'
+                                   description='Drop a file with 150×150 size here (jpg, gif, png) or click'
+                                   buttonLabel='Upload image'
+                                   (fileChange)='onFileChanged($event)'
+                                   [background]='false'
+        ></app-devpoint-upload-image>
+      </div>
+      <mat-divider></mat-divider>
+      <div class='footer'>
+        <app-devpoint-button class='create-button'>
+          Create project
+        </app-devpoint-button>
+      </div>
+    </div>
+  </div>
+</div>

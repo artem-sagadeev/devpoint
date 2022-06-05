@@ -17,7 +17,7 @@
     height: 1em;
     flex-shrink: 0;
     flex-grow: 0;
-    border: 2px solid #0366d6;
+    border: 2px solid var(--btn-main-color);
     border-radius: 0.5em;
     margin-right: 0.5em;
     background-repeat: no-repeat;
@@ -26,8 +26,8 @@
 }
 
 .checkbox:checked+label::before {
-    border-color: #0b76ef;
-    background-color: #0b76ef;
+    border-color: var(--btn-main-color);
+    background-color: var(--btn-main-color);
 }
 
 .round label{
@@ -37,7 +37,17 @@
 }
 
 .input-search{
-    width: 100%;
-    border-radius: 25px;
+  width: 100%;
+  border-radius: 25px 0 0 25px;
+}
+
+.search-col {
+  margin-right: 0;
+  padding-right: 0;
+}
+
+.button-col {
+  margin-left: 0;
+  padding-left: 0;
 }
 

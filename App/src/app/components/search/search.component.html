@@ -2,11 +2,22 @@
     <form>
         <div class="container" style="padding-bottom: 10px;">
             <div class="row align-items-center">
-                <div class="col-6" style="min-width: 300px">
-                    <input type="text" name="searchString" placeholder="What are you searching for?" class="input-search form-control" autocomplete="off">
+                <div class="col-6 search-col" style="min-width: 300px">
+                  <input [(ngModel)]='search' type="text" name="searchString" placeholder="What are you searching for?"
+                         class="input-search form-control" autocomplete="off" (input)='onSearchChange()'
+                         [formControl]="control"
+                         [matAutocomplete]="auto">
+                  <mat-autocomplete #auto="matAutocomplete" (optionSelected)='onSearchChange()'>
+                    <mat-option *ngFor="let name of filteredNames | async" [value]="name">
+                      {{name}}
+                    </mat-option>
+                  </mat-autocomplete>
                 </div>
-                <div class="col-auto">
-                    <app-devpoint-button autoWidth>
+                <div class="col-auto button-col">
+                    <app-devpoint-button devpoint-border-style='round'
+                                         noBorderLeft
+                                         (click)='onSearchChange()'
+                                         autoWidth>
                         Search
                     </app-devpoint-button>
                 </div>
@@ -26,8 +37,30 @@
         </div>
     </form>
     <div class="row row-cols-2">
-        <div class="col" *ngFor="let item of data">
+      <ng-container *ngIf='searchingDevelopers'>
+        <div class="col" *ngFor="let item of developers">
             <app-developer-preview [developer]="item"></app-developer-preview>
         </div>
+      </ng-container>
+
+      <ng-container *ngIf='searchingProjects'>
+        <div class="col" *ngFor="let item of projects">
+          <app-project-preview [project]="item"></app-project-preview>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf='searchingCompanies'>
+        <div class="col" *ngFor="let item of companies">
+          <app-company-preview [company]="item"></app-company-preview>
+        </div>
+      </ng-container>
     </div>
+
+  <mat-paginator [length]="totalCount"
+                 [pageIndex]='page'
+                 [pageSize]='take'
+                 [pageSizeOptions]="[10, 25, 50]"
+                 (page)="onPageChange($event)"
+                 aria-label="Select page">
+  </mat-paginator>
 </div>

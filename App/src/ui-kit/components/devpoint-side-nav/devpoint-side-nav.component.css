@@ -1,0 +1,11 @@
+.side-nav {
+  width: 150px;
+  position: sticky;
+  top: 0;
+  padding-top: 64px;
+  margin-top: -14px;
+}
+
+.side-nav-button {
+  margin-top: 8px;
+}

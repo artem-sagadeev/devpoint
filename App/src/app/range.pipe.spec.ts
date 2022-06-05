@@ -1,4 +1,4 @@
-import { RangePipe } from './range.pipe';
+import { RangePipe } from '@ui-kit/range.pipe';
 
 describe('RangePipe', () => {
   it('create an instance', () => {

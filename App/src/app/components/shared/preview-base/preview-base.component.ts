@@ -1,29 +1,35 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Entity } from 'src/app/models/entity';
+import { Entity, EntityType } from 'src/app/models/entity';
 
 @Component({
   selector: 'app-preview-base',
   templateUrl: './preview-base.component.html',
-  styleUrls: ['./preview-base.component.css']
+  styleUrls: ['./preview-base.component.css'],
 })
 export class PreviewBaseComponent implements OnInit {
   @Input() link = '';
+  loading: boolean = true;
+
+  @Input() isOwned: boolean = true;
 
   private _isLarge: boolean = false;
+  entityTypes = EntityType;
 
-  @Input('large')
-  set isLarge(value: boolean | '') {
+  @Input()
+  set large(value: boolean | '') {
     this._isLarge = value === '' || value;
   }
-  get isLarge(): boolean {
+  get large(): boolean {
     return this._isLarge;
   }
 
   @Input() entity?: Entity;
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit(): void {
+  ngOnInit(): void {}
+
+  onLoad() {
+    this.loading = false;
   }
-
 }
