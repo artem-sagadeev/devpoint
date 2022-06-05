@@ -6,9 +6,8 @@ public class Withdrawal
     public int Amount { get; set; }
     public Wallet Wallet { get; set; }
     
-    public Withdrawal(int id, int amount, Wallet wallet)
+    public Withdrawal(int amount, Wallet wallet)
     {
-        Id = id;
         Amount = amount;
         Wallet = wallet;
     }

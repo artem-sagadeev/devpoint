@@ -147,17 +147,22 @@ namespace Data.Core.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<decimal>("Latitude")
+                    b.Property<decimal?>("Latitude")
                         .HasColumnType("numeric");
 
-                    b.Property<decimal>("Longitude")
+                    b.Property<decimal?>("Longitude")
                         .HasColumnType("numeric");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("Companies");
                 });
@@ -183,16 +188,21 @@ namespace Data.Core.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("CompanyId")
+                    b.Property<Guid?>("CompanyId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyId");
+
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("Projects");
                 });
@@ -318,6 +328,28 @@ namespace Data.Core.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SubscriptionLevels");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Free"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Basic"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Improved"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Pro"
+                        });
                 });
 
             modelBuilder.Entity("Domain.Subscriptions.Entities.Subscriptions.Subscription", b =>
@@ -377,6 +409,92 @@ namespace Data.Core.Migrations
                     b.HasIndex("SubscriptionLevelId");
 
                     b.ToTable("Tariffs");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            PricePerMonth = 100,
+                            SubscriptionLevelId = 1,
+                            SubscriptionType = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            PricePerMonth = 100,
+                            SubscriptionLevelId = 2,
+                            SubscriptionType = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            PricePerMonth = 100,
+                            SubscriptionLevelId = 3,
+                            SubscriptionType = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            PricePerMonth = 100,
+                            SubscriptionLevelId = 4,
+                            SubscriptionType = 1
+                        },
+                        new
+                        {
+                            Id = 5,
+                            PricePerMonth = 100,
+                            SubscriptionLevelId = 1,
+                            SubscriptionType = 0
+                        },
+                        new
+                        {
+                            Id = 6,
+                            PricePerMonth = 100,
+                            SubscriptionLevelId = 2,
+                            SubscriptionType = 0
+                        },
+                        new
+                        {
+                            Id = 7,
+                            PricePerMonth = 100,
+                            SubscriptionLevelId = 3,
+                            SubscriptionType = 0
+                        },
+                        new
+                        {
+                            Id = 8,
+                            PricePerMonth = 100,
+                            SubscriptionLevelId = 4,
+                            SubscriptionType = 0
+                        },
+                        new
+                        {
+                            Id = 9,
+                            PricePerMonth = 100,
+                            SubscriptionLevelId = 1,
+                            SubscriptionType = 2
+                        },
+                        new
+                        {
+                            Id = 10,
+                            PricePerMonth = 100,
+                            SubscriptionLevelId = 2,
+                            SubscriptionType = 2
+                        },
+                        new
+                        {
+                            Id = 11,
+                            PricePerMonth = 100,
+                            SubscriptionLevelId = 3,
+                            SubscriptionType = 2
+                        },
+                        new
+                        {
+                            Id = 12,
+                            PricePerMonth = 100,
+                            SubscriptionLevelId = 4,
+                            SubscriptionType = 2
+                        });
                 });
 
             modelBuilder.Entity("ProjectTag", b =>
@@ -536,15 +654,32 @@ namespace Data.Core.Migrations
                     b.Navigation("RequiredSubscriptionLevel");
                 });
 
+            modelBuilder.Entity("Domain.Developers.Entities.Company", b =>
+                {
+                    b.HasOne("Domain.Developers.Entities.Developer", "Owner")
+                        .WithMany("OwnedCompanies")
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Owner");
+                });
+
             modelBuilder.Entity("Domain.Developers.Entities.Project", b =>
                 {
                     b.HasOne("Domain.Developers.Entities.Company", "Company")
                         .WithMany("Projects")
-                        .HasForeignKey("CompanyId")
+                        .HasForeignKey("CompanyId");
+
+                    b.HasOne("Domain.Developers.Entities.Developer", "Owner")
+                        .WithMany("OwnedProjects")
+                        .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Company");
+
+                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("Domain.Payments.Entities.Bill", b =>
@@ -685,6 +820,13 @@ namespace Data.Core.Migrations
             modelBuilder.Entity("Domain.Developers.Entities.Company", b =>
                 {
                     b.Navigation("Projects");
+                });
+
+            modelBuilder.Entity("Domain.Developers.Entities.Developer", b =>
+                {
+                    b.Navigation("OwnedCompanies");
+
+                    b.Navigation("OwnedProjects");
                 });
 #pragma warning restore 612, 618
         }

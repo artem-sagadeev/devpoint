@@ -1,26 +1,18 @@
-﻿using Domain.Developers.Interfaces;
-
-namespace Domain.Developers.Entities
+﻿namespace Domain.Developers.Entities
 {
-    public class Developer : IDeveloper
+    public class Developer
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public List<Project> OwnedProjects { get; set; }
         public List<Project> Projects { get; set; }
+        public List<Company> OwnedCompanies { get; set; }
         public List<Company> Companies { get; set; }
         public List<Tag> Tags { get; set; }
         
-        public Developer(string name, List<Tag> tags)
-        {
-            Id = Guid.NewGuid();
-            Name = name;
-            Tags = tags;
-        }
-
-        public void Update(string name, List<Tag> tags)
+        public Developer(string name)
         {
             Name = name;
-            Tags = tags;
         }
         
         private Developer() {}

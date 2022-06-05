@@ -1,14 +1,12 @@
 using Domain.Developers.Entities;
-using Domain.Developers.Interfaces;
-using Domain.Subscriptions.Interfaces;
 
 namespace Domain.Subscriptions.Entities.Subscriptions;
 
 public class ProjectSubscription : Subscription
 {
-    public IProject Project { get; set; }
+    public Project Project { get; set; }
 
-    public ProjectSubscription(DateTime endTime, bool isAutoRenewal, Tariff tariff, IDeveloper subscriber, IProject project)
+    public ProjectSubscription(DateTime endTime, bool isAutoRenewal, Tariff tariff, Developer subscriber, Project project)
         : base(endTime, isAutoRenewal, tariff, subscriber)
     {
         Project = project;

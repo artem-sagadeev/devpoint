@@ -1,5 +1,5 @@
-﻿using Domain.Developers.Interfaces;
-using Domain.Subscriptions.Interfaces;
+﻿using Domain.Developers.Entities;
+using Domain.Subscriptions.Entities;
 
 namespace Domain.Content.Entities
 {
@@ -7,12 +7,12 @@ namespace Domain.Content.Entities
     {
         public int Id { get; set; }
         public string Text { get; set; }
-        public ISubscriptionLevel RequiredSubscriptionLevel { get; set; }
-        public IDeveloper Developer { get; set; }
-        public IProject Project { get; set; }
+        public SubscriptionLevel RequiredSubscriptionLevel { get; set; }
+        public Developer Developer { get; set; }
+        public Project Project { get; set; }
         public List<Comment> Comments { get; set; }
 
-        public Post(string text, ISubscriptionLevel requiredSubscriptionLevel, IDeveloper developer, IProject project)
+        public Post(string text, SubscriptionLevel requiredSubscriptionLevel, Developer developer, Project project)
         {
             Text = text;
             RequiredSubscriptionLevel = requiredSubscriptionLevel;
