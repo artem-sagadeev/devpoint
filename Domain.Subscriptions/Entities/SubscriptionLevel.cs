@@ -15,12 +15,6 @@ public class SubscriptionLevel
     {
         Name = name;
     }
-
-    public SubscriptionLevel(int id, string name)
-    {
-        Id = id;
-        Name = name;
-    }
     
     //For EntityFramework
     public SubscriptionLevel() {}

@@ -30,13 +30,5 @@ public class Tariff
         SubscriptionLevel = subscriptionLevel;
     }
     
-    public Tariff(int id, int pricePerMonth, SubscriptionType subscriptionType, SubscriptionLevel subscriptionLevel)
-    {
-        Id = id;
-        PricePerMonth = pricePerMonth;
-        SubscriptionType = subscriptionType;
-        SubscriptionLevel = subscriptionLevel;
-    }
-    
     private Tariff() {}
 }
