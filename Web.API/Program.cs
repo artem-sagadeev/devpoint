@@ -1,8 +1,7 @@
 using Data.Core;
-using Domain.Payments.Entities;
+using Microsoft.EntityFrameworkCore;
 using Services.Content.Comments;
 using Services.Content.Posts;
-using Services.Developers;
 using Services.Developers.Companies;
 using Services.Developers.Developers;
 using Services.Developers.Projects;
@@ -17,10 +16,8 @@ using Services.Subscriptions.Tariffs;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -54,6 +51,13 @@ builder.Services.AddScoped<IWalletService, WalletService>();
 builder.Services.AddScoped<IWithdrawalService, WithdrawalService>();
 
 var app = builder.Build();
+
+if (builder.Configuration.GetValue<bool>("Automigration"))
+{
+    using var scope = app.Services.CreateScope();
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+    await context.Database.MigrateAsync();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
