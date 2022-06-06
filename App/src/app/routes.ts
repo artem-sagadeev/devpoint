@@ -20,11 +20,17 @@ import { EditPostComponent } from './components/post/edit-post/edit-post.compone
 import { EditCompanyComponent } from './components/companies/edit-company/edit-company.component';
 import { EditProjectComponent } from './components/projects/edit-project/edit-project.component';
 import { ProfileEditComponent } from './components/account/profile-edit/profile-edit.component';
+import { Routes } from '@angular/router';
+import { NoAuthGuard } from './guards/no-auth.guard';
 
-export const routes = [
+export const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
+  { path: 'login', component: LoginComponent, canActivate: [NoAuthGuard] },
+  {
+    path: 'register',
+    component: RegisterComponent,
+    canActivate: [NoAuthGuard],
+  },
   { path: 'about-us', component: AboutUsComponent },
   { path: 'pricing', component: PricingComponent },
   { path: 'search', component: SearchComponent },

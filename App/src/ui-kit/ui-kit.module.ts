@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import {
   DevpointButtonComponent,
+  DevpointErrorsComponent,
   DevpointMiniPreviewComponent,
   DevpointSideNavComponent,
   DevpointSwiperComponent,
@@ -19,6 +20,7 @@ const components = [
   DevpointMiniPreviewComponent,
   DevpointUploadImageComponent,
   DevpointSideNavComponent,
+  DevpointErrorsComponent,
 ];
 
 @NgModule({

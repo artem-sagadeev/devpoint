@@ -3,8 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { UiKitModule } from '@ui-kit';
-import { HttpService } from './services/http.service';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import {
   HeaderComponent,
   HomeComponent,
@@ -61,6 +60,15 @@ import { TagsInputComponent } from './components/tags-input/tags-input.component
 import { DeveloperEntryComponent } from './components/developers/developer-entry/developer-entry.component';
 import { DeleteConfirmationComponent } from './components/companies/edit-company/delete-confirmation/delete-confirmation.component';
 import { AddDeveloperModalComponent } from './components/companies/edit-company/add-developer-modal/add-developer-modal.component';
+import { JwtService } from './services/jwt.service';
+import { UserService } from './services/user.service';
+import { ApiService } from './services/api.service';
+import { AppService } from './services/app.service';
+import { HttpTokenInterceptor } from './interceptors/http.token.interceptor';
+import { AuthResolver } from './resolvers/auth.resolver';
+import { AuthGuard } from './guards/auth.guard';
+import { NoAuthGuard } from './guards/no-auth.guard';
+import { CustomValidationService } from './services/custom-validation.service';
 
 @NgModule({
   imports: [
@@ -126,7 +134,18 @@ import { AddDeveloperModalComponent } from './components/companies/edit-company/
     DeleteConfirmationComponent,
     AddDeveloperModalComponent,
   ],
-  providers: [HttpService, LocalStorageService],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: HttpTokenInterceptor, multi: true },
+    LocalStorageService,
+    JwtService,
+    UserService,
+    ApiService,
+    AppService,
+    AuthResolver,
+    AuthGuard,
+    NoAuthGuard,
+    CustomValidationService,
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

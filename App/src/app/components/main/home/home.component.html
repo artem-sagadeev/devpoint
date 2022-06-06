@@ -10,17 +10,28 @@
       Receive funding from subscribers and create even cooler projects. Chat in
       chats and leave comments.
     </p>
-    <app-devpoint-button
-      [maxWidth]=220
-      routerLink='/register'
-    >
-      Create an account
-    </app-devpoint-button>
-    <app-devpoint-button
-      [maxWidth]=220
-      routerLink='/login'
-    >
-      Log In
-    </app-devpoint-button>
+    <ng-container *ngIf='!isAuthenticated'>
+      <app-devpoint-button
+        [maxWidth]=220
+        routerLink='/register'
+      >
+        Create an account
+      </app-devpoint-button>
+      <app-devpoint-button
+        [maxWidth]=220
+        routerLink='/login'
+      >
+        Log In
+      </app-devpoint-button>
+    </ng-container>
+    <ng-container *ngIf='isAuthenticated'>
+      <app-devpoint-button
+        [maxWidth]=440
+        fullWidth
+        routerLink='/search'
+      >
+        Find creators
+      </app-devpoint-button>
+    </ng-container>
   </div>
 </div>

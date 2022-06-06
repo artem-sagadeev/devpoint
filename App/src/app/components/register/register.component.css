@@ -22,6 +22,10 @@
     border-style: solid;
 }
 
+.register .form-control.error {
+  border-color: #cf222e;
+}
+
 .register label{
     color: white;
     font-weight: bold;

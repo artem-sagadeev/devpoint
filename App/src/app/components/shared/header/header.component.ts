@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { UserService } from '../../../services/user.service';
+import { Developer } from '../../../models/developer';
 
 @Component({
   selector: 'app-header',
@@ -6,9 +8,16 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./header.component.css'],
 })
 export class HeaderComponent implements OnInit {
-  isAuthenticated = true;
+  constructor(private userService: UserService) {}
+  currentUser?: Developer;
 
-  constructor() {}
+  ngOnInit() {
+    this.userService.currentUser.subscribe((userData) => {
+      this.currentUser = userData;
+    });
+  }
 
-  ngOnInit(): void {}
+  onLogout() {
+    this.userService.purgeAuth();
+  }
 }
