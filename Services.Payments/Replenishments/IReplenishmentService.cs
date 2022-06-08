@@ -12,5 +12,5 @@ public interface IReplenishmentService
 
     public Task<Wallet> GetReplenishmentWallet(int replenishmentId);
 
-    public Task<Replenishment> CreateReplenishment(int amount, int walletId);
+    public Task<Replenishment> CreateReplenishment(double amount, int walletId);
 }

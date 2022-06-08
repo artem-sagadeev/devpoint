@@ -68,7 +68,7 @@ public class WithdrawalController : Controller
 
     [HttpPost]
     [Route("create")]
-    public async Task<IActionResult> CreateWithdrawal([FromForm] int amount)
+    public async Task<IActionResult> CreateWithdrawal([FromBody] PaymentDto paymentDto)
     {
         var devId = User.GetDevId();
         if (devId == null)
@@ -77,7 +77,7 @@ public class WithdrawalController : Controller
         var wallet = await _walletService.GetDeveloperWallet(devId.Value) ?? 
                      await _walletService.CreateWallet(devId.Value);
          
-        var withdrawal = await _withdrawalService.CreateWithdrawal(amount, wallet.Id);
+        var withdrawal = await _withdrawalService.CreateWithdrawal(paymentDto.Amount, wallet.Id);
 
         return Json(new WithdrawalDto(withdrawal));
     }

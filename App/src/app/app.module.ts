@@ -73,6 +73,7 @@ import { Error404Component } from './components/error404/error404.component';
 import { Error403Component } from './components/error403/error403.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { FeedComponent } from './components/feed/feed.component';
 
 @NgModule({
   imports: [
@@ -141,6 +142,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     AddDeveloperModalComponent,
     Error404Component,
     Error403Component,
+    FeedComponent,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: HttpTokenInterceptor, multi: true },

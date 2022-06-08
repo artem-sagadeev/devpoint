@@ -14,7 +14,7 @@ export class Entity {
   imagePath?: string = '/assets/img/avatar.png';
   description?: string = '';
   isFollowing?: boolean = false;
-  userSubscriptionLevel?: number = 0;
+  userSubscriptionLevel?: number = 1;
 
   get type(): EntityType {
     return 0;

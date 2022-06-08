@@ -103,13 +103,13 @@ export class PreviewBaseComponent implements OnInit {
       this.entity.userSubscriptionLevel <= 1
     )
       this.subscribeButtonName = 'Subscribe';
-
-    this.app
-      .getSubscriptionLevelName()
-      .subscribe(
-        (table) =>
-          (this.subscribeButtonName =
-            table[this.entity!.userSubscriptionLevel!]),
-      );
+    else
+      this.app
+        .getSubscriptionLevelName()
+        .subscribe(
+          (table) =>
+            (this.subscribeButtonName =
+              table[this.entity!.userSubscriptionLevel!]),
+        );
   }
 }

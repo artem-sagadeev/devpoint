@@ -48,7 +48,7 @@ public class WithdrawalService : IWithdrawalService
         return withdrawal.Wallet;
     }
 
-    public async Task<Withdrawal> CreateWithdrawal(int amount, int walletId)
+    public async Task<Withdrawal> CreateWithdrawal(double amount, int walletId)
     {
         var wallet = await _walletService.GetWallet(walletId);
         if (wallet.Amount < amount)

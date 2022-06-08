@@ -366,13 +366,13 @@ export class AppService {
   }
   //#endregion
   withdraw(withdraw: number) {
-    return this.apiService.postForm(`/withdrawals/create`, {
+    return this.apiService.post(`/withdrawals/create`, {
       amount: withdraw.toString(),
     });
   }
 
   deposit(deposit: number) {
-    return this.apiService.postForm(`/replenishments/create`, {
+    return this.apiService.post(`/replenishments/create`, {
       amount: deposit.toString(),
     });
   }

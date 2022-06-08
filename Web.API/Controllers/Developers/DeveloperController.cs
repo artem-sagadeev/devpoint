@@ -67,7 +67,7 @@ public class DeveloperController : Controller
                 {
                     entity,
                     isFollowing = ef != null,
-                    userSubscriptionLevel = es == null ? 0 : es.Tariff.SubscriptionLevelId
+                    userSubscriptionLevel = es == null ? 1 : es.Tariff.SubscriptionLevelId
                 };
             
             if (isFollow)

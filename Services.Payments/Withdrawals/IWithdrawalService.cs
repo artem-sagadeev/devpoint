@@ -12,5 +12,5 @@ public interface IWithdrawalService
 
     public Task<Wallet> GetWithdrawalWallet(int withdrawalId);
 
-    public Task<Withdrawal> CreateWithdrawal(int amount, int walletId);
+    public Task<Withdrawal> CreateWithdrawal(double amount, int walletId);
 }

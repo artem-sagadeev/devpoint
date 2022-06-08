@@ -63,7 +63,7 @@ public class WalletService : IWalletService
         return wallet;
     }
 
-    public async Task UpdateAmount(int walletId, int amount)
+    public async Task UpdateAmount(int walletId, double amount)
     {
         var wallet = await GetWallet(walletId);
         wallet.Amount = amount;

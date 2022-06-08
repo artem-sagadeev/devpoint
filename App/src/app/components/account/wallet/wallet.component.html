@@ -4,8 +4,9 @@
           <div class="alert alert-success" role="alert" *ngIf='successMessage'>
             {{ successMessage }}
           </div>
+          <app-devpoint-errors [errors]='errors'></app-devpoint-errors>
             <div class="funds-label">Your funds:</div>
-            <div class="funds">{{amount}}$</div>
+            <div class="funds">{{formattedAmount}}$</div>
             <div style="margin-bottom: 15px;">
                 <div class='form'>
                     <input maxlength='6' [(ngModel)]='deposit' placeholder="Money"

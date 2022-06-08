@@ -104,13 +104,13 @@ public class SubscriptionService : ISubscriptionService
     public async Task<int> UserCompanySubscriptionLevel(Guid? userDevId, Guid companyId)
     {
         if (!userDevId.HasValue)
-            return 0;
+            return 1;
 
         var sub = await GetCompanySubscriptions(companyId)
             .FirstOrDefaultAsync(sub => sub.Subscriber.Id == userDevId);
         
         if (sub == null)
-            return 0;
+            return 1;
 
         await _context.Entry(sub).Reference(s => s.Tariff).LoadAsync();
         return sub.Tariff.SubscriptionLevelId;
@@ -119,13 +119,13 @@ public class SubscriptionService : ISubscriptionService
     public async Task<int> UserDeveloperSubscriptionLevel(Guid? userDevId, Guid developerId)
     {
         if (!userDevId.HasValue)
-            return 0;
+            return 1;
 
         var sub = await GetDeveloperSubscriptions(developerId)
             .FirstOrDefaultAsync(sub => sub.Subscriber.Id == userDevId);
 
         if (sub == null)
-            return 0;
+            return 1;
 
         await _context.Entry(sub).Reference(s => s.Tariff).LoadAsync();
         return sub.Tariff.SubscriptionLevelId;
@@ -134,13 +134,13 @@ public class SubscriptionService : ISubscriptionService
     public async Task<int> UserProjectSubscriptionLevel(Guid? userDevId, Guid projectId)
     {
         if (!userDevId.HasValue)
-            return 0;
+            return 1;
 
         var sub = await GetProjectSubscriptions(projectId)
             .FirstOrDefaultAsync(sub => sub.Subscriber.Id == userDevId);
 
         if (sub == null)
-            return 0;
+            return 1;
 
         await _context.Entry(sub).Reference(s => s.Tariff).LoadAsync();
         return sub.Tariff.SubscriptionLevelId;
@@ -149,7 +149,7 @@ public class SubscriptionService : ISubscriptionService
     public bool HasSufficientSubscriptionLevel(Post post, Guid? userDevId, int userSubLevel)
     {
         if (!userDevId.HasValue)
-            return false;
+            return post.RequiredSubscriptionLevelId == 1;
         
         return userDevId == post.DeveloperId || userSubLevel >= post.RequiredSubscriptionLevelId;
     }
@@ -175,6 +175,6 @@ public class SubscriptionService : ISubscriptionService
                 s.Subscriber.Id == userId &&
                 s.TargetId == entityId);
 
-        return sub?.Tariff?.SubscriptionLevelId ?? 0;
+        return sub?.Tariff?.SubscriptionLevelId ?? 1;
     }
 }

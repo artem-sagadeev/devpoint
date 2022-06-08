@@ -68,7 +68,7 @@ public class ReplenishmentController : Controller
 
     [HttpPost]
     [Route("create")]
-    public async Task<IActionResult> CreateReplenishment([FromForm] int amount)
+    public async Task<IActionResult> CreateReplenishment([FromBody] PaymentDto paymentDto)
     {
         var devId = User.GetDevId();
         if (devId == null)
@@ -77,7 +77,7 @@ public class ReplenishmentController : Controller
         var wallet = await _walletService.GetDeveloperWallet(devId.Value) ?? 
                      await _walletService.CreateWallet(devId.Value);
 
-        var replenishment = await _replenishmentService.CreateReplenishment(amount, wallet.Id);
+        var replenishment = await _replenishmentService.CreateReplenishment(paymentDto.Amount, wallet.Id);
 
         return Json(new ReplenishmentDto(replenishment));
     }

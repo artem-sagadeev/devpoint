@@ -17,5 +17,5 @@ public interface IWalletService
 
     public Task<Wallet> CreateWallet(Guid developerId);
 
-    public Task UpdateAmount(int walletId, int amount);
+    public Task UpdateAmount(int walletId, double amount);
 }
