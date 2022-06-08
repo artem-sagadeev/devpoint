@@ -4,7 +4,7 @@ namespace Services.Payments.Withdrawals;
 
 public interface IWithdrawalService
 {
-    public Task<List<Withdrawal>> GetAllWithdrawals();
+    public IQueryable<Withdrawal> GetAllWithdrawals();
 
     public Task<List<Withdrawal>> GetWithdrawals(List<int> withdrawalIds);
 
@@ -12,5 +12,5 @@ public interface IWithdrawalService
 
     public Task<Wallet> GetWithdrawalWallet(int withdrawalId);
 
-    public Task<int> CreateWithdrawal(int amount, int walletId);
+    public Task<Withdrawal> CreateWithdrawal(int amount, int walletId);
 }

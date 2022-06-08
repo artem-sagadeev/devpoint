@@ -3,7 +3,7 @@
         <div class="container" style="padding-bottom: 10px;">
             <div class="row align-items-center">
                 <div class="col-6 search-col" style="min-width: 300px">
-                  <input [(ngModel)]='search' type="text" name="searchString" placeholder="What are you searching for?"
+                  <input maxlength='32' [(ngModel)]='search' type="text" name="searchString" placeholder="What are you searching for?"
                          class="input-search form-control" autocomplete="off" (input)='onSearchChange()'
                          [formControl]="control"
                          [matAutocomplete]="auto">
@@ -36,30 +36,30 @@
             </div>
         </div>
     </form>
-    <div class="row row-cols-2">
+    <div class="row row-cols-2 entity-container">
       <ng-container *ngIf='searchingDevelopers'>
         <div class="col" *ngFor="let item of developers">
-            <app-developer-preview [developer]="item"></app-developer-preview>
+            <app-developer-preview [developer]="item" [isCurrent]='currentUser?.id === item.id'></app-developer-preview>
         </div>
       </ng-container>
 
       <ng-container *ngIf='searchingProjects'>
         <div class="col" *ngFor="let item of projects">
-          <app-project-preview [project]="item"></app-project-preview>
+          <app-project-preview [project]="item" [isOwned]='currentUser?.id === item.ownerId'></app-project-preview>
         </div>
       </ng-container>
 
       <ng-container *ngIf='searchingCompanies'>
         <div class="col" *ngFor="let item of companies">
-          <app-company-preview [company]="item"></app-company-preview>
+          <app-company-preview [company]="item" [isOwned]='currentUser?.id === item.ownerId'></app-company-preview>
         </div>
       </ng-container>
     </div>
 
   <mat-paginator [length]="totalCount"
                  [pageIndex]='page'
-                 [pageSize]='take'
-                 [pageSizeOptions]="[10, 25, 50]"
+                 [pageSize]='pageSize'
+                 [pageSizeOptions]="pageOptions"
                  (page)="onPageChange($event)"
                  aria-label="Select page">
   </mat-paginator>

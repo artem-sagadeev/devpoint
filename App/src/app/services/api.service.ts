@@ -7,7 +7,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
   providedIn: 'root',
 })
 export class ApiService {
-  readonly ApiUrl = 'https://localhost:5001/api';
+  readonly ApiUrl = 'https://localhost:5001';
 
   constructor(private http: HttpClient) {}
 
@@ -30,6 +30,20 @@ export class ApiService {
   post(path: string, body: Object = {}): Observable<any> {
     return this.http
       .post(`${this.ApiUrl}${path}`, JSON.stringify(body))
+      .pipe(catchError(this.formatErrors));
+  }
+
+  postRaw(path: string, body: any): Observable<any> {
+    return this.http
+      .post(`${this.ApiUrl}${path}`, body)
+      .pipe(catchError(this.formatErrors));
+  }
+
+  postForm(path: string, body: Record<string, string>): Observable<any> {
+    const formData = new FormData();
+    for (const [key, value] of Object.entries(body)) formData.set(key, value);
+    return this.http
+      .post(`${this.ApiUrl}${path}`, formData)
       .pipe(catchError(this.formatErrors));
   }
 

@@ -16,9 +16,9 @@ public class CompanyService : ICompanyService
         _tagService = tagService;
     }
 
-    public async Task<List<Company>> GetAllCompanies()
+    public IQueryable<Company> GetAllCompanies()
     {
-        var companies = await _context.Companies.ToListAsync();
+        var companies = _context.Companies;
 
         return companies;
     }
@@ -69,13 +69,22 @@ public class CompanyService : ICompanyService
         return company.Tags;
     }
 
-    public async Task<Guid> CreateCompany(string name, Guid ownerId)
+    public async Task<Guid> CreateCompany(string name, string description, Guid ownerId, List<Tag> tags)
     {
-        var owner = await GetOwner(ownerId);
-        var company = new Company(name, owner);
+        var owner = await _context.Developers.FindAsync(ownerId);
+        
+        var company = new Company(name, owner!)
+        {
+            Description = description,
+        };
+        company.Tags = new List<Tag>();
+        var existingTagsIds = tags.Where(tag => tag.Id >= 0).Select(tag => tag.Id).ToList();
+        var existingTags = await _context.Tags.Where(tag => existingTagsIds.Contains(tag.Id)).ToListAsync();
+        company.Tags.AddRange(existingTags);
+        company.Tags.AddRange(tags.Where(tag => tag.Id <= 0).ToList());
         _context.Companies.Add(company);
+        company.Developers = new List<Developer>() { owner };
         await _context.SaveChangesAsync();
-
         return company.Id;
     }
 
@@ -97,11 +106,13 @@ public class CompanyService : ICompanyService
     public async Task UpdateDevelopers(Guid companyId, List<Guid> developerIds)
     {
         var company = await GetCompany(companyId);
+        await _context.Entry(company).Collection(c => c.Developers).LoadAsync();
+        company.Developers.Clear();
         var developers = await _context
             .Developers
             .Where(developer => developerIds.Contains(developer.Id))
             .ToListAsync();
-        company.Developers = developers;
+        company.Developers.AddRange(developers);
         await _context.SaveChangesAsync();
     }
 
@@ -116,11 +127,17 @@ public class CompanyService : ICompanyService
         await _context.SaveChangesAsync();
     }
 
-    public async Task UpdateTags(Guid companyId, List<int> tagIds)
+    public async Task UpdateTags(Guid companyId, List<Tag> tags)
     {
         var company = await GetCompany(companyId);
-        var tags = await _tagService.GetTags(tagIds);
-        company.Tags = tags;
+        await _context.Entry(company).Collection(c => c.Tags).LoadAsync();
+        if (company.Tags == null)
+            company.Tags = new List<Tag>();
+        company.Tags.Clear();
+        var existingTagsIds = tags.Where(tag => tag.Id >= 0).Select(tag => tag.Id).ToList();
+        var existingTags = await _context.Tags.Where(tag => existingTagsIds.Contains(tag.Id)).ToListAsync();
+        company.Tags.AddRange(existingTags);
+        company.Tags.AddRange(tags.Where(tag => tag.Id <= 0).ToList());
         await _context.SaveChangesAsync();
     }
 }

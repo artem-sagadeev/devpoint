@@ -2,10 +2,22 @@ import { Component, OnInit } from '@angular/core';
 import { Developer } from 'src/app/models/developer';
 import { Project } from 'src/app/models/project';
 import { PageEvent } from '@angular/material/paginator';
-import { map, Observable, startWith, take } from 'rxjs';
+import {
+  EMPTY,
+  firstValueFrom,
+  forkJoin,
+  map,
+  Observable,
+  of,
+  startWith,
+  take,
+} from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { plainToTyped } from 'type-transformer';
 import { Company } from '../../models/company';
+import { ActivatedRoute, Router } from '@angular/router';
+import { UserService } from '../../services/user.service';
+import { AppService } from '../../services/app.service';
 
 @Component({
   selector: 'app-search',
@@ -16,103 +28,66 @@ export class SearchComponent implements OnInit {
   search?: string;
 
   control = new FormControl();
-  names: string[] = ['sas', 'ses', 'kek'];
+  developerNames: string[] = [];
+  projectNames: string[] = [];
+  comapanyNames: string[] = [];
+  names: string[] = [];
   filteredNames?: Observable<string[]>;
 
-  developers = [
-    plainToTyped(
-      {
-        id: '1',
-        name: 'Developer 1',
-        tags: [{ name: 'Tag 1' }],
-      },
-      Developer,
-    ),
-    plainToTyped(
-      {
-        id: '2',
-        name: 'Developer 2',
-        tags: [{ name: 'Tag 2' }],
-      },
-      Developer,
-    ),
-    plainToTyped(
-      {
-        id: '3',
-        name: 'Developer 3',
-        tags: [{ name: 'Tag 3' }],
-      },
-      Developer,
-    ),
-  ];
-  projects = [
-    plainToTyped(
-      {
-        id: '1',
-        name: 'Project 1',
-        tags: [{ name: 'Tag 1' }],
-      },
-      Project,
-    ),
-    plainToTyped(
-      {
-        id: '2',
-        name: 'Project 2',
-        tags: [{ name: 'Tag 2' }],
-      },
-      Project,
-    ),
-    plainToTyped(
-      {
-        id: '3',
-        name: 'Project 3',
-        tags: [{ name: 'Tag 3' }],
-      },
-      Project,
-    ),
-  ];
-  companies = [
-    plainToTyped(
-      {
-        id: '1',
-        name: 'Company 1',
-        tags: [{ name: 'Tag 1' }],
-      },
-      Company,
-    ),
-    plainToTyped(
-      {
-        id: '2',
-        name: 'Company 2',
-        tags: [{ name: 'Tag 2' }],
-      },
-      Company,
-    ),
-    plainToTyped(
-      {
-        id: '3',
-        name: 'Company 3',
-        tags: [{ name: 'Tag 3' }],
-      },
-      Company,
-    ),
-  ];
+  developers: Developer[] = [];
+  projects: Project[] = [];
+  companies: Company[] = [];
 
   searchingDevelopers: boolean = true;
   searchingProjects: boolean = true;
   searchingCompanies: boolean = true;
 
-  totalCount: number = 90;
-  take: number = 10;
+  totalDevCount: number = 0;
+  totalProjectCount: number = 0;
+  totalCompanyCount: number = 0;
+  totalCount: number = 0;
+  take: number = 4;
   page: number = 0;
 
-  constructor() {}
+  pageSize: number = 4 * 3;
+  pageOptions = [4 * 3, 8 * 3, 16 * 3];
+
+  currentUser?: Developer;
+
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private userService: UserService,
+    private app: AppService,
+  ) {}
 
   ngOnInit(): void {
+    this.userService.currentUser.subscribe((userData) => {
+      this.currentUser = userData;
+    });
+    this.fetchNames().then(() => {
+      this.changeNames();
+    });
     this.filteredNames = this.control.valueChanges.pipe(
       startWith(''),
       map((value) => this._filter(value)),
     );
+
+    this.onSearchChange();
+  }
+
+  private async fetchNames() {
+    this.developerNames = await firstValueFrom(this.app.getDeveloperNames());
+    this.projectNames = await firstValueFrom(this.app.getProjectNames());
+    this.comapanyNames = await firstValueFrom(this.app.getCompanyNames());
+  }
+
+  private changeNames() {
+    this.names = [
+      ...(this.searchingDevelopers ? this.developerNames : []),
+      ...(this.searchingProjects ? this.projectNames : []),
+      ...(this.searchingCompanies ? this.comapanyNames : []),
+    ];
   }
 
   private _filter(value: string): string[] {
@@ -127,29 +102,73 @@ export class SearchComponent implements OnInit {
   }
 
   onSearchChange() {
-    console.log(this.searchingDevelopers);
-    console.log(this.searchingProjects);
-    console.log(this.searchingCompanies);
+    const typeCount = this.getTypesCount();
+    forkJoin([
+      this.searchingDevelopers
+        ? this.app.getDevelopers(this.search, this.take, this.page * this.take)
+        : of(null),
+      this.searchingProjects
+        ? this.app.getProjects(this.search, this.take, this.page * this.take)
+        : of(null),
+      this.searchingCompanies
+        ? this.app.getCompanies(this.search, this.take, this.page * this.take)
+        : of(null),
+    ]).subscribe(([developers, projects, companies]) => {
+      this.totalDevCount = developers?.totalCount ?? 0;
+      this.developers = developers?.developers ?? [];
+
+      this.totalProjectCount = projects?.totalCount ?? 0;
+      this.projects = projects?.projects ?? [];
+
+      this.totalCompanyCount = companies?.totalCount ?? 0;
+      this.companies = companies?.companies ?? [];
+
+      this.totalCount =
+        this.totalCompanyCount + this.totalDevCount + this.totalProjectCount;
+    });
+  }
+
+  changePageSize() {
+    this.pageSize = this.take * this.getTypesCount();
+    this.pageOptions = [
+      4 * this.getTypesCount(),
+      8 * this.getTypesCount(),
+      16 * this.getTypesCount(),
+    ];
   }
 
   toggleDevelopersSearch() {
     this.searchingDevelopers = !this.searchingDevelopers;
+    this.changeNames();
     this.onSearchChange();
+    this.changePageSize();
   }
 
   toggleProjectsSearch() {
     this.searchingProjects = !this.searchingProjects;
+    this.changeNames();
     this.onSearchChange();
+    this.changePageSize();
   }
 
   toggleCompaniesSearch() {
     this.searchingCompanies = !this.searchingCompanies;
+    this.changeNames();
     this.onSearchChange();
+    this.changePageSize();
   }
 
   onPageChange(event: PageEvent) {
-    this.take = event.pageSize;
+    this.take = event.pageSize / this.getTypesCount();
     this.page = event.pageIndex;
     this.onSearchChange();
+  }
+
+  getTypesCount() {
+    return (
+      +this.searchingCompanies +
+      +this.searchingProjects +
+      +this.searchingDevelopers
+    );
   }
 }

@@ -1,8 +1,9 @@
-form {
+.form {
     margin-top: 40px;
+    position: relative;
 }
 
-form > input {
+.form > input {
     margin-bottom: 10px;
 }
 
@@ -20,3 +21,75 @@ form > input {
     font-size: 4rem;
     line-height: 4rem;
 }
+
+.error {
+  border-color: #cf222e!important;
+  color: #cf222e!important;
+}
+
+.error::placeholder {
+  color: #cf222e!important;
+}
+
+.text-danger {
+  bottom: 90px;
+  margin-left: 3px;
+  position: absolute;
+}
+
+.history-label {
+  width: 100%;
+  max-width: 710px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.history-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.input-field {
+  width: 100%;
+  max-width: 710px;
+  background: transparent;
+  border: 1px solid #DBDBDB;
+  padding: 0 14px;
+  box-sizing: border-box;
+  font-size: 14px;
+  font-family: "-apple-system",BlinkMacSystemFont,Arial,sans-serif;
+  color: #333;
+  transition: border linear .2s, box-shadow linear .2s;
+  border-radius: 6px;
+  min-height: 200px;
+  max-height: 380px;
+  overflow: auto;
+}
+
+.entry {
+  display: grid;
+  grid-template-columns: 0.5fr 0.2fr 1fr;
+  width: 100%;
+  font-size: 24px;
+  padding: 16px 64px;
+}
+
+.entry div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.input-wrapper {
+  width: 100%;
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+

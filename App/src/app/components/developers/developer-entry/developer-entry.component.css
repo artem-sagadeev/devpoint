@@ -27,6 +27,21 @@
   align-items: center;
 }
 
+.removed-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.removed-message {
+  color: #222;
+}
+
+.undo {
+  margin-left: auto;
+}
+
 .name-wrapper {
   margin-left: 16px;
   display: flex;

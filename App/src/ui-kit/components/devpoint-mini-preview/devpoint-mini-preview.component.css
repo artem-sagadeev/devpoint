@@ -63,6 +63,7 @@
   font-weight: bold;
   user-select: none;
   font-size: 24px;
+  text-align: center;
 }
 
 .preview-label.cover {
@@ -71,6 +72,7 @@
   font-weight: bold;
   opacity: 0.5;
   transition: color 0.16s ease-in-out;
+  text-align: center;
 }
 
 .mini-preview:hover .preview-label.cover {

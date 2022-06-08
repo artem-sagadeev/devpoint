@@ -5,6 +5,8 @@ export class Post {
   title?: string = '';
   content?: string = '';
   date?: string = '';
+  imagePath?: string = '';
   hasUserAccess: boolean = true;
+  requiredSubscriptionLevel?: number = 0;
   tags?: Tag[] = [];
 }

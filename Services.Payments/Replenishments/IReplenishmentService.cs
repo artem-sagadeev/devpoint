@@ -4,7 +4,7 @@ namespace Services.Payments.Replenishments;
 
 public interface IReplenishmentService
 {
-    public Task<List<Replenishment>> GetAllReplenishments();
+    public IQueryable<Replenishment> GetAllReplenishments();
 
     public Task<List<Replenishment>> GetReplenishments(List<int> replenishmentIds);
 
@@ -12,5 +12,5 @@ public interface IReplenishmentService
 
     public Task<Wallet> GetReplenishmentWallet(int replenishmentId);
 
-    public Task<int> CreateReplenishment(int amount, int walletId);
+    public Task<Replenishment> CreateReplenishment(int amount, int walletId);
 }

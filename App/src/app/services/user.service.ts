@@ -33,8 +33,8 @@ export class UserService {
 
   populate() {
     if (this.jwtService.getToken()) {
-      this.apiService.get('/user').subscribe(
-        (data) => this.setAuth(data.user, this.jwtService.getToken()!),
+      this.apiService.get('/users').subscribe(
+        (data) => this.setAuth(data, this.jwtService.getToken()!),
         (err) => this.purgeAuth(),
       );
     } else {
@@ -55,18 +55,18 @@ export class UserService {
   }
 
   attemptAuth(credentials: LoginCredentials): Observable<Developer> {
-    return this.apiService.post('/login', { user: credentials }).pipe(
+    return this.apiService.post('/users/login', credentials).pipe(
       map((data) => {
-        this.setAuth(data.user, data.token);
+        this.setAuth(data.developer, data.token);
         return data;
       }),
     );
   }
 
   attemptRegister(credentials: RegisterDto): Observable<Developer> {
-    return this.apiService.post('/register', { user: credentials }).pipe(
+    return this.apiService.post('/users/register', credentials).pipe(
       map((data) => {
-        this.setAuth(data.user, data.token);
+        this.setAuth(data.developer, data.token);
         return data;
       }),
     );

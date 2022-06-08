@@ -3,8 +3,27 @@ import { Developer } from 'src/app/models/developer';
 import { DevpointMiniPreviewProps } from '@ui-kit/components/devpoint-mini-preview/devpoint-mini-preview.props';
 import * as moment from 'moment';
 import { plainToTyped } from 'type-transformer';
-import { map, Observable, of, pipe, timeout, timer } from 'rxjs';
+import {
+  catchError,
+  concatMap,
+  EMPTY,
+  firstValueFrom,
+  map,
+  Observable,
+  of,
+  pipe,
+  switchMap,
+  tap,
+  timeout,
+  timer,
+} from 'rxjs';
 import { Post } from '../../../models/post';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AppService } from '../../../services/app.service';
+import { UserService } from '../../../services/user.service';
+import { Project } from '../../../models/project';
+import { from } from 'rxjs';
+import { Company } from '../../../models/company';
 
 @Component({
   selector: 'app-developer',
@@ -12,56 +31,87 @@ import { Post } from '../../../models/post';
   styleUrls: ['./developer.component.css'],
 })
 export class DeveloperComponent implements OnInit {
-  @Input() isProfile: boolean = false;
+  @Input() developerId?: string;
+  isProfile: boolean = false;
 
-  @Input() developer: Developer = plainToTyped(
-    {
-      id: '1',
-      name: 'Ben',
-      subscriberCount: 22000,
-      description: 'Ho-ho-ho!\nNo...',
-      tags: [
-        { name: 'Tag 1' },
-        { name: 'Tag 2' },
-        { name: 'Tag 3' },
-        { name: 'Tag 4' },
-        { name: 'Tag 5' },
-      ],
-      imgPath: 'assets/img/ben.png',
-    },
-    Developer,
-  );
+  developer?: Developer;
+  currentUser?: Developer;
 
-  @Input() projects: DevpointMiniPreviewProps[] = Array(5).fill({
-    link: '/project/1',
-    name: 'Talking Ben',
-    imgSrc: '/assets/img/ben.png',
-  });
+  projects: DevpointMiniPreviewProps[] = [];
+  companies: DevpointMiniPreviewProps[] = [];
 
-  constructor() {}
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private userService: UserService,
+    private app: AppService,
+  ) {
+    this.getPostsRequest = this.getPostsRequest.bind(this);
+  }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.route.params
+      .pipe(
+        tap((params) => {
+          this.developerId = this.developerId ?? params['id'];
+        }),
+        switchMap((_) =>
+          this.userService.currentUser.pipe(
+            tap((userData: Developer) => {
+              this.currentUser = userData;
+            }),
+            switchMap((_) => from(this.setDeveloper())),
+          ),
+        ),
+        catchError((err) => this.router.navigateByUrl('/404')),
+      )
+      .subscribe();
+  }
 
-  getPostsRequest(take: number, skip: number): Observable<Post[]> {
-    return timer(1000).pipe(
-      map((_) => [
-        {
-          id: '1',
-          title: 'Talking Ben on PC!',
-          content:
-            '**Talking Ben** just released on PC for *Windows* and *Linux* on *Steam*! Only for **399$**!\n ### LIST\n - one\n - two\n - **three**\n\r```css\n.projects-container {\n' +
-            '    margin-top: 20px;\n' +
-            '    margin-bottom: 20px;\n' +
-            '    position: relative;\n' +
-            '}\n```',
-          tags: [{ name: 'News' }],
-          hasUserAccess: true,
-          date: moment().format('DD.MM.YYYY'),
-        },
-        {
-          hasUserAccess: false,
-        },
-      ]),
+  async setDeveloper() {
+    this.developer = await firstValueFrom(
+      this.app.getDeveloper(this.developerId!),
     );
+
+    if (!this.developer) throw new Error();
+
+    this.developer.tags = await firstValueFrom(
+      this.app.getDeveloperTags(this.developerId!),
+    );
+
+    this.projects = await firstValueFrom(
+      this.app.getDeveloperProjects(this.developerId!).pipe(
+        map((projects: Project[]) =>
+          projects.map((p) => ({
+            link: `/project/${p.id}`,
+            name: p.name,
+            imgSrc: p.imagePath
+              ? this.app.getImagePath(p.imagePath)
+              : undefined,
+          })),
+        ),
+      ),
+    );
+
+    this.companies = await firstValueFrom(
+      this.app.getDeveloperCompanies(this.developerId!).pipe(
+        map((companies: Company[]) =>
+          companies.map((c) => ({
+            link: `/company/${c.id}`,
+            name: c.name,
+            imgSrc: c.imagePath
+              ? this.app.getImagePath(c.imagePath)
+              : undefined,
+          })),
+        ),
+      ),
+    );
+
+    this.isProfile = this.currentUser?.id === this.developer?.id;
+  }
+
+  getPostsRequest(take: number, skip: number, search?: string) {
+    if (!this.developerId) return EMPTY;
+    return this.app.getDeveloperPosts(this.developerId, search, take, skip);
   }
 }

@@ -16,9 +16,9 @@ public class WithdrawalService : IWithdrawalService
         _walletService = walletService;
     }
 
-    public async Task<List<Withdrawal>> GetAllWithdrawals()
+    public IQueryable<Withdrawal> GetAllWithdrawals()
     {
-        var withdrawals = await _context.Withdrawals.ToListAsync();
+        var withdrawals = _context.Withdrawals;
 
         return withdrawals;
     }
@@ -48,13 +48,16 @@ public class WithdrawalService : IWithdrawalService
         return withdrawal.Wallet;
     }
 
-    public async Task<int> CreateWithdrawal(int amount, int walletId)
+    public async Task<Withdrawal> CreateWithdrawal(int amount, int walletId)
     {
         var wallet = await _walletService.GetWallet(walletId);
+        if (wallet.Amount < amount)
+            throw new Exception("Wallet amount is less then withdrawal amount");
         var withdrawal = new Withdrawal(amount, wallet);
         _context.Withdrawals.Add(withdrawal);
+        wallet.Amount -= amount;
         await _context.SaveChangesAsync();
 
-        return withdrawal.Id;
+        return withdrawal;
     }
 }

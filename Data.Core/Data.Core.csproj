@@ -21,6 +21,7 @@
       <ProjectReference Include="..\Domain.Developers\Domain.Developers.csproj" />
       <ProjectReference Include="..\Domain.Payments\Domain.Payments.csproj" />
       <ProjectReference Include="..\Domain.Subscriptions\Domain.Subscriptions.csproj" />
+      <ProjectReference Include="..\Domain.Users\Domain.Users.csproj" />
     </ItemGroup>
 
 </Project>

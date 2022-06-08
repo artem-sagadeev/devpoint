@@ -12,7 +12,7 @@ export class DevpointErrorsComponent implements OnInit {
   @Input()
   set errors(errorList: Errors) {
     this.formattedErrors = Object.keys(errorList.errors || {}).map(
-      (key) => `${key} ${errorList.errors[key]}`,
+      (key) => `${errorList.errors[key]}`,
     );
   }
 

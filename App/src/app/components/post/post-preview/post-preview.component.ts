@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Post } from 'src/app/models/post';
+import { AppService } from '../../../services/app.service';
 
 @Component({
   selector: 'app-post-preview',
@@ -8,14 +9,29 @@ import { Post } from 'src/app/models/post';
 })
 export class PostPreviewComponent implements OnInit {
   @Input() post: Post = new Post();
-  loading: boolean = false;
-
+  loading: boolean = true;
+  requiredLevelName?: string;
+  imagePath?: string;
+  bgImagePath?: string;
   @ViewChild('image') image?: HTMLImageElement;
 
-  constructor() {}
+  constructor(private app: AppService) {}
 
   ngOnInit(): void {
-    //this.loading = !this.image?.complete ?? false;
+    this.requiredLevelName = '';
+
+    this.app
+      .getSubscriptionLevelName()
+      .subscribe(
+        (table) =>
+          (this.requiredLevelName =
+            table[this.post.requiredSubscriptionLevel!]),
+      );
+
+    if (this.post?.imagePath)
+      this.imagePath = this.app.getImagePath(this.post.imagePath);
+
+    this.bgImagePath = `url(${this.imagePath ?? 'assets/img/empty.png'})`;
   }
 
   onLoad() {

@@ -5,7 +5,7 @@ namespace Services.Developers.Projects;
 
 public interface IProjectService
 {
-    public Task<List<Project>> GetAllProjects();
+    public IQueryable<Project> GetAllProjects();
 
     public Task<List<Project>> GetProjects(List<Guid> projectIds);
 
@@ -19,13 +19,11 @@ public interface IProjectService
 
     public Task<List<Tag>> GetProjectTags(Guid projectId);
 
-    public Task<List<Post>> GetProjectPosts(Guid projectId);
-
-    public Task<Guid> CreateProject(string name, Guid ownerId, Guid? companyId);
+    public Task<Guid> CreateProject(string name, string description, Guid ownerId, List<Tag> tags, Guid? companyId);
 
     public Task UpdateName(Guid projectId, string name);
 
     public Task UpdateDevelopers(Guid projectId, List<Guid> developerIds);
 
-    public Task UpdateTags(Guid projectId, List<int> tagIds);
+    public Task UpdateTags(Guid projectId, List<Tag> tagIds);
 }

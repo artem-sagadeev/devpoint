@@ -4,7 +4,7 @@ namespace Web.API.Controllers.Developers.DTOs;
 
 public class TagDto
 {
-    public int Id { get; set; }
+    public int? Id { get; set; } = null;
     public string Text { get; set; }
 
     public TagDto(Tag tag)
@@ -12,4 +12,6 @@ public class TagDto
         Id = tag.Id;
         Text = tag.Text;
     }
+    
+    public TagDto() {}
 }

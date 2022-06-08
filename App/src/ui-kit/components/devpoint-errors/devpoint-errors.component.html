@@ -1,4 +1,4 @@
-<div class="alert alert-danger" role="alert">
+<div class="alert alert-danger" role="alert" *ngIf='errorList && errorList.length'>
   <ng-container *ngFor='let error of errorList; last as last'>
     <p>
       {{ error }}

@@ -63,6 +63,7 @@ public class BillService : IBillService
         var subscription = await _subscriptionService.GetSubscription(subscriptionId);
         var bill = new Bill(amount, wallet, subscription);
         _context.Bills.Add(bill);
+        wallet.Amount -= amount;
         await _context.SaveChangesAsync();
 
         return bill.Id;

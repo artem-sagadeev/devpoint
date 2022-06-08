@@ -21,6 +21,20 @@
   margin-top: 16px;
 }
 
+.error {
+  border-color: #cf222e!important;
+  color: #cf222e!important;
+}
+
+.error::placeholder {
+  color: #cf222e!important;
+}
+
+.text-danger {
+  margin-top: -24px;
+  margin-left: 3px;
+}
+
 .button {
   margin-left: 8px;
 }
@@ -32,6 +46,10 @@
 
 .input-wrapper {
   margin-top: 32px;
+}
+
+.input-wrapper app-devpoint-button {
+  width: 100%;
 }
 
 .wrapper>.input-wrapper:nth-of-type(1) {

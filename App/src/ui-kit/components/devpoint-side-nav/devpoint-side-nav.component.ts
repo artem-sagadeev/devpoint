@@ -10,6 +10,24 @@ export class DevpointSideNavComponent implements OnInit {
   @Output() pageChange = new EventEmitter<number>();
   @Input() page = 0;
 
+  _vertical: boolean = false;
+  @Input()
+  set vertical(value: boolean | '') {
+    this._vertical = value === '' || value;
+  }
+  get vertical(): boolean {
+    return this._vertical;
+  }
+
+  _noStick: boolean = false;
+  @Input('no-stick')
+  set noStick(value: boolean | '') {
+    this._noStick = value === '' || value;
+  }
+  get noStick(): boolean {
+    return this._noStick;
+  }
+
   constructor() {}
 
   ngOnInit(): void {}

@@ -18,6 +18,19 @@
   max-width: 888px;
 }
 
+.error {
+  color: #cf222e;
+}
+
+.error::placeholder {
+  color: #cf222e;
+}
+
+.text-danger {
+  margin-top: -24px;
+  margin-left: 3px;
+}
+
 a {
   color: inherit;
 }

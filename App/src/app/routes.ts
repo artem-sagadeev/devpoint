@@ -22,6 +22,9 @@ import { EditProjectComponent } from './components/projects/edit-project/edit-pr
 import { ProfileEditComponent } from './components/account/profile-edit/profile-edit.component';
 import { Routes } from '@angular/router';
 import { NoAuthGuard } from './guards/no-auth.guard';
+import { AuthGuard } from './guards/auth.guard';
+import { Error404Component } from './components/error404/error404.component';
+import { Error403Component } from './components/error403/error403.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
@@ -32,20 +35,50 @@ export const routes: Routes = [
     canActivate: [NoAuthGuard],
   },
   { path: 'about-us', component: AboutUsComponent },
-  { path: 'pricing', component: PricingComponent },
+  { path: 'pricing', component: PricingComponent, canActivate: [AuthGuard] },
   { path: 'search', component: SearchComponent },
   { path: 'developer/:id', component: DeveloperComponent },
   { path: 'project/:id', component: ProjectComponent },
   { path: 'company/:id', component: CompanyComponent },
   { path: 'post/:id', component: PostComponent },
-  { path: 'wallet', component: WalletComponent },
-  { path: 'profile', component: ProfileComponent },
-  { path: 'subscriptions', component: SubscriptionsComponent },
-  { path: 'add-post', component: AddPostComponent },
-  { path: 'create-project', component: CreateProjectComponent },
-  { path: 'create-company', component: CreateCompanyComponent },
-  { path: 'profile/edit', component: ProfileEditComponent },
-  { path: 'company/:id/edit', component: EditCompanyComponent },
-  { path: 'project/:id/edit', component: EditProjectComponent },
-  { path: 'post/:id/edit', component: EditPostComponent },
+  { path: 'wallet', component: WalletComponent, canActivate: [AuthGuard] },
+  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
+  {
+    path: 'subscriptions',
+    component: SubscriptionsComponent,
+    canActivate: [AuthGuard],
+  },
+  { path: 'add-post', component: AddPostComponent, canActivate: [AuthGuard] },
+  {
+    path: 'create-project',
+    component: CreateProjectComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'create-company',
+    component: CreateCompanyComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'profile/edit',
+    component: ProfileEditComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'company/:id/edit',
+    component: EditCompanyComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'project/:id/edit',
+    component: EditProjectComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'post/:id/edit',
+    component: EditPostComponent,
+    canActivate: [AuthGuard],
+  },
+  { path: '404', component: Error404Component },
+  { path: '403', component: Error403Component },
 ];

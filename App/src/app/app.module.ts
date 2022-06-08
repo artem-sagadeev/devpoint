@@ -69,6 +69,9 @@ import { AuthResolver } from './resolvers/auth.resolver';
 import { AuthGuard } from './guards/auth.guard';
 import { NoAuthGuard } from './guards/no-auth.guard';
 import { CustomValidationService } from './services/custom-validation.service';
+import { Error404Component } from './components/error404/error404.component';
+import { Error403Component } from './components/error403/error403.component';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @NgModule({
   imports: [
@@ -95,6 +98,7 @@ import { CustomValidationService } from './services/custom-validation.service';
     MatFormFieldModule,
     MatChipsModule,
     MatIconModule,
+    MatExpansionModule,
   ],
   declarations: [
     AppComponent,
@@ -133,6 +137,8 @@ import { CustomValidationService } from './services/custom-validation.service';
     DeveloperEntryComponent,
     DeleteConfirmationComponent,
     AddDeveloperModalComponent,
+    Error404Component,
+    Error403Component,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: HttpTokenInterceptor, multi: true },

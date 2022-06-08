@@ -25,6 +25,11 @@
     background-size: 50% 50%;
 }
 
+.entity-container {
+  min-height: calc(100vh - 70px - 64px - 66px);
+  align-content: baseline;
+}
+
 .checkbox:checked+label::before {
     border-color: var(--btn-main-color);
     background-color: var(--btn-main-color);

@@ -5,6 +5,7 @@ namespace Domain.Subscriptions.Entities.Subscriptions;
 public class CompanySubscription : Subscription
 {
     public Company Company { get; set; }
+    public Guid CompanyId { get; set; }
 
     public CompanySubscription(DateTime endTime, bool isAutoRenewal, Tariff tariff, Developer subscriber, Company company)
         : base(endTime, isAutoRenewal, tariff, subscriber)

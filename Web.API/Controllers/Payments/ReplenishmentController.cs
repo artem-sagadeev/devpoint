@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Services.Payments.Replenishments;
+using Services.Payments.Wallets;
 using Web.API.Controllers.Payments.DTOs;
 
 namespace Web.API.Controllers.Payments;
@@ -9,20 +11,29 @@ namespace Web.API.Controllers.Payments;
 public class ReplenishmentController : Controller
 {
     private readonly IReplenishmentService _replenishmentService;
+    private readonly IWalletService _walletService;
 
-    public ReplenishmentController(IReplenishmentService replenishmentService)
+    public ReplenishmentController(IReplenishmentService replenishmentService, IWalletService walletService)
     {
         _replenishmentService = replenishmentService;
+        _walletService = walletService;
     }
 
     [HttpGet]
     [Route("")]
     public async Task<IActionResult> GetAllReplenishments()
     {
-        var replenishments = await _replenishmentService.GetAllReplenishments();
-        var result = replenishments.Select(replenishment => new ReplenishmentDto(replenishment));
+        var devId = User.GetDevId();
+        if (devId == null)
+            return Unauthorized();
+        
+        var replenishments = await _replenishmentService.GetAllReplenishments()
+            .Where(w => w.Wallet.Developer.Id == devId)
+            .OrderByDescending(w => w.DateTime)
+            .ToListAsync();
+        var result = replenishments.Select(replenishment => new ReplenishmentDto(replenishment)).ToList();
 
-        return Ok(result);
+        return Json(result);
     }
 
     [HttpGet]
@@ -57,10 +68,17 @@ public class ReplenishmentController : Controller
 
     [HttpPost]
     [Route("create")]
-    public async Task<IActionResult> CreateReplenishment(int amount, int walletId)
+    public async Task<IActionResult> CreateReplenishment([FromForm] int amount)
     {
-        var replenishmentId = await _replenishmentService.CreateReplenishment(amount, walletId);
+        var devId = User.GetDevId();
+        if (devId == null)
+            return Unauthorized();
+        
+        var wallet = await _walletService.GetDeveloperWallet(devId.Value) ?? 
+                     await _walletService.CreateWallet(devId.Value);
 
-        return Ok(replenishmentId);
+        var replenishment = await _replenishmentService.CreateReplenishment(amount, wallet.Id);
+
+        return Json(new ReplenishmentDto(replenishment));
     }
 }

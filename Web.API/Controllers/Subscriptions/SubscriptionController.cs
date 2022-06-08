@@ -45,36 +45,6 @@ public class SubscriptionController : Controller
 
         return Ok(result);
     }
-    
-    [HttpGet]
-    [Route("{projectSubscriptionId:int}")]
-    public async Task<IActionResult> GetProjectSubscription(int projectSubscriptionId)
-    {
-        var subscription = await _subscriptionService.GetProjectSubscription(projectSubscriptionId);
-        var result = new SubscriptionDto(subscription);
-
-        return Ok(result);
-    }
-    
-    [HttpGet]
-    [Route("{developerSubscriptionId:int}")]
-    public async Task<IActionResult> GetDeveloperSubscription(int developerSubscriptionId)
-    {
-        var subscription = await _subscriptionService.GetDeveloperSubscription(developerSubscriptionId);
-        var result = new SubscriptionDto(subscription);
-
-        return Ok(result);
-    }
-    
-    [HttpGet]
-    [Route("{companySubscriptionId:int}")]
-    public async Task<IActionResult> GetCompanySubscription(int companySubscriptionId)
-    {
-        var subscription = await _subscriptionService.GetCompanySubscription(companySubscriptionId);
-        var result = new SubscriptionDto(subscription);
-
-        return Ok(result);
-    }
 
     [HttpGet]
     [Route("{subscriptionId:int}/tariff")]

@@ -20,9 +20,10 @@ public class SubscriptionLevelController : Controller
     public async Task<IActionResult> GetAllSubscriptionLevels()
     {
         var subscriptionLevels = await _subscriptionLevelService.GetAllSubscriptionLevels();
-        var result = subscriptionLevels.Select(level => new SubscriptionLevelDto(level));
+        var result = subscriptionLevels.Select(level => new SubscriptionLevelDto(level))
+            .ToList();
 
-        return Ok(result);
+        return Json(result);
     }
 
     [HttpGet]

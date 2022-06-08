@@ -9,10 +9,11 @@ import {
 } from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { FormControl } from '@angular/forms';
-import { map, Observable, startWith } from 'rxjs';
+import { firstValueFrom, map, Observable, startWith } from 'rxjs';
 import { Tag } from '../../models/tag';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { AppService } from '../../services/app.service';
 
 @Component({
   selector: 'app-tags-input',
@@ -24,67 +25,80 @@ export class TagsInputComponent implements OnInit {
   tagsCtrl = new FormControl('');
   filteredTags?: Observable<Tag[]>;
   @Input() tags: Tag[] = [];
-  allTags: Tag[] = [
-    {
-      name: 'tag 1',
-    },
-    {
-      name: 'sas',
-    },
-    {
-      name: 'ses',
-    },
-    {
-      name: 'kek',
-    },
-  ];
+  allTags: Tag[] = [];
 
   @Output() tagsChange = new EventEmitter<Tag[]>();
 
   @ViewChild('tagsInput') tagsInput?: ElementRef<HTMLInputElement>;
 
-  constructor() {}
+  constructor(private app: AppService) {
+    this.displayFn = this.displayFn.bind(this);
+  }
 
   add(event: MatChipInputEvent): void {
+    if (this.tags.length >= 32) return;
     const value = (event.value || '').trim();
-
     if (value) {
-      this.tags.push({ name: value });
+      let tag = this.allTags.find((tag) => tag.text === value);
+      if (!tag) tag = { text: value };
+      this.tags.push(tag);
       this.tagsChange.emit(this.tags);
     }
 
     event.chipInput!.clear();
-    this.tagsCtrl.setValue(null);
+    this.tagsCtrl.setValue('');
   }
 
   remove(index: number): void {
     if (index >= 0) {
       this.tags.splice(index, 1);
+      this.tagsInput!.nativeElement.value = '';
+      this.tagsCtrl.setValue('');
       this.tagsChange.emit(this.tags);
     }
   }
 
-  selected(event: MatAutocompleteSelectedEvent): void {
-    this.tags.push({ name: event.option.viewValue });
-    this.tagsChange.emit(this.tags);
+  selected(tag: Tag): void {
+    if (this.tags.length >= 32) return;
     this.tagsInput!.nativeElement.value = '';
-    this.tagsCtrl.setValue(null);
+    this.tagsCtrl.setValue('');
+    this.tags.push(tag);
+    this.tagsChange.emit(this.tags);
+  }
+
+  afterSelect(): void {
+    this.tagsInput!.nativeElement.value = '';
+    this.tagsCtrl.setValue('');
   }
 
   private _filter(value: string): Tag[] {
     const filterValue = value.toLowerCase();
 
     return this.allTags.filter((tag) =>
-      tag.name.toLowerCase().includes(filterValue),
+      tag.text.toLowerCase().includes(filterValue),
     );
   }
 
   ngOnInit(): void {
     this.filteredTags = this.tagsCtrl.valueChanges.pipe(
-      startWith(null),
-      map((tag: string | null) =>
-        tag ? this._filter(tag) : this.allTags.slice(),
+      startWith(''),
+      map((value: string | Tag) =>
+        typeof value === 'string' ? value : value?.text,
+      ),
+      map((text: string) =>
+        (text ? this._filter(text) : this.allTags.slice()).filter(
+          (tag) => !this.tags.map((t) => t.id).includes(tag.id),
+        ),
       ),
     );
+
+    firstValueFrom(this.app.getTags()).then((tags) => {
+      this.allTags = tags;
+      this.tagsCtrl.setValue(this.tagsCtrl.value);
+    });
+  }
+
+  displayFn(tag: Tag): string {
+    return tag && tag.text ? tag.text : '';
   }
 }

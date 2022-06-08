@@ -6,10 +6,12 @@ public class ReplenishmentDto
 {
     public int Id { get; set; }
     public int Amount { get; set; }
+    public DateTime DateTime { get; set; }
 
     public ReplenishmentDto(Replenishment replenishment)
     {
         Id = replenishment.Id;
         Amount = replenishment.Amount;
+        DateTime = replenishment.DateTime;
     }
 }

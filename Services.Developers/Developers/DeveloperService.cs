@@ -16,9 +16,9 @@ public class DeveloperService : IDeveloperService
         _tagService = tagService;
     }
 
-    public async Task<List<Developer>> GetAllDevelopers()
+    public IQueryable<Developer> GetAllDevelopers()
     {
-        var developers = await _context.Developers.ToListAsync();
+        var developers = _context.Developers;
 
         return developers;
     }
@@ -77,13 +77,16 @@ public class DeveloperService : IDeveloperService
         return developer.Tags;
     }
 
-    public async Task<Guid> CreateDeveloper(string name)
+    public async Task<Developer> CreateDeveloper(string name, string description)
     {
-        var developer = new Developer(name);
+        var developer = new Developer(name)
+        {
+            Description = description
+        };
         _context.Developers.Add(developer);
         await _context.SaveChangesAsync();
 
-        return developer.Id;
+        return developer;
     }
 
     public async Task UpdateName(Guid developerId, string name)
@@ -115,11 +118,17 @@ public class DeveloperService : IDeveloperService
         await _context.SaveChangesAsync();
     }
 
-    public async Task UpdateTags(Guid developerId, List<int> tagIds)
+    public async Task UpdateTags(Guid developerId, List<Tag> tags)
     {
         var developer = await GetDeveloper(developerId);
-        var tags = await _tagService.GetTags(tagIds);
-        developer.Tags = tags;
+        await _context.Entry(developer).Collection(c => c.Tags).LoadAsync();
+        if (developer.Tags == null)
+            developer.Tags = new List<Tag>();
+        developer.Tags.Clear();
+        var existingTagsIds = tags.Where(tag => tag.Id >= 0).Select(tag => tag.Id).ToList();
+        var existingTags = await _context.Tags.Where(tag => existingTagsIds.Contains(tag.Id)).ToListAsync();
+        developer.Tags.AddRange(existingTags);
+        developer.Tags.AddRange(tags.Where(tag => tag.Id <= 0).ToList());
         await _context.SaveChangesAsync();
     }
 }

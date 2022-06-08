@@ -3,6 +3,19 @@ import * as moment from 'moment';
 import { Moment } from 'moment';
 import { MarkdownService } from 'ngx-markdown';
 import { LocalStorageService } from '../../../services/local-storage.service';
+import { Developer } from '../../../models/developer';
+import { Errors } from '../../../models/errors';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { UserService } from '../../../services/user.service';
+import { AppService } from '../../../services/app.service';
+import { Entity, EntityType } from '../../../models/entity';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-add-post',
@@ -11,24 +24,60 @@ import { LocalStorageService } from '../../../services/local-storage.service';
 })
 export class AddPostComponent implements OnInit {
   date?: Moment;
-  title?: string;
-  content?: string;
   options?: any;
   saved?: Moment;
   page?: string = 'editor';
-  subType?: string;
   cover?: File;
 
+  contentTouched: boolean = false;
+  form: FormGroup;
+  isSubmitting = false;
+  submittedOnce = false;
+
+  currentUser?: Developer;
+  errors: Errors = { errors: {} };
+
+  ownerId?: string;
+  type?: EntityType;
+
   @ViewChild('input') input?: any;
+  entity?: Entity;
 
   constructor(
     private markdownService: MarkdownService,
     private localStorageService: LocalStorageService,
-  ) {}
+    private route: ActivatedRoute,
+    private router: Router,
+    private userService: UserService,
+    private fb: FormBuilder,
+    private app: AppService,
+  ) {
+    this.form = this.fb.group({
+      title: [
+        '',
+        Validators.compose([Validators.required, Validators.maxLength(32)]),
+      ],
+      content: [
+        '',
+        Validators.compose([
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(3000),
+        ]),
+      ],
+      subType: [
+        0,
+        Validators.compose([
+          Validators.required,
+          Validators.min(1),
+          Validators.max(4),
+        ]),
+      ],
+    });
+  }
 
   ngOnInit(): void {
     this.date = moment();
-    this.title = this.localStorageService.getData('post-title') ?? undefined;
     this.options = {
       lang: 'en_US',
       mode: 'sv',
@@ -62,16 +111,78 @@ export class AddPostComponent implements OnInit {
         'both',
         'preview',
       ],
-      cache: {
-        enable: true,
-        id: 'post',
-        after: this.onCached.bind(this),
-      },
       preview: {
         transform: this.parse.bind(this),
         actions: [],
       },
     };
+
+    this.form.setValue({
+      title: this.localStorageService.getData('post-title') ?? '',
+      content: this.localStorageService.getData('post') ?? '',
+      subType: 0,
+    });
+
+    this.userService.currentUser.subscribe((userData) => {
+      this.currentUser = userData;
+    });
+
+    this.route.queryParams.subscribe((params) => {
+      this.ownerId = params['id'];
+      if (!this.ownerId) {
+        this.router.navigateByUrl(`/`);
+        return;
+      }
+
+      let query: Observable<any> | null = null;
+      if (params['type'] === 'company') {
+        this.type = EntityType.Company;
+        query = this.app.getCompany(this.ownerId);
+      }
+      if (params['type'] === 'developer') {
+        this.type = EntityType.Developer;
+        query = this.app.getDeveloper(this.ownerId);
+      }
+      if (params['type'] === 'project') {
+        this.type = EntityType.Project;
+        query = this.app.getProject(this.ownerId);
+      }
+
+      if (!query) {
+        this.router.navigateByUrl(`/`);
+        return;
+      }
+
+      query.subscribe((entity: Entity) => {
+        this.entity = entity;
+      });
+    });
+  }
+
+  get formControl() {
+    return this.form.controls;
+  }
+
+  get subTypeControl(): FormControl {
+    return this.form.controls['subType'] as FormControl;
+  }
+
+  get contentTypeControl(): FormControl {
+    return this.form.controls['content'] as FormControl;
+  }
+
+  hasError(control: string, error: string): boolean {
+    return (
+      (this.formControl[control].touched || this.submittedOnce) &&
+      this.formControl[control].errors?.[error]
+    );
+  }
+
+  hasErrors(control: string): boolean {
+    return (
+      (this.formControl[control].touched || this.submittedOnce) &&
+      !!this.formControl[control].errors
+    );
   }
 
   highlight() {
@@ -92,11 +203,52 @@ export class AddPostComponent implements OnInit {
   }
 
   cacheTitle() {
-    this.localStorageService.setData('post-title', this.title);
+    this.localStorageService.setData('post-title', this.form.value.title);
     this.onCached();
   }
 
   onFileChanged(image?: File) {
     this.cover = image;
+  }
+
+  cacheContent() {
+    this.localStorageService.setData('post', this.form.value.content);
+    this.onCached();
+  }
+
+  onSubmit() {
+    this.isSubmitting = true;
+    this.submittedOnce = true;
+    this.errors = { errors: {} };
+
+    if (!this.form.valid || !this.ownerId || !this.currentUser) return;
+
+    const projectDto = {
+      title: this.form.value.title,
+      text: this.form.value.content,
+      ownerId: this.ownerId,
+      developerId: this.currentUser.id,
+      subscriptionLevelId: this.form.value.subType,
+      type: this.type,
+    };
+
+    this.app.createPost(projectDto).subscribe(
+      (postId: number) => {
+        if (this.cover)
+          this.app.uploadFile(this.cover).subscribe((data: string) => {
+            this.app.updatePost(postId, { imagePath: data }).subscribe({
+              complete: () => {
+                this.localStorageService.removeData('post');
+                this.localStorageService.removeData('post-title');
+                this.router.navigateByUrl(`/post/${postId}`);
+              },
+            });
+          });
+      },
+      (err) => {
+        this.errors = { errors: { error: err } };
+        this.isSubmitting = false;
+      },
+    );
   }
 }

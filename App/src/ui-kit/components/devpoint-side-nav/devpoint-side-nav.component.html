@@ -1,4 +1,4 @@
-<div class='side-nav'>
+<div class='side-nav' [class.vertical]='vertical' [class.no-stick]='noStick'>
   <div class='side-nav-button' *ngFor='let pageName of pages; index as i'>
     <app-devpoint-button devpoint-border-style='more'
                          fullWidth

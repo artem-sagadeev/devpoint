@@ -35,7 +35,8 @@ public class WalletController : Controller
 
         return Ok(result);
     }
-
+    
+    
     [HttpGet]
     [Route("{walletId:int}")]
     public async Task<IActionResult> GetWallet(int walletId)
@@ -44,6 +45,20 @@ public class WalletController : Controller
         var result = new WalletDto(wallet);
 
         return Ok(result);
+    }
+    
+    [HttpGet]
+    [Route("user")]
+    public async Task<IActionResult> GetUserWallet()
+    {
+        var devId = User.GetDevId();
+        if (devId == null)
+            return Unauthorized();
+        
+        var wallet = await _walletService.GetDeveloperWallet(devId.Value) ?? 
+                     await _walletService.CreateWallet(devId.Value);
+
+        return Json(wallet);
     }
 
     [HttpGet]

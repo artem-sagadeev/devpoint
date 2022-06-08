@@ -33,7 +33,7 @@ public class WalletService : IWalletService
 
     public async Task<Wallet> GetWallet(int walletId)
     {
-        var wallet = await _context.Wallets.FindAsync();
+        var wallet = await _context.Wallets.FindAsync(walletId);
 
         return wallet;
     }
@@ -45,15 +45,22 @@ public class WalletService : IWalletService
 
         return wallet.Developer;
     }
+    
+    public async Task<Wallet> GetDeveloperWallet(Guid developerId)
+    {
+        var wallet = await _context.Wallets.FirstOrDefaultAsync(w => w.Developer.Id == developerId);
 
-    public async Task<int> CreateWallet(Guid developerId)
+        return wallet;
+    }
+
+    public async Task<Wallet> CreateWallet(Guid developerId)
     {
         var developer = await _developerService.GetDeveloper(developerId);
         var wallet = new Wallet(developer);
         _context.Wallets.Add(wallet);
         await _context.SaveChangesAsync();
 
-        return wallet.Id;
+        return wallet;
     }
 
     public async Task UpdateAmount(int walletId, int amount)

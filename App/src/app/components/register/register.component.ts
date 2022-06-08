@@ -16,6 +16,7 @@ export class RegisterComponent implements OnInit {
   errors: Errors = { errors: {} };
   registerForm: FormGroup;
   isSubmitting = false;
+  submittedOnce = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -26,16 +27,30 @@ export class RegisterComponent implements OnInit {
   ) {
     this.registerForm = this.fb.group(
       {
-        login: ['', Validators.required],
-        email: ['', Validators.required],
+        login: [
+          '',
+          Validators.compose([Validators.required, Validators.maxLength(32)]),
+        ],
+        email: [
+          '',
+          Validators.compose([
+            Validators.required,
+            Validators.email,
+            Validators.maxLength(64),
+          ]),
+        ],
         password: [
           '',
           Validators.compose([
             Validators.required,
             this.customValidator.patternValidator(),
+            Validators.maxLength(32),
           ]),
         ],
-        confirmPassword: ['', [Validators.required]],
+        confirmPassword: [
+          '',
+          Validators.compose([Validators.required, Validators.maxLength(32)]),
+        ],
       },
       {
         validators: this.customValidator.MatchPassword(
@@ -52,23 +67,30 @@ export class RegisterComponent implements OnInit {
 
   hasError(control: string, error: string): boolean {
     return (
-      (this.registerFormControl[control].touched || this.isSubmitting) &&
+      (this.registerFormControl[control].touched || this.submittedOnce) &&
       this.registerFormControl[control].errors?.[error]
     );
   }
 
   hasErrors(control: string): boolean {
     return (
-      (this.registerFormControl[control].touched || this.isSubmitting) &&
+      (this.registerFormControl[control].touched || this.submittedOnce) &&
       !!this.registerFormControl[control].errors
     );
+  }
+
+  formHasError(error: string): boolean {
+    return this.submittedOnce && this.registerForm.errors?.[error];
   }
 
   ngOnInit(): void {}
 
   submitForm() {
     this.isSubmitting = true;
+    this.submittedOnce = true;
     this.errors = { errors: {} };
+
+    if (!this.registerForm.valid) return;
 
     const credentials: RegisterDto = {
       login: this.registerForm.value.login,
@@ -79,7 +101,7 @@ export class RegisterComponent implements OnInit {
     this.userService.attemptRegister(credentials).subscribe(
       (data) => this.router.navigateByUrl('/profile'),
       (err) => {
-        this.errors = err;
+        this.errors = { errors: { error: err } };
         this.isSubmitting = false;
       },
     );

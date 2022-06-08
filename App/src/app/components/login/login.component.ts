@@ -22,8 +22,14 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
   ) {
     this.authForm = this.fb.group({
-      login: ['', Validators.required],
-      password: ['', Validators.required],
+      login: [
+        '',
+        Validators.compose([Validators.required, Validators.maxLength(32)]),
+      ],
+      password: [
+        '',
+        Validators.compose([Validators.required, Validators.maxLength(32)]),
+      ],
     });
   }
 
@@ -33,11 +39,13 @@ export class LoginComponent implements OnInit {
     this.isSubmitting = true;
     this.errors = { errors: {} };
 
+    if (!this.authForm.valid) return;
+
     const credentials: LoginCredentials = this.authForm.value;
     this.userService.attemptAuth(credentials).subscribe(
       (data) => this.router.navigateByUrl('/'),
       (err) => {
-        this.errors = err;
+        this.errors = { errors: { error: err } };
         this.isSubmitting = false;
       },
     );

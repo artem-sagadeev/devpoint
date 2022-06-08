@@ -2,8 +2,8 @@ import { Tag } from './tag';
 
 export enum EntityType {
   Developer,
-  Company,
   Project,
+  Company,
 }
 
 export class Entity {
@@ -11,8 +11,10 @@ export class Entity {
   name: string = '';
   tags: Tag[] = [];
   subscriberCount?: number = 0;
-  imgPath?: string = '/assets/img/avatar.jpg';
+  imagePath?: string = '/assets/img/avatar.png';
   description?: string = '';
+  isFollowing?: boolean = false;
+  userSubscriptionLevel?: number = 0;
 
   get type(): EntityType {
     return 0;

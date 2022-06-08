@@ -39,6 +39,8 @@ export class DevpointButtonComponent implements OnInit {
 
   @Input() maxWidth?: number;
 
+  @Input() formTarget?: string;
+
   private _autoWidth: boolean = false;
 
   @Input() disabled?: boolean;

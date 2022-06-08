@@ -21,6 +21,20 @@
   margin-top: 16px;
 }
 
+.error {
+  border-color: #cf222e!important;
+  color: #cf222e!important;
+}
+
+.error::placeholder {
+  color: #cf222e!important;
+}
+
+.text-danger {
+  margin-top: -24px;
+  margin-left: 3px;
+}
+
 .button {
   margin-left: 16px;
 }

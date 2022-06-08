@@ -17,7 +17,7 @@ export class PostComponent implements OnInit {
       '    margin-bottom: 20px;\n' +
       '    position: relative;\n' +
       '}\n```',
-    tags: [{ name: 'News' }],
+    tags: [{ text: 'News' }],
     hasUserAccess: true,
     date: moment().format('DD.MM.YYYY'),
   };

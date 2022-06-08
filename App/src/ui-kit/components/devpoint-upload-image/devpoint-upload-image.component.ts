@@ -24,6 +24,7 @@ export class DevpointUploadImageComponent implements OnInit {
   @Input() label?: string;
   @Input() description?: string;
   @Input() buttonLabel?: string;
+  @Input() currentImagePath?: string;
 
   _noMargin = false;
 

@@ -9,6 +9,7 @@ public class Subscription
     public bool IsAutoRenewal { get; set; }
     public Tariff Tariff { get; set; }
     public Developer Subscriber { get; set; }
+    public Guid SubscriberId { get; set; }
 
     protected Subscription(DateTime endTime, bool isAutoRenewal, Tariff tariff, Developer subscriber)
     {

@@ -2,7 +2,7 @@ namespace Domain.Subscriptions.Entities;
 
 public enum SubscriptionType
 {
-    User,
+    Developer,
     Project, 
     Company
 }

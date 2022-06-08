@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Developer } from '../../../models/developer';
+import { AppService } from '../../../services/app.service';
 
 @Component({
   selector: 'app-developer-entry',
@@ -8,11 +9,18 @@ import { Developer } from '../../../models/developer';
 })
 export class DeveloperEntryComponent implements OnInit {
   @Input() developer?: Developer;
+  @Input() isRemoved?: boolean;
+  @Input() isOwner?: boolean;
   @Output() remove = new EventEmitter<Developer>();
+  @Output() undoRemove = new EventEmitter<Developer>();
+  imagePath?: string;
   loading: boolean = true;
-  constructor() {}
+  constructor(private app: AppService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.developer?.imagePath)
+      this.imagePath = this.app.getImagePath(this.developer.imagePath);
+  }
 
   onLoad() {
     this.loading = false;

@@ -6,6 +6,7 @@ import { SwiperComponent } from 'swiper/angular';
 import { DevpointMiniPreviewProps } from '@ui-kit/components/devpoint-mini-preview/devpoint-mini-preview.props';
 import * as moment from 'moment';
 import { plainToTyped } from 'type-transformer';
+import { UserService } from '../../../services/user.service';
 
 @Component({
   selector: 'app-profile',
@@ -13,31 +14,12 @@ import { plainToTyped } from 'type-transformer';
   styleUrls: ['./profile.component.css'],
 })
 export class ProfileComponent implements OnInit {
-  developer: Developer = plainToTyped(
-    {
-      id: '1',
-      name: 'Ben',
-      subscriberCount: 22000,
-      description: 'Ho-ho-ho!\nNo...',
-      tags: [
-        { name: 'Tag 1' },
-        { name: 'Tag 2' },
-        { name: 'Tag 3' },
-        { name: 'Tag 4' },
-        { name: 'Tag 5' },
-      ],
-      imgPath: 'assets/img/ben.png',
-    },
-    Developer,
-  );
+  constructor(private userService: UserService) {}
+  currentUser?: Developer;
 
-  projects: DevpointMiniPreviewProps[] = Array(5).fill({
-    link: '/project/1',
-    name: 'Talking Ben',
-    imgSrc: '/assets/img/ben.png',
-  });
-
-  constructor() {}
-
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.userService.currentUser.subscribe((userData) => {
+      this.currentUser = userData;
+    });
+  }
 }

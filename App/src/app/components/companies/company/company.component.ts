@@ -4,8 +4,12 @@ import { Developer } from '../../../models/developer';
 import { plainToTyped } from 'type-transformer';
 import { DevpointMiniPreviewProps } from '@ui-kit/components/devpoint-mini-preview/devpoint-mini-preview.props';
 import * as moment from 'moment';
-import { Observable, of } from 'rxjs';
+import { catchError, EMPTY, firstValueFrom, from, map, Observable, of, switchMap, tap } from 'rxjs';
 import { Post } from '../../../models/post';
+import { Project } from '../../../models/project';
+import { ActivatedRoute, Router } from '@angular/router';
+import { UserService } from '../../../services/user.service';
+import { AppService } from '../../../services/app.service';
 
 @Component({
   selector: 'app-company',
@@ -13,59 +17,85 @@ import { Post } from '../../../models/post';
   styleUrls: ['./company.component.css'],
 })
 export class CompanyComponent implements OnInit {
-  @Input() isOwned: boolean = true;
-  @Input() company: Company = plainToTyped(
-    {
-      id: '1',
-      name: 'Talking Ben Incorporated',
-      subscriberCount: 1,
-      description: 'Very professional company!',
-      tags: [
-        { name: 'Tag 1' },
-        { name: 'Tag 2' },
-        { name: 'Tag 3' },
-        { name: 'Tag 4' },
-        { name: 'Tag 5' },
-      ],
-      imgPath: 'assets/img/ben.png',
-    },
-    Company,
-  );
+  isOwned: boolean = true;
 
-  @Input() projects: DevpointMiniPreviewProps[] = Array(5).fill({
-    link: '/project/1',
-    name: 'Talking Ben',
-    imgSrc: '/assets/img/ben.png',
-  });
+  currentUser?: Developer;
+  company?: Company;
+  companyId?: string;
 
-  @Input() developers: DevpointMiniPreviewProps[] = Array(5).fill({
-    link: '/developer/1',
-    name: 'Ben',
-    imgSrc: '/assets/img/ben.png',
-  });
+  projects: DevpointMiniPreviewProps[] = [];
+  developers: DevpointMiniPreviewProps[] = [];
 
-  constructor() {}
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private userService: UserService,
+    private app: AppService,
+  ) {
+    this.getPostsRequest = this.getPostsRequest.bind(this);
+  }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.route.params
+      .pipe(
+        tap((params) => {
+          this.companyId = params['id'];
+        }),
+        switchMap((_) =>
+          this.userService.currentUser.pipe(
+            tap((userData: Developer) => {
+              this.currentUser = userData;
+            }),
+            switchMap((_) => from(this.setCompany())),
+          ),
+        ),
+        catchError((err) => this.router.navigateByUrl('/404')),
+      )
+      .subscribe();
+  }
 
-  getPostsRequest(take: number, skip: number): Observable<Post[]> {
-    return of([
-      {
-        id: '1',
-        title: 'Talking Ben on PC!',
-        content:
-          '**Talking Ben** just released on PC for *Windows* and *Linux* on *Steam*! Only for **399$**!\n ### LIST\n - one\n - two\n - **three**\n\r```css\n.projects-container {\n' +
-          '    margin-top: 20px;\n' +
-          '    margin-bottom: 20px;\n' +
-          '    position: relative;\n' +
-          '}\n```',
-        tags: [{ name: 'News' }],
-        hasUserAccess: true,
-        date: moment().format('DD.MM.YYYY'),
-      },
-      {
-        hasUserAccess: false,
-      },
-    ]);
+  async setCompany() {
+    this.company = await firstValueFrom(this.app.getCompany(this.companyId!));
+
+    if (!this.company) throw new Error();
+
+    this.company.tags = await firstValueFrom(
+      this.app.getCompanyTags(this.companyId!),
+    );
+
+    this.developers = await firstValueFrom(
+      this.app.getCompanyDevelopers(this.companyId!).pipe(
+        map((developer: Developer[]) =>
+          developer.map((d) => ({
+            link: `/developer/${d.id}`,
+            name: d.name,
+            imgSrc: d.imagePath
+              ? this.app.getImagePath(d.imagePath)
+              : undefined,
+          })),
+        ),
+      ),
+    );
+
+    this.projects = await firstValueFrom(
+      this.app.getCompanyProjects(this.companyId!).pipe(
+        map((projects: Project[]) =>
+          projects.map((p) => ({
+            link: `/project/${p.id}`,
+            name: p.name,
+            imgSrc: p.imagePath
+              ? this.app.getImagePath(p.imagePath)
+              : undefined,
+          })),
+        ),
+      ),
+    );
+
+    this.isOwned = this.currentUser?.id === this.company?.ownerId;
+  }
+
+  getPostsRequest(take: number, skip: number, search?: string) {
+    if (!this.companyId) return EMPTY;
+    return this.app.getCompanyPosts(this.companyId, search, take, skip);
   }
 }
