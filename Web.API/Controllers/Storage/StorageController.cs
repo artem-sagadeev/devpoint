@@ -16,20 +16,9 @@ public class StorageController : Controller
             var formCollection = await Request.ReadFormAsync();
             var file = formCollection.Files.First();
             
-            var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
             if (file.Length > 0)
             {
-                var ext = Path.GetExtension(ContentDispositionHeaderValue
-                    .Parse(file.ContentDisposition).FileName.ToString()
-                    .Trim('"'));
-                var fileName = RandomizeRegister(
-                    DateTime.Now.Ticks.GetHashCode().ToString("x").ToUpper() + Path.GetRandomFileName()
-                ) + ext;
-                var fullPath = Path.Combine(pathToSave, fileName);
-                await using (var stream = new FileStream(fullPath, FileMode.Create))
-                {
-                    await file.CopyToAsync(stream);
-                }
+                var fileName = await SaveFile(file);
                 return Ok(fileName);
             }
             else
@@ -41,6 +30,80 @@ public class StorageController : Controller
         {
             return StatusCode(500, $"Internal server error: {ex}");
         }
+    }
+    
+    [HttpPost("upload-md"), DisableRequestSizeLimit]
+    public async Task<IActionResult> UploadMarkdown()
+    {
+        try
+        {
+            var formCollection = await Request.ReadFormAsync();
+            var file = formCollection.Files.First();
+            
+            var initialFileName = file.FileName;
+            if (file.Length > 0)
+            {
+                var fileName = await SaveFile(file);
+
+                var response = new
+                {
+                    msg = fileName,
+                    code = 0,
+                    data = new
+                    {
+                        succMap = new Dictionary<string, string>()
+                        {
+                            {initialFileName, fileName},
+                        }
+                    }
+                };
+
+                return Json(response);
+            }
+            else
+            {
+                var response = new
+                {
+                    msg = "File is empty or cannot be parsed",
+                    code = 400,
+                    data = new
+                    {
+                        errFiles = new [] { initialFileName },
+                    }
+                };
+
+                return Json(response);
+            }
+        }
+        catch (Exception ex)
+        {
+            var response = new
+            {
+                msg = "Internal server error",
+                code = 500
+            };
+
+            return Json(response);
+        }
+    }
+
+    async Task<string> SaveFile(IFormFile file)
+    {
+        var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
+
+        var ext = Path.GetExtension(ContentDispositionHeaderValue
+            .Parse(file.ContentDisposition).FileName.ToString()
+            .Trim('"'));
+        var fileName = RandomizeRegister(
+            DateTime.Now.Ticks.GetHashCode().ToString("x").ToUpper() + Path.GetRandomFileName()
+        ) + ext;
+        var fullPath = Path.Combine(pathToSave, fileName);
+        await using (var stream = new FileStream(fullPath, FileMode.Create))
+        {
+            await file.CopyToAsync(stream);
+        }
+
+        return fileName;
     }
 
     string RandomizeRegister(string s)

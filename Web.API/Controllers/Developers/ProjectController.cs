@@ -74,7 +74,7 @@ public class ProjectController : Controller
                 projects = projects.Where(o => o.isFollowing);
 
             totalCount = await projects.CountAsync();
-            projects = projects.OrderBy(o => o.entity.Id).Take(take).Skip(skip);
+            projects = projects.OrderBy(o => o.entity.Id).Skip(skip).Take(take);
             
             result = (await projects.ToListAsync())
                 .Select(o => new ProjectDto(o.entity)
@@ -85,7 +85,7 @@ public class ProjectController : Controller
         }
         else {
             totalCount = await query.CountAsync();
-            query = query.OrderBy(o => o.Id).Take(take).Skip(skip);
+            query = query.OrderBy(o => o.Id).Skip(skip).Take(take);
             result = (await query.ToListAsync())
             .Select(c => new ProjectDto(c)).ToList();
         }
@@ -192,7 +192,7 @@ public class ProjectController : Controller
         }
 
         var totalCount = await postsQuery.CountAsync();
-        postsQuery = postsQuery.Take(take).Skip(skip);
+        postsQuery = postsQuery.OrderByDescending(post => post.DateTime).Skip(skip).Take(take);
         var posts = (await postsQuery
                 .ToListAsync())
                 .Select(p => 

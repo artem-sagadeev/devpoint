@@ -73,7 +73,7 @@ public class CompanyController : Controller
                 companies = companies.Where(o => o.isFollowing);
 
             totalCount = await companies.CountAsync();
-            companies = companies.OrderBy(o => o.entity.Id).Take(take).Skip(skip);
+            companies = companies.OrderBy(o => o.entity.Id).Skip(skip).Take(take);
 
             result = (await companies.ToListAsync())
             .Select(o => new CompanyDto(o.entity)
@@ -84,7 +84,7 @@ public class CompanyController : Controller
         }
         else { 
             totalCount = await query.CountAsync();
-            query = query.OrderBy(o => o.Id).Take(take).Skip(skip);
+            query = query.OrderBy(o => o.Id).Skip(skip).Take(take);
             result = (await query.ToListAsync())
             .Select(c => new CompanyDto(c)).ToList();
         }
@@ -191,7 +191,7 @@ public class CompanyController : Controller
         }
 
         var totalCount = await postsQuery.CountAsync();
-        postsQuery = postsQuery.Take(take).Skip(skip);
+        postsQuery = postsQuery.OrderByDescending(post => post.DateTime).Skip(skip).Take(take);
         var posts = (await postsQuery
                 .ToListAsync())
                 .Select(p => 
