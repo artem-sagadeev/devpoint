@@ -250,6 +250,8 @@ export class AddPostComponent implements OnInit {
 
     this.app.createPost(projectDto).subscribe(
       (postId: number) => {
+        this.localStorageService.removeData('post');
+        this.localStorageService.removeData('post-title');
         if (this.cover)
           this.app.uploadFile(this.cover).subscribe((data: string) => {
             this.app.updatePost(postId, { imagePath: data }).subscribe({
