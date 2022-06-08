@@ -158,3 +158,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .mat-slide-toggle.mat-primary.mat-checked .mat-ripple-element {
   background-color: var(--btn-main-color-hover);
 }
+
+.post-content * {
+  max-width: 100%;
+}

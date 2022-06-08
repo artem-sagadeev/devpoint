@@ -74,7 +74,7 @@ public class DeveloperController : Controller
                 developers = developers.Where(o => o.isFollowing);
 
             totalCount = await developers.CountAsync();
-            developers = developers.OrderBy(o => o.entity.Id).Take(take).Skip(skip);
+            developers = developers.OrderBy(o => o.entity.Id).Skip(skip).Take(take);
 
             result = (await developers.ToListAsync())
                 .Select(o => new DeveloperDto(o.entity)
@@ -85,7 +85,7 @@ public class DeveloperController : Controller
         }
         else {
             totalCount = await query.CountAsync();
-            query = query.OrderBy(o => o.Id).Take(take).Skip(skip);
+            query = query.OrderBy(o => o.Id).Skip(skip).Take(take);
             result = (await query.ToListAsync())
             .Select(c => new DeveloperDto(c)).ToList();
         }
@@ -202,7 +202,7 @@ public class DeveloperController : Controller
         }
 
         var totalCount = await postsQuery.CountAsync();
-        postsQuery = postsQuery.Take(take).Skip(skip);
+        postsQuery = postsQuery.OrderByDescending(post => post.DateTime).Skip(skip).Take(take);
         var posts = (await postsQuery
                 .ToListAsync())
                 .Select(p => 

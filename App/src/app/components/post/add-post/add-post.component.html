@@ -77,7 +77,7 @@
                                (click)='page = "editor"'
           >Back to editor
           </app-devpoint-button>
-          <app-devpoint-button type='submit' [disabled]='!form.valid' class='create-post'>
+          <app-devpoint-button type='submit' [disabled]='!form.valid || !cover' class='create-post'>
             Create post
           </app-devpoint-button>
         </div>

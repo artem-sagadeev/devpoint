@@ -505,4 +505,8 @@ export class AppService {
   public cancelSubscription(subscriptionId: number) {
     return this.apiService.delete(`/subscriptions/${subscriptionId}/cancel`);
   }
+
+  getUploadMdUrl() {
+    return `${this.apiService.ApiUrl}/storage/upload-md`;
+  }
 }

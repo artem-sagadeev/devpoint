@@ -81,7 +81,22 @@ export class AddPostComponent implements OnInit {
     this.options = {
       lang: 'en_US',
       mode: 'sv',
-      tab: '\t',
+      tab: '  ',
+      counter: {
+        enable: true,
+        max: 3000,
+      },
+      upload: {
+        url: this.app.getUploadMdUrl(),
+        multiple: false,
+        format: (files: any, response: string) => {
+          const res = JSON.parse(response);
+          const key = Object.keys(res.data.succMap)[0];
+          res.data.succMap[key] = this.app.getImagePath(res.data.succMap[key]);
+          return JSON.stringify(res);
+        },
+      },
+      typewriterMode: true,
       toolbar: [
         'emoji',
         'headings',
@@ -221,7 +236,8 @@ export class AddPostComponent implements OnInit {
     this.submittedOnce = true;
     this.errors = { errors: {} };
 
-    if (!this.form.valid || !this.ownerId || !this.currentUser) return;
+    if (!this.form.valid || !this.ownerId || !this.currentUser || !this.cover)
+      return;
 
     const projectDto = {
       title: this.form.value.title,
