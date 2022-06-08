@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AppService } from '../../../services/app.service';
-import { PaymentEntry } from '../../../models/PaymentEntry';
+import { PaymentEntry } from '../../../models/payment-entry';
 
 @Component({
   selector: 'app-wallet',
@@ -16,6 +16,7 @@ export class WalletComponent implements OnInit {
 
   withdrawals?: PaymentEntry[];
   deposits?: PaymentEntry[];
+  bills?: PaymentEntry[];
   constructor(private app: AppService) {}
 
   ngOnInit(): void {
@@ -29,6 +30,10 @@ export class WalletComponent implements OnInit {
 
     this.app.getAllDeposits().subscribe((entries) => {
       this.deposits = entries;
+    });
+
+    this.app.getAllBills().subscribe((entries) => {
+      this.bills = entries;
     });
   }
 

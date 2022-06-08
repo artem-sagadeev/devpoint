@@ -4,7 +4,7 @@
             <div class="row align-items-center">
                 <div class="col-6 search-col" style="min-width: 300px">
                   <input maxlength='32' [(ngModel)]='search' type="text" name="searchString" placeholder="What are you searching for?"
-                         class="input-search form-control" autocomplete="off" (input)='onSearchChange()'
+                         class="input-search form-control" autocomplete="off" (change)='onSearchChange()'
                          [formControl]="control"
                          [matAutocomplete]="auto">
                   <mat-autocomplete #auto="matAutocomplete" (optionSelected)='onSearchChange()'>

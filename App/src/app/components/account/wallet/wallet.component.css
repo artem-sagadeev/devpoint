@@ -85,6 +85,28 @@
   align-items: center;
 }
 
+.bill {
+  grid-template-columns: 0.5fr 0.2fr 1fr 0.4fr 0.6fr;
+  padding: 16px 32px;
+  font-size: 20px;
+}
+
+.sub-info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.failed {
+  color: #cf222e;
+  font-weight: bold;
+}
+
+.success {
+  color: #33cf22;
+}
+
 .input-wrapper {
   width: 100%;
   margin-top: 24px;

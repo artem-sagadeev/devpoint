@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { DevpointBorderStyle, DevpointButtonStyle } from '@ui-kit/components';
 
 @Component({
   selector: 'app-devpoint-side-nav',
@@ -9,6 +10,8 @@ export class DevpointSideNavComponent implements OnInit {
   @Input() pages: string[] = [];
   @Output() pageChange = new EventEmitter<number>();
   @Input() page = 0;
+
+  @Input() borderStyle: 'default' | 'more' | 'round' = 'more';
 
   _vertical: boolean = false;
   @Input()

@@ -38,17 +38,15 @@ public class ProjectController : Controller
 
     [HttpGet]
     [Route("")]
-    public async Task<IActionResult> GetAllProjects(string? search = null, int take = 10, int skip = 0)
+    public async Task<IActionResult> GetAllProjects(string? search = null, int take = 10, int skip = 0, bool isFollow = false)
     {
         var devId = User.GetDevId();
         var query = _projectService.GetAllProjects();
         if (!string.IsNullOrEmpty(search))
             query = query.Where(e => e.Name.ToLower().Contains(search.ToLower()));
-        var totalCount = await query.CountAsync();
-
-        query = query.OrderBy(e => e.Id).Skip(skip).Take(take);
-        query = query.Include(e => e.Tags);
         
+        var totalCount = 0;
+        query = query.Include(e => e.Tags);
         List<ProjectDto> result;
         if (devId != null)
         {
@@ -60,9 +58,9 @@ public class ProjectController : Controller
                     equals new { eId = follow.Target, dId = follow.FollowerId, type = follow.EntityType }
                     into follows
                 from ef in follows.DefaultIfEmpty()
-                join sub in _context.ProjectSubscriptions
-                    on new { eId = entity.Id, dId = devIdVal }
-                    equals new { eId = sub.ProjectId, dId = sub.SubscriberId }
+                join sub in _context.Subscriptions
+                    on new { eId = entity.Id, dId = devIdVal, type = EntityType.Project }
+                    equals new { eId = sub.TargetId, dId = sub.SubscriberId, type = sub.EntityType }
                     into subs
                 from es in subs.DefaultIfEmpty()
                 select new
@@ -72,6 +70,12 @@ public class ProjectController : Controller
                     userSubscriptionLevel = es == null ? 0 : es.Tariff.SubscriptionLevelId
                 };
 
+            if (isFollow)
+                projects = projects.Where(o => o.isFollowing);
+
+            totalCount = await projects.CountAsync();
+            projects = projects.OrderBy(o => o.entity.Id).Take(take).Skip(skip);
+            
             result = (await projects.ToListAsync())
                 .Select(o => new ProjectDto(o.entity)
                 {
@@ -79,8 +83,12 @@ public class ProjectController : Controller
                     UserSubscriptionLevel = o.userSubscriptionLevel
                 }).ToList();
         }
-        else result = (await query.ToListAsync())
+        else {
+            totalCount = await query.CountAsync();
+            query = query.OrderBy(o => o.Id).Take(take).Skip(skip);
+            result = (await query.ToListAsync())
             .Select(c => new ProjectDto(c)).ToList();
+        }
         
         return Json(
             new
@@ -211,11 +219,12 @@ public class ProjectController : Controller
                 return res;
             }).ToList(), createProjectDto.CompanyId);
         var tariff = await _context.Tariffs.FirstOrDefaultAsync(t =>
-            t.SubscriptionLevelId == 6 && t.SubscriptionType == SubscriptionType.Project);
+            t.SubscriptionLevelId == 6 && t.SubscriptionType == EntityType.Project);
         if (tariff == null)
             throw new Exception("Tariff not found");
-        var sub = await _subscriptionService.CreateProjectSubscription(DateTime.MaxValue, true, tariff.Id, createProjectDto.OwnerId,
-            projectId);
+        var sub = await _subscriptionService.CreateSubscription(DateTime.MaxValue, true, 
+            tariff.Id, createProjectDto.OwnerId,
+            projectId, EntityType.Project);
 
         return Ok(projectId);
     }
@@ -296,8 +305,9 @@ public class ProjectController : Controller
         
         await _projectService.UpdateDevelopers(projectId, developerIds);
         
-        var subsToDelete = await _context.ProjectSubscriptions
-            .Where(s => s.ProjectId == projectId &&
+        var subsToDelete = await _subscriptionService
+            .GetProjectSubscriptions(projectId)
+            .Where(s => 
                         !developerIds.Contains(s.SubscriberId)
                         && s.Tariff.SubscriptionLevelId == 5)
             .ToListAsync();
@@ -305,9 +315,9 @@ public class ProjectController : Controller
         _context.RemoveRange(subsToDelete);
         await _context.SaveChangesAsync();
         
-        var subs = await _context.ProjectSubscriptions
-                .Where(s => s.ProjectId == projectId &&
-                                           developerIds.Contains(s.SubscriberId))
+        var subs = await _subscriptionService
+                .GetProjectSubscriptions(projectId)
+                .Where(s => developerIds.Contains(s.SubscriberId))
                 .Include(s => s.Tariff)
                 .ToListAsync();
         
@@ -326,11 +336,12 @@ public class ProjectController : Controller
             }
 
             var tariff = await _context.Tariffs.FirstOrDefaultAsync(t =>
-                t.SubscriptionLevelId == 5 && t.SubscriptionType == SubscriptionType.Project);
+                t.SubscriptionLevelId == 5 && t.SubscriptionType == EntityType.Project);
             if (tariff == null)
                 throw new Exception("Tariff not found");
-            var sub = await _subscriptionService.CreateProjectSubscription(DateTime.MaxValue, true, tariff.Id, devId,
-                projectId);
+            var sub = await _subscriptionService.CreateSubscription(DateTime.MaxValue, true, 
+                tariff.Id, devId,
+                projectId, EntityType.Project);
         }
 
         return Ok();

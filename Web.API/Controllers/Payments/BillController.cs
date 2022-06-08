@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Services.Payments.Bills;
 using Web.API.Controllers.Payments.DTOs;
 using Web.API.Controllers.Subscriptions.DTOs;
@@ -20,10 +21,18 @@ public class BillController : Controller
     [Route("")]
     public async Task<IActionResult> GetAllBills()
     {
-        var bills = await _billService.GetAllBills();
+        var devId = User.GetDevId();
+        if (devId == null)
+            return Unauthorized();
+        
+        var bills = await _billService.GetAllBills()
+            .Include(bill => bill.Tariff)
+            .Where(bill => bill.Wallet.Developer.Id == devId)
+            .OrderByDescending(bill => bill.DateTime)
+            .ToListAsync();
         var result = bills.Select(bill => new BillDto(bill));
 
-        return Ok(result);
+        return Json(result);
     }
 
     [HttpGet]
@@ -54,24 +63,5 @@ public class BillController : Controller
         var result = new WalletDto(wallet);
 
         return Ok(result);
-    }
-
-    [HttpGet]
-    [Route("{billId:int}/subscription")]
-    public async Task<IActionResult> GetBillSubscription(int billId)
-    {
-        var subscription = await _billService.GetBillSubscription(billId);
-        var result = new SubscriptionDto(subscription);
-
-        return Ok(result);
-    }
-
-    [HttpPost]
-    [Route("create")]
-    public async Task<IActionResult> CreateBill(int amount, int walletId, int subscriptionId)
-    {
-        var billId = await _billService.CreateBill(amount, walletId, subscriptionId);
-
-        return Ok(billId);
     }
 }

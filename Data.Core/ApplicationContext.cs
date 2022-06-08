@@ -21,9 +21,7 @@ public class ApplicationContext : DbContext
     public DbSet<Tag> Tags { get; set; }
 
     public DbSet<Follow> Follows { get; set; }
-    public DbSet<CompanySubscription> CompanySubscriptions { get; set; }
-    public DbSet<ProjectSubscription> ProjectSubscriptions { get; set; }
-    public DbSet<DeveloperSubscription> DeveloperSubscriptions { get; set; }
+    public DbSet<Subscription> Subscriptions { get; set; }
     public DbSet<SubscriptionLevel> SubscriptionLevels { get; set; }
     public DbSet<Tariff> Tariffs { get; set; }
     

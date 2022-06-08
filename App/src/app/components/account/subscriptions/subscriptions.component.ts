@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from '../../../models/subscription';
-import { EntityType } from '../../../models/entity';
-import { plainToTyped } from 'type-transformer';
-import { Company } from '../../../models/company';
-import { Developer } from '../../../models/developer';
+import { AppService } from '../../../services/app.service';
+import { forkJoin, of } from 'rxjs';
+import { Errors } from '../../../models/errors';
 
 @Component({
   selector: 'app-subscriptions',
@@ -11,64 +10,58 @@ import { Developer } from '../../../models/developer';
   styleUrls: ['./subscriptions.component.css'],
 })
 export class SubscriptionsComponent implements OnInit {
-  subscriptions: Subscription[] = [
-    {
-      id: 0,
-      endTime: new Date(Date.now()),
-      isAutoRenewal: true,
-      tariff: {
-        id: 0,
-        pricePerMonth: 1000,
-        subscriptionType: EntityType.Company,
-        subscriptionLevel: {
-          id: 0,
-          name: 'Basic',
-        },
-      },
-      entity: plainToTyped(
-        {
-          id: '1',
-          name: 'Talking Ben Incorporated',
-          subscriberCount: 1,
-          description: 'Very professional company!',
-          tags: [
-            { name: 'Tag 1' },
-            { name: 'Tag 2' },
-            { name: 'Tag 3' },
-            { name: 'Tag 4' },
-            { name: 'Tag 5' },
-          ],
-          imgPath: 'assets/img/ben.png',
-        },
-        Company,
-      ),
-    },
+  developerSubscriptions: Subscription[] = [];
+  projectSubscriptions: Subscription[] = [];
+  companiesSubscriptions: Subscription[] = [];
 
-    {
-      id: 1,
-      endTime: new Date(Date.now()),
-      isAutoRenewal: true,
-      tariff: {
-        id: 1,
-        pricePerMonth: 20000,
-        subscriptionType: EntityType.Developer,
-        subscriptionLevel: {
-          id: 0,
-          name: 'Pro',
-        },
-      },
-      entity: plainToTyped(
-        {
-          id: '1',
-          name: 'Ben',
-          subscriberCount: 1,
-          imgPath: 'assets/img/ben.png',
-        },
-        Developer,
-      ),
-    },
-  ];
-  constructor() {}
+  searchingDevelopers: boolean = true;
+  searchingProjects: boolean = true;
+  searchingCompanies: boolean = true;
+  successMessage?: string;
+  errors: Errors = { errors: {} };
 
-  ngOnInit(): void {}
+  constructor(private app: AppService) {}
+
+  ngOnInit(): void {
+    this.onSearchChange();
+  }
+
+  onSearchChange() {
+    forkJoin([
+      this.searchingDevelopers
+        ? this.app.getDeveloperSubscriptions()
+        : of(null),
+      this.searchingProjects ? this.app.getProjectSubscriptions() : of(null),
+      this.searchingCompanies ? this.app.getCompanySubscriptions() : of(null),
+    ]).subscribe(([developers, projects, companies]) => {
+      this.developerSubscriptions = developers ?? [];
+      this.projectSubscriptions = projects ?? [];
+      this.companiesSubscriptions = companies ?? [];
+    });
+  }
+
+  toggleDevelopersSearch() {
+    this.searchingDevelopers = !this.searchingDevelopers;
+    this.onSearchChange();
+  }
+
+  toggleProjectsSearch() {
+    this.searchingProjects = !this.searchingProjects;
+    this.onSearchChange();
+  }
+
+  toggleCompaniesSearch() {
+    this.searchingCompanies = !this.searchingCompanies;
+    this.onSearchChange();
+  }
+
+  onCancelError(err: string) {
+    this.errors = { errors: { [err]: err } };
+  }
+
+  onCancelSuccess() {
+    this.errors = { errors: {} };
+    this.successMessage = 'Subscription canceled successfully';
+    this.onSearchChange();
+  }
 }

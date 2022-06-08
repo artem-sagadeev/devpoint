@@ -28,73 +28,59 @@ public class SubscriptionService : ISubscriptionService
         _companyService = companyService;
     }
 
-    public async Task<List<Subscription>> GetAllSubscriptions()
+    public IQueryable<Subscription> GetAllSubscriptions()
     {
-        var companySubscriptions = await _context.CompanySubscriptions.ToListAsync();
-        var projectSubscriptions = await _context.ProjectSubscriptions.ToListAsync();
-        var developerSubscriptions = await _context.DeveloperSubscriptions.ToListAsync();
+        var subscriptions = _context.Subscriptions;
 
-        var allSubscriptions = new List<Subscription>();
-        allSubscriptions.AddRange(companySubscriptions);
-        allSubscriptions.AddRange(projectSubscriptions);
-        allSubscriptions.AddRange(developerSubscriptions);
-
-        return allSubscriptions;
-    }
-
-    public async Task<List<Subscription>> GetSubscriptions(List<int> subscriptionIds)
-    {
-        var companySubscriptions = await _context
-            .CompanySubscriptions
-            .Where(s => subscriptionIds.Contains(s.Id))
-            .ToListAsync();
-        var projectSubscriptions = await _context
-            .ProjectSubscriptions
-            .Where(s => subscriptionIds.Contains(s.Id))
-            .ToListAsync();
-        var developerSubscriptions = await _context
-            .DeveloperSubscriptions
-            .Where(s => subscriptionIds.Contains(s.Id))
-            .ToListAsync();
-        
-        var allSubscriptions = new List<Subscription>();
-        allSubscriptions.AddRange(companySubscriptions);
-        allSubscriptions.AddRange(projectSubscriptions);
-        allSubscriptions.AddRange(developerSubscriptions);
-        
-        return allSubscriptions;
+        return subscriptions;
     }
 
     public async Task<Subscription> GetSubscription(int subscriptionId)
     {
-        var companySubscription = (Subscription) await _context.CompanySubscriptions.FindAsync(subscriptionId);
-        var projectSubscription = (Subscription) await _context.ProjectSubscriptions.FindAsync(subscriptionId);
-        var developerSubscription = (Subscription) await _context.DeveloperSubscriptions.FindAsync(subscriptionId);
-        var subscription = companySubscription ?? projectSubscription ?? developerSubscription;
-        
-        return subscription;
-    }
-
-    public IQueryable<ProjectSubscription> GetProjectSubscriptions(Guid id)
-    {
-        var subscription = _context.ProjectSubscriptions
-            .Where(sub => sub.Project.Id == id);
+        var subscription = await _context.Subscriptions.FindAsync(subscriptionId);
 
         return subscription;
     }
 
-    public IQueryable<DeveloperSubscription> GetDeveloperSubscriptions(Guid id)
+    public async Task<Subscription> FindSubscription(Guid subscriberId, Guid targetId, EntityType type)
     {
-        var subscription = _context.DeveloperSubscriptions
-            .Where(sub => sub.Developer.Id == id);
+        var subscription = await _context.Subscriptions
+            .Include(sub => sub.Tariff)
+            .FirstOrDefaultAsync(sub => 
+                sub.EntityType == type &&
+                sub.SubscriberId == subscriberId &&
+                sub.TargetId == targetId
+                );
 
         return subscription;
     }
 
-    public IQueryable<CompanySubscription> GetCompanySubscriptions(Guid id)
+    public IQueryable<Subscription> GetProjectSubscriptions(Guid id)
     {
-        var subscription = _context.CompanySubscriptions
-            .Where(sub => sub.Company.Id == id);
+        var subscription = _context.Subscriptions
+            .Where(sub =>
+                sub.EntityType == EntityType.Project &&
+                sub.TargetId == id);
+
+        return subscription;
+    }
+
+    public IQueryable<Subscription> GetDeveloperSubscriptions(Guid id)
+    {
+        var subscription = _context.Subscriptions
+            .Where(sub =>
+                sub.EntityType == EntityType.Developer &&
+                sub.TargetId == id);
+
+        return subscription;
+    }
+
+    public IQueryable<Subscription> GetCompanySubscriptions(Guid id)
+    {
+        var subscription = _context.Subscriptions
+            .Where(sub =>
+                sub.EntityType == EntityType.Company &&
+                sub.TargetId == id);
 
         return subscription;
     }
@@ -119,48 +105,45 @@ public class SubscriptionService : ISubscriptionService
     {
         if (!userDevId.HasValue)
             return 0;
-        
-        var subLevel = 0;
 
         var sub = await GetCompanySubscriptions(companyId)
             .FirstOrDefaultAsync(sub => sub.Subscriber.Id == userDevId);
         
-        if (sub is not null)
-            subLevel = sub.Id;
+        if (sub == null)
+            return 0;
 
-        return subLevel;
+        await _context.Entry(sub).Reference(s => s.Tariff).LoadAsync();
+        return sub.Tariff.SubscriptionLevelId;
     }
     
     public async Task<int> UserDeveloperSubscriptionLevel(Guid? userDevId, Guid developerId)
     {
         if (!userDevId.HasValue)
             return 0;
-        
-        var subLevel = 0;
 
         var sub = await GetDeveloperSubscriptions(developerId)
             .FirstOrDefaultAsync(sub => sub.Subscriber.Id == userDevId);
-        
-        if (sub is not null)
-            subLevel = sub.Id;
 
-        return subLevel;
+        if (sub == null)
+            return 0;
+
+        await _context.Entry(sub).Reference(s => s.Tariff).LoadAsync();
+        return sub.Tariff.SubscriptionLevelId;
     }
     
     public async Task<int> UserProjectSubscriptionLevel(Guid? userDevId, Guid projectId)
     {
         if (!userDevId.HasValue)
             return 0;
-        
-        var subLevel = 0;
 
         var sub = await GetProjectSubscriptions(projectId)
             .FirstOrDefaultAsync(sub => sub.Subscriber.Id == userDevId);
-        
-        if (sub is not null)
-            subLevel = sub.Id;
 
-        return subLevel;
+        if (sub == null)
+            return 0;
+
+        await _context.Entry(sub).Reference(s => s.Tariff).LoadAsync();
+        return sub.Tariff.SubscriptionLevelId;
     }
 
     public bool HasSufficientSubscriptionLevel(Post post, Guid? userDevId, int userSubLevel)
@@ -171,73 +154,26 @@ public class SubscriptionService : ISubscriptionService
         return userDevId == post.DeveloperId || userSubLevel >= post.RequiredSubscriptionLevelId;
     }
 
-    public async Task<int> CreateProjectSubscription(DateTime endTime, bool isAutoRenewal, int tariffId, 
-        Guid subscriberId, Guid projectId)
+    public async Task<Subscription> CreateSubscription(DateTime endTime, bool isAutoRenewal, int tariffId, 
+        Guid subscriberId, Guid targetId, EntityType type)
     {
         var tariff = await _tariffService.GetTariff(tariffId);
         var subscriber = await _developerService.GetDeveloper(subscriberId);
-        var project = await _projectService.GetProject(projectId);
-        var subscription = new ProjectSubscription(endTime, isAutoRenewal, tariff, subscriber, project);
-        _context.ProjectSubscriptions.Add(subscription);
+        var subscription = new Subscription(endTime, isAutoRenewal, tariff, subscriber, targetId, type);
+        _context.Subscriptions.Add(subscription);
         await _context.SaveChangesAsync();
 
-        return subscription.Id;
+        return subscription;
     }
 
-    public async Task<int> CreateDeveloperSubscription(DateTime endTime, bool isAutoRenewal, int tariffId, 
-        Guid subscriberId, Guid developerId)
-    {
-        var tariff = await _tariffService.GetTariff(tariffId);
-        var subscriber = await _developerService.GetDeveloper(subscriberId);
-        var developer = await _developerService.GetDeveloper(developerId);
-        var subscription = new DeveloperSubscription(endTime, isAutoRenewal, tariff, subscriber, developer);
-        _context.DeveloperSubscriptions.Add(subscription);
-        await _context.SaveChangesAsync();
-
-        return subscription.Id;
-    }
-
-    public async Task<int> CreateCompanySubscription(DateTime endTime, bool isAutoRenewal, int tariffId, Guid subscriberId, Guid companyId)
-    {
-        var tariff = await _tariffService.GetTariff(tariffId);
-        var subscriber = await _developerService.GetDeveloper(subscriberId);
-        var company = await _companyService.GetCompany(companyId);
-        var subscription = new CompanySubscription(endTime, isAutoRenewal, tariff, subscriber, company);
-        _context.CompanySubscriptions.Add(subscription);
-        await _context.SaveChangesAsync();
-
-        return subscription.Id;
-    }
-    
     public async Task<int> UserSubscriptionLevel(Guid userId, Guid entityId, EntityType type)
     {
-        Subscription sub;
-        switch (type)
-        {
-            case EntityType.Developer:
-                sub = await _context.DeveloperSubscriptions
-                    .Include(s => s.Tariff)
-                    .FirstOrDefaultAsync(s => 
-                    s.Subscriber.Id == userId &&
-                    s.Developer.Id == entityId);
-                break;
-            case EntityType.Project:
-                sub = await _context.ProjectSubscriptions
-                    .Include(s => s.Tariff)
-                    .FirstOrDefaultAsync(s => 
-                    s.Subscriber.Id == userId &&
-                    s.Project.Id == entityId);
-                break;
-            case EntityType.Company:
-                sub = await _context.CompanySubscriptions
-                    .Include(s => s.Tariff)
-                    .FirstOrDefaultAsync(s => 
-                    s.Subscriber.Id == userId &&
-                    s.Company.Id == entityId);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(type), type, null);
-        }
+        Subscription sub = await _context.Subscriptions
+            .Include(s => s.Tariff)
+            .FirstOrDefaultAsync(s => 
+                s.EntityType == type &&
+                s.Subscriber.Id == userId &&
+                s.TargetId == entityId);
 
         return sub?.Tariff?.SubscriptionLevelId ?? 0;
     }

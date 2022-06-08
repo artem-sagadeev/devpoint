@@ -1,9 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Subscription } from '../../../../models/subscription';
 import { EntityType } from '../../../../models/entity';
 import * as moment from 'moment';
 import { MatDialog } from '@angular/material/dialog';
 import { UnsubscribeConfirmModalComponent } from './unsubscribe-confirm-modal/unsubscribe-confirm-modal.component';
+import { AppService } from '../../../../services/app.service';
 
 @Component({
   selector: 'app-subscription-partial',
@@ -16,7 +17,11 @@ export class SubscriptionPartialComponent implements OnInit {
   entityTypes = EntityType;
   endTime?: string;
   loading: boolean = true;
-  constructor(public dialog: MatDialog) {}
+  imagePath?: string;
+  subscriptionLevelName?: string;
+  @Output() cancelError = new EventEmitter<string>();
+  @Output() cancelSuccess = new EventEmitter<Subscription>();
+  constructor(public dialog: MatDialog, private app: AppService) {}
 
   ngOnInit(): void {
     this.link = '/';
@@ -34,13 +39,30 @@ export class SubscriptionPartialComponent implements OnInit {
     this.link += `/${this.subscription?.entity?.id ?? 0}`;
 
     this.endTime = moment(this.subscription?.endTime).format('DD.MM.YYYY');
+    if (this.subscription?.entity?.imagePath)
+      this.imagePath = this.app.getImagePath(
+        this.subscription.entity.imagePath,
+      );
+
+    if (this.subscription?.tariff)
+      this.app
+        .getSubscriptionLevelName()
+        .subscribe(
+          (table) =>
+            (this.subscriptionLevelName =
+              table[this.subscription?.tariff?.subscriptionLevelId!]),
+        );
   }
 
   openDialog() {
     const dialogRef = this.dialog.open(UnsubscribeConfirmModalComponent);
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log(`Dialog result: ${result}`);
+      if (result && this.subscription)
+        this.app.cancelSubscription(this.subscription.id).subscribe({
+          next: () => this.cancelSuccess.emit(this.subscription),
+          error: (err) => this.cancelError.emit(err),
+        });
     });
   }
 

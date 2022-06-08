@@ -7,4 +7,5 @@ export class Subscription {
   isAutoRenewal: boolean = false;
   tariff?: Tariff;
   entity?: Entity;
+  entityType?: EndingType;
 }

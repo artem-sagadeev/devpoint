@@ -1,7 +1,25 @@
 .entity-name {
   text-align: center;
+  font: 400 24px/32px Roboto, "Helvetica Neue", sans-serif;
   font-weight: bold;
   font-size: 2rem;
+  margin-block-start: 0.67em;
+  margin-block-end: 0.67em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  letter-spacing: normal;
+  color: black;
+  margin: 0 0 16px;
+}
+
+.entity-name-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.alert {
+  text-align: center;
 }
 
 .container {
@@ -29,6 +47,29 @@
   box-shadow: 0 1px 4px #0000001f, 0 2px 8px #00000014, 0 4px 6px #00000014;
   font-size: 1rem;
   transition: all .2s ease;
+}
+
+.auto-renewal {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  margin-bottom: 32px;
+}
+
+.auto-renewal-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fafafa;
+  padding: 8px 24px;
+  border-radius: 32px;
+  box-shadow: 0 6px 6px #00000014, 0 4px 16px #0000001a, 0 8px 12px #00000014;
+}
+
+.auto-renewal mat-slide-toggle {
+  margin-left: 16px;
 }
 
 .tariff-container:hover {

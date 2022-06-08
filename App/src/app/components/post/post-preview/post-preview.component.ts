@@ -13,7 +13,6 @@ export class PostPreviewComponent implements OnInit {
   requiredLevelName?: string;
   imagePath?: string;
   bgImagePath?: string;
-  @ViewChild('image') image?: HTMLImageElement;
 
   constructor(private app: AppService) {}
 

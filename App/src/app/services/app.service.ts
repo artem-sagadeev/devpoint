@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from './api.service';
-import { BehaviorSubject, map, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable, subscribeOn } from 'rxjs';
 import { plainToTyped } from 'type-transformer';
 import { Developer } from '../models/developer';
 import { Project } from '../models/project';
@@ -8,7 +8,9 @@ import { Company } from '../models/company';
 import { Post } from '../models/post';
 import * as moment from 'moment';
 import { HttpParams } from '@angular/common/http';
-import { PaymentEntry } from '../models/PaymentEntry';
+import { PaymentEntry, PaymentStatus } from '../models/payment-entry';
+import { EntityType } from '../models/entity';
+import { Subscription } from '../models/subscription';
 
 @Injectable({
   providedIn: 'root',
@@ -127,11 +129,17 @@ export class AppService {
       );
   }
 
-  public getDevelopers(search?: string, take: number = 10, skip: number = 0) {
+  public getDevelopers(
+    search?: string,
+    take: number = 10,
+    skip: number = 0,
+    follow: boolean = false,
+  ) {
     const params: Record<string, any> = {
       ...(search ? { search } : {}),
       take,
       skip,
+      isFollow: follow,
     };
 
     return this.apiService
@@ -218,11 +226,17 @@ export class AppService {
       );
   }
 
-  public getProjects(search?: string, take: number = 10, skip: number = 0) {
+  public getProjects(
+    search?: string,
+    take: number = 10,
+    skip: number = 0,
+    follow: boolean = false,
+  ) {
     const params: Record<string, any> = {
       ...(search ? { search } : {}),
       take,
       skip,
+      isFollow: follow,
     };
 
     return this.apiService
@@ -315,11 +329,17 @@ export class AppService {
       );
   }
 
-  public getCompanies(search?: string, take: number = 10, skip: number = 0) {
+  public getCompanies(
+    search?: string,
+    take: number = 10,
+    skip: number = 0,
+    follow: boolean = false,
+  ) {
     const params: Record<string, any> = {
       ...(search ? { search } : {}),
       take,
       skip,
+      isFollow: follow,
     };
 
     return this.apiService
@@ -371,6 +391,21 @@ export class AppService {
     return this.apiService.get(`/replenishments`);
   }
 
+  getAllBills(): Observable<PaymentEntry[]> {
+    return this.apiService.get('/bills').pipe(
+      map((bills) =>
+        bills.map((bill: any) => ({
+          id: bill.id,
+          amount: bill.amount,
+          dateTime: bill.dateTime,
+          status: bill.status,
+          subscriptionType:
+            this._subscriptionLevels[bill.tariff.subscriptionLevelId],
+        })),
+      ),
+    );
+  }
+
   public getPost(id: string) {
     return this.apiService.get(`/posts/${id}`).pipe(map(this.mapPost));
   }
@@ -381,5 +416,93 @@ export class AppService {
 
   public updatePost(postId: number, updateDto: any) {
     return this.apiService.put(`/posts/${postId}/update`, updateDto);
+  }
+
+  public getSubscription(targetId: string, type: EntityType) {
+    const params: Record<string, any> = {
+      targetId,
+      type,
+    };
+
+    return this.apiService
+      .get(
+        `/subscriptions/find`,
+        new HttpParams({
+          fromObject: params,
+        }),
+      )
+      .pipe(
+        map((sub) => ({
+          ...sub,
+          entity:
+            sub.entityType === EntityType.Developer
+              ? this.mapDeveloper(sub.entity)
+              : sub.entityType === EntityType.Project
+              ? this.mapProject(sub.entity)
+              : this.mapCompany(sub.entity),
+        })),
+      );
+  }
+
+  public getProjectSubscriptions() {
+    return this.apiService.get('/subscriptions/project').pipe(
+      map((subs) =>
+        subs.map((sub: any) => ({
+          ...sub,
+          entity: this.mapProject(sub.entity),
+        })),
+      ),
+    );
+  }
+
+  public getDeveloperSubscriptions() {
+    return this.apiService.get('/subscriptions/developer').pipe(
+      map((subs) =>
+        subs.map((sub: any) => ({
+          ...sub,
+          entity: this.mapDeveloper(sub.entity),
+        })),
+      ),
+    );
+  }
+
+  public getCompanySubscriptions() {
+    return this.apiService.get('/subscriptions/company').pipe(
+      map((subs) =>
+        subs.map((sub: any) => ({
+          ...sub,
+          entity: this.mapCompany(sub.entity),
+        })),
+      ),
+    );
+  }
+
+  public createSubscription(
+    targetId: string,
+    subscriptionLevelId: number,
+    type: EntityType,
+    isAutoRenewal?: boolean,
+  ) {
+    const createSubDto = {
+      targetId,
+      subscriptionLevelId,
+      type,
+      isAutoRenewal,
+    };
+
+    return this.apiService.post(`/subscriptions/create`, createSubDto);
+  }
+
+  public updateSubscription(subscriptionId: number, isAutoRenewable: boolean) {
+    const updateSubDto = {
+      subscriptionId,
+      isAutoRenewable,
+    };
+
+    return this.apiService.put(`/subscriptions/update`, updateSubDto);
+  }
+
+  public cancelSubscription(subscriptionId: number) {
+    return this.apiService.delete(`/subscriptions/${subscriptionId}/cancel`);
   }
 }

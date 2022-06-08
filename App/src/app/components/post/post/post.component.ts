@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Post } from '../../../models/post';
 import * as moment from 'moment';
+import { AppService } from '../../../services/app.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { catchError, firstValueFrom, from, switchMap, tap } from 'rxjs';
+import { Developer } from '../../../models/developer';
 
 @Component({
   selector: 'app-post',
@@ -8,23 +12,43 @@ import * as moment from 'moment';
   styleUrls: ['./post.component.css'],
 })
 export class PostComponent implements OnInit {
-  post?: Post = {
-    id: '1',
-    title: 'Talking Ben on PC!',
-    content:
-      '**Talking Ben** just released on PC for *Windows* and *Linux* on *Steam*! Only for **399$**!\n ### LIST\n - one\n - two\n - **three**\n\r```css\n.projects-container {\n' +
-      '    margin-top: 20px;\n' +
-      '    margin-bottom: 20px;\n' +
-      '    position: relative;\n' +
-      '}\n```',
-    tags: [{ text: 'News' }],
-    hasUserAccess: true,
-    date: moment().format('DD.MM.YYYY'),
-  };
+  postId?: string;
+  post?: Post;
   loading: boolean = true;
-  constructor() {}
+  imagePath?: string;
+  bgImagePath?: string;
 
-  ngOnInit(): void {}
+  constructor(
+    private app: AppService,
+    private router: Router,
+    private route: ActivatedRoute,
+  ) {}
+
+  ngOnInit(): void {
+    this.route.params
+      .pipe(
+        tap((params) => {
+          this.postId = params['id'];
+        }),
+        switchMap((_) => from(this.setPost())),
+        catchError((err) => this.router.navigateByUrl('/404')),
+      )
+      .subscribe();
+  }
+
+  async setPost() {
+    if (!this.postId) throw new Error();
+    this.post = await firstValueFrom(this.app.getPost(this.postId));
+
+    if (!this.post?.hasUserAccess) {
+      this.router.navigateByUrl('/403');
+    }
+
+    if (this.post?.imagePath)
+      this.imagePath = this.app.getImagePath(this.post.imagePath);
+
+    this.bgImagePath = `url(${this.imagePath ?? 'assets/img/empty.png'})`;
+  }
 
   onLoad() {
     this.loading = false;

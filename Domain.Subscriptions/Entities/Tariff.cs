@@ -1,21 +1,16 @@
-namespace Domain.Subscriptions.Entities;
+using Domain.Developers.Entities;
 
-public enum SubscriptionType
-{
-    Developer,
-    Project, 
-    Company
-}
+namespace Domain.Subscriptions.Entities;
 
 public class Tariff
 {
     public int Id { get; set; }
-    public int PricePerMonth { get; set; }
-    public SubscriptionType SubscriptionType { get; set; }
+    public double PricePerMonth { get; set; }
+    public EntityType SubscriptionType { get; set; }
     public int SubscriptionLevelId { get; set; }
     public SubscriptionLevel SubscriptionLevel { get; set; }
 
-    public Tariff(int id, int pricePerMonth, SubscriptionType subscriptionType, int subscriptionLevelId)
+    public Tariff(int id, double pricePerMonth, EntityType subscriptionType, int subscriptionLevelId)
     {
         Id = id;
         PricePerMonth = pricePerMonth;
@@ -23,7 +18,7 @@ public class Tariff
         SubscriptionLevelId = subscriptionLevelId;
     }
     
-    public Tariff(int pricePerMonth, SubscriptionType subscriptionType, SubscriptionLevel subscriptionLevel)
+    public Tariff(double pricePerMonth, EntityType subscriptionType, SubscriptionLevel subscriptionLevel)
     {
         PricePerMonth = pricePerMonth;
         SubscriptionType = subscriptionType;

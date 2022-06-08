@@ -72,6 +72,7 @@ import { CustomValidationService } from './services/custom-validation.service';
 import { Error404Component } from './components/error404/error404.component';
 import { Error403Component } from './components/error403/error403.component';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @NgModule({
   imports: [
@@ -99,6 +100,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
     MatChipsModule,
     MatIconModule,
     MatExpansionModule,
+    MatSlideToggleModule,
   ],
   declarations: [
     AppComponent,

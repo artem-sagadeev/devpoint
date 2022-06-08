@@ -3,6 +3,7 @@ using System;
 using Data.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Data.Core.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220608104451_SubscriptionAndBillsUpdate")]
+    partial class SubscriptionAndBillsUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -277,8 +279,8 @@ namespace Data.Core.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<double>("Amount")
-                        .HasColumnType("double precision");
+                    b.Property<int>("Amount")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("timestamp with time zone");
@@ -309,8 +311,8 @@ namespace Data.Core.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<double>("Amount")
-                        .HasColumnType("double precision");
+                    b.Property<int>("Amount")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("timestamp with time zone");
@@ -333,8 +335,8 @@ namespace Data.Core.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<double>("Amount")
-                        .HasColumnType("double precision");
+                    b.Property<int>("Amount")
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("DeveloperId")
                         .HasColumnType("uuid");
@@ -354,8 +356,8 @@ namespace Data.Core.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<double>("Amount")
-                        .HasColumnType("double precision");
+                    b.Property<int>("Amount")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("timestamp with time zone");
@@ -486,8 +488,8 @@ namespace Data.Core.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<double>("PricePerMonth")
-                        .HasColumnType("double precision");
+                    b.Property<int>("PricePerMonth")
+                        .HasColumnType("integer");
 
                     b.Property<int>("SubscriptionLevelId")
                         .HasColumnType("integer");
@@ -505,126 +507,126 @@ namespace Data.Core.Migrations
                         new
                         {
                             Id = 1,
-                            PricePerMonth = 0.0,
+                            PricePerMonth = 100,
                             SubscriptionLevelId = 1,
                             SubscriptionType = 1
                         },
                         new
                         {
                             Id = 2,
-                            PricePerMonth = 9.9900000000000002,
+                            PricePerMonth = 100,
                             SubscriptionLevelId = 2,
                             SubscriptionType = 1
                         },
                         new
                         {
                             Id = 3,
-                            PricePerMonth = 19.989999999999998,
+                            PricePerMonth = 100,
                             SubscriptionLevelId = 3,
                             SubscriptionType = 1
                         },
                         new
                         {
                             Id = 4,
-                            PricePerMonth = 39.990000000000002,
+                            PricePerMonth = 100,
                             SubscriptionLevelId = 4,
                             SubscriptionType = 1
                         },
                         new
                         {
                             Id = 5,
-                            PricePerMonth = 0.0,
+                            PricePerMonth = 0,
                             SubscriptionLevelId = 5,
                             SubscriptionType = 1
                         },
                         new
                         {
                             Id = 6,
-                            PricePerMonth = 0.0,
+                            PricePerMonth = 0,
                             SubscriptionLevelId = 6,
                             SubscriptionType = 1
                         },
                         new
                         {
                             Id = 7,
-                            PricePerMonth = 0.0,
+                            PricePerMonth = 100,
                             SubscriptionLevelId = 1,
                             SubscriptionType = 0
                         },
                         new
                         {
                             Id = 8,
-                            PricePerMonth = 9.9900000000000002,
+                            PricePerMonth = 100,
                             SubscriptionLevelId = 2,
                             SubscriptionType = 0
                         },
                         new
                         {
                             Id = 9,
-                            PricePerMonth = 19.989999999999998,
+                            PricePerMonth = 100,
                             SubscriptionLevelId = 3,
                             SubscriptionType = 0
                         },
                         new
                         {
                             Id = 10,
-                            PricePerMonth = 39.990000000000002,
+                            PricePerMonth = 100,
                             SubscriptionLevelId = 4,
                             SubscriptionType = 0
                         },
                         new
                         {
                             Id = 11,
-                            PricePerMonth = 0.0,
+                            PricePerMonth = 0,
                             SubscriptionLevelId = 5,
                             SubscriptionType = 0
                         },
                         new
                         {
                             Id = 12,
-                            PricePerMonth = 0.0,
+                            PricePerMonth = 0,
                             SubscriptionLevelId = 6,
                             SubscriptionType = 0
                         },
                         new
                         {
                             Id = 13,
-                            PricePerMonth = 0.0,
+                            PricePerMonth = 100,
                             SubscriptionLevelId = 1,
                             SubscriptionType = 2
                         },
                         new
                         {
                             Id = 14,
-                            PricePerMonth = 9.9900000000000002,
+                            PricePerMonth = 100,
                             SubscriptionLevelId = 2,
                             SubscriptionType = 2
                         },
                         new
                         {
                             Id = 15,
-                            PricePerMonth = 19.989999999999998,
+                            PricePerMonth = 100,
                             SubscriptionLevelId = 3,
                             SubscriptionType = 2
                         },
                         new
                         {
                             Id = 16,
-                            PricePerMonth = 39.990000000000002,
+                            PricePerMonth = 100,
                             SubscriptionLevelId = 4,
                             SubscriptionType = 2
                         },
                         new
                         {
                             Id = 17,
-                            PricePerMonth = 0.0,
+                            PricePerMonth = 0,
                             SubscriptionLevelId = 5,
                             SubscriptionType = 2
                         },
                         new
                         {
                             Id = 18,
-                            PricePerMonth = 0.0,
+                            PricePerMonth = 0,
                             SubscriptionLevelId = 6,
                             SubscriptionType = 2
                         });

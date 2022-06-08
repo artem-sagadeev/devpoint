@@ -7,17 +7,17 @@ namespace Services.Subscriptions.Subscriptions;
 
 public interface ISubscriptionService
 {
-    public Task<List<Subscription>> GetAllSubscriptions();
-
-    public Task<List<Subscription>> GetSubscriptions(List<int> subscriptionIds);
-
+    public IQueryable<Subscription> GetAllSubscriptions();
+    
     public Task<Subscription> GetSubscription(int subscriptionId);
+    
+    public Task<Subscription> FindSubscription(Guid subscriberId, Guid targetId, EntityType type);
 
-    public IQueryable<ProjectSubscription> GetProjectSubscriptions(Guid projectId);
+    public IQueryable<Subscription> GetProjectSubscriptions(Guid projectId);
 
-    public IQueryable<DeveloperSubscription> GetDeveloperSubscriptions(Guid developerId);
+    public IQueryable<Subscription> GetDeveloperSubscriptions(Guid developerId);
 
-    public IQueryable<CompanySubscription> GetCompanySubscriptions(Guid companyId);
+    public IQueryable<Subscription> GetCompanySubscriptions(Guid companyId);
 
     public Task<Tariff> GetSubscriptionTariff(int subscriptionId);
 
@@ -30,12 +30,6 @@ public interface ISubscriptionService
     
     public Task<int> UserSubscriptionLevel(Guid userId, Guid entityId, EntityType type);
 
-    public Task<int> CreateProjectSubscription(DateTime endTime, bool isAutoRenewal, int tariffId, Guid subscriberId,
-        Guid projectId);
-
-    public Task<int> CreateDeveloperSubscription(DateTime endTime, bool isAutoRenewal, int tariffId, Guid subscriberId,
-        Guid developerId);
-    
-    public Task<int> CreateCompanySubscription(DateTime endTime, bool isAutoRenewal, int tariffId, Guid subscriberId,
-        Guid companyId); 
+    public Task<Subscription> CreateSubscription(DateTime endTime, bool isAutoRenewal, int tariffId, Guid subscriberId,
+        Guid targetId, EntityType type);
 }

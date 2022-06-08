@@ -37,7 +37,7 @@ public class DeveloperController : Controller
 
     [HttpGet]
     [Route("search")]
-    public async Task<IActionResult> GetAllDevelopers(string? search = null, int take = 10, int skip = 0)
+    public async Task<IActionResult> GetAllDevelopers(string? search = null, int take = 10, int skip = 0, bool isFollow = false)
     {
         var devId = User.GetDevId();
         var query = _developerService.GetAllDevelopers();
@@ -45,10 +45,8 @@ public class DeveloperController : Controller
         if (!string.IsNullOrEmpty(search))
             query = query.Where(entity => entity.Name.ToLower().Contains(search.ToLower()));
 
-        var totalCount = await query.CountAsync();
-        query = query.Take(take).Skip(skip);
+        var totalCount = 0;
         query = query.Include(e => e.Tags);
-        
         List<DeveloperDto> result;
         if (devId != null)
         {
@@ -60,9 +58,9 @@ public class DeveloperController : Controller
                     equals new { eId = follow.Target, dId = follow.FollowerId, type = follow.EntityType }
                     into follows
                 from ef in follows.DefaultIfEmpty()
-                join sub in _context.DeveloperSubscriptions
-                    on new { eId = entity.Id, dId = devIdVal }
-                    equals new { eId = sub.DeveloperId, dId = sub.SubscriberId }
+                join sub in _context.Subscriptions
+                    on new { eId = entity.Id, dId = devIdVal, type = EntityType.Developer }
+                    equals new { eId = sub.TargetId, dId = sub.SubscriberId, type = sub.EntityType }
                     into subs
                 from es in subs.DefaultIfEmpty()
                 select new
@@ -71,6 +69,12 @@ public class DeveloperController : Controller
                     isFollowing = ef != null,
                     userSubscriptionLevel = es == null ? 0 : es.Tariff.SubscriptionLevelId
                 };
+            
+            if (isFollow)
+                developers = developers.Where(o => o.isFollowing);
+
+            totalCount = await developers.CountAsync();
+            developers = developers.OrderBy(o => o.entity.Id).Take(take).Skip(skip);
 
             result = (await developers.ToListAsync())
                 .Select(o => new DeveloperDto(o.entity)
@@ -79,8 +83,12 @@ public class DeveloperController : Controller
                     UserSubscriptionLevel = o.userSubscriptionLevel
                 }).ToList();
         }
-        else result = (await query.ToListAsync())
+        else {
+            totalCount = await query.CountAsync();
+            query = query.OrderBy(o => o.Id).Take(take).Skip(skip);
+            result = (await query.ToListAsync())
             .Select(c => new DeveloperDto(c)).ToList();
+        }
         
         return Json(
             new

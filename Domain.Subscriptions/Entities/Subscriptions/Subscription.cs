@@ -10,14 +10,23 @@ public class Subscription
     public Tariff Tariff { get; set; }
     public Developer Subscriber { get; set; }
     public Guid SubscriberId { get; set; }
+    
+    public Guid TargetId { get; set; }
+    public EntityType EntityType { get; set; }
 
-    protected Subscription(DateTime endTime, bool isAutoRenewal, Tariff tariff, Developer subscriber)
+    public Subscription(
+        DateTime endTime, bool isAutoRenewal, Tariff tariff, 
+        Developer subscriber, Guid targetId, EntityType entityType)
     {
         EndTime = endTime;
         IsAutoRenewal = isAutoRenewal;
         Tariff = tariff;
         Subscriber = subscriber;
+        TargetId = targetId;
+        EntityType = entityType;
     }
     
-    protected Subscription() {}
+    public Subscription()
+    {
+    }
 }

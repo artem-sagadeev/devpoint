@@ -38,15 +38,13 @@ public class CompanyController : Controller
 
     [HttpGet]
     [Route("")]
-    public async Task<IActionResult> GetAllCompanies(string? search = null, int take = 10, int skip = 0)
+    public async Task<IActionResult> GetAllCompanies(string? search = null, int take = 10, int skip = 0, bool isFollow = false)
     {
         var devId = User.GetDevId();
         var query = _companyService.GetAllCompanies();
         if (!string.IsNullOrEmpty(search))
             query = query.Where(e => e.Name.ToLower().Contains(search.ToLower()));
-        var totalCount = await query.CountAsync();
-
-        query = query.Take(take).Skip(skip);
+        var totalCount = 0;
         query = query.Include(e => e.Tags);
         List<CompanyDto> result;
         if (devId != null)
@@ -59,9 +57,9 @@ public class CompanyController : Controller
                     equals new { eId = follow.Target, dId = follow.FollowerId, type = follow.EntityType }
                     into follows
                 from ef in follows.DefaultIfEmpty()
-                join sub in _context.CompanySubscriptions
-                    on new { eId = entity.Id, dId = devId.Value }
-                    equals new { eId = sub.CompanyId, dId = sub.SubscriberId }
+                join sub in _context.Subscriptions
+                    on new { eId = entity.Id, dId = devId.Value, type = EntityType.Company }
+                    equals new { eId = sub.TargetId, dId = sub.SubscriberId, type = sub.EntityType }
                     into subs
                 from es in subs.DefaultIfEmpty()
                 select new
@@ -71,15 +69,25 @@ public class CompanyController : Controller
                     userSubscriptionLevel = es == null ? 0 : es.Tariff.SubscriptionLevelId
                 };
 
+            if (isFollow)
+                companies = companies.Where(o => o.isFollowing);
+
+            totalCount = await companies.CountAsync();
+            companies = companies.OrderBy(o => o.entity.Id).Take(take).Skip(skip);
+
             result = (await companies.ToListAsync())
-                .Select(o => new CompanyDto(o.entity)
-                {
-                    IsFollowing = o.isFollowing,
-                    UserSubscriptionLevel = o.userSubscriptionLevel
-                }).ToList();
+            .Select(o => new CompanyDto(o.entity)
+            {
+                IsFollowing = o.isFollowing,
+                UserSubscriptionLevel = o.userSubscriptionLevel
+            }).ToList();
         }
-        else result = (await query.ToListAsync())
+        else { 
+            totalCount = await query.CountAsync();
+            query = query.OrderBy(o => o.Id).Take(take).Skip(skip);
+            result = (await query.ToListAsync())
             .Select(c => new CompanyDto(c)).ToList();
+        }
 
         return Json(
             new
@@ -210,11 +218,12 @@ public class CompanyController : Controller
                 return res;
             }).ToList());
         var tariff = await _context.Tariffs.FirstOrDefaultAsync(t =>
-            t.SubscriptionLevelId == 6 && t.SubscriptionType == SubscriptionType.Company);
+            t.SubscriptionLevelId == 6 && t.SubscriptionType == EntityType.Company);
         if (tariff == null)
             throw new Exception("Tariff not found");
-        var sub = await _subscriptionService.CreateCompanySubscription(DateTime.MaxValue, true, tariff.Id, createCompanyDto.OwnerId,
-            companyId);
+        var sub = await _subscriptionService.CreateSubscription(DateTime.MaxValue, true, 
+            tariff.Id, createCompanyDto.OwnerId,
+            companyId, EntityType.Company);
 
         return Ok(companyId);
     }
@@ -305,18 +314,19 @@ public class CompanyController : Controller
         
         await _companyService.UpdateDevelopers(companyId, developerIds);
 
-        var subsToDelete = await _context.CompanySubscriptions
-            .Where(s => s.CompanyId == companyId &&
-                        !developerIds.Contains(s.SubscriberId)
-                        && s.Tariff.SubscriptionLevelId == 5)
+        var subsToDelete = await _subscriptionService
+            .GetCompanySubscriptions(companyId)
+            .Where(s => 
+                !developerIds.Contains(s.SubscriberId)
+                && s.Tariff.SubscriptionLevelId == 5)
             .ToListAsync();
 
         _context.RemoveRange(subsToDelete);
         await _context.SaveChangesAsync();
         
-        var subs = await _context.CompanySubscriptions
-            .Where(s => s.CompanyId == companyId &&
-                        developerIds.Contains(s.SubscriberId))
+        var subs = await _subscriptionService
+            .GetCompanySubscriptions(companyId)
+            .Where(s => developerIds.Contains(s.SubscriberId))
             .Include(s => s.Tariff)
             .ToListAsync();
         var devSubs = subs.Join(developerIds, sub => sub.SubscriberId, id => id,
@@ -334,11 +344,12 @@ public class CompanyController : Controller
             }
 
             var tariff = await _context.Tariffs.FirstOrDefaultAsync(t =>
-                t.SubscriptionLevelId == 5 && t.SubscriptionType == SubscriptionType.Company);
+                t.SubscriptionLevelId == 5 && t.SubscriptionType == EntityType.Company);
             if (tariff == null)
                 throw new Exception("Tariff not found");
-            var sub = await _subscriptionService.CreateCompanySubscription(DateTime.MaxValue, true, tariff.Id, devId,
-                companyId);
+            var sub = await _subscriptionService.CreateSubscription(DateTime.MaxValue, true, 
+                tariff.Id, devId,
+                companyId, EntityType.Company);
         }
 
         return Ok();

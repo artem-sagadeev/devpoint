@@ -9,6 +9,7 @@
             <div style="margin-bottom: 15px;">
                 <div class='form'>
                     <input maxlength='6' [(ngModel)]='deposit' placeholder="Money"
+                           type='number'
                            class="form-control input-search"/>
                     <app-devpoint-button autoWidth [bold]="false" (buttonClick)='onDeposit()'>Deposit</app-devpoint-button>
                 </div>
@@ -36,9 +37,10 @@
       <div class='history-label'>
         <h2 class='no-margin'>History</h2>
         <app-devpoint-side-nav vertical
+                               borderStyle='round'
                                no-stick
                                [(page)]='page'
-                               [pages]="['Withdrawals', 'Deposits']"></app-devpoint-side-nav>
+                               [pages]="['Withdrawals', 'Deposits', 'Bills']"></app-devpoint-side-nav>
       </div>
     </div>
 
@@ -60,6 +62,23 @@
               <div>{{ entry.amount }}$</div>
               <div>{{ entry.id }}</div>
               <div>{{ entry.dateTime | date: 'dd.MM.YYYY HH:mm' }}</div>
+            </div>
+            <mat-divider></mat-divider>
+          </ng-container>
+        </ng-container>
+
+        <ng-container *ngIf='page === 2 && bills'>
+          <ng-container *ngFor='let entry of bills'>
+            <div class='entry bill'>
+              <div>{{ entry.amount }}$</div>
+              <div>{{ entry.id }}</div>
+              <div>{{ entry.dateTime | date: 'dd.MM.YYYY HH:mm' }}</div>
+              <div class='sub-info'>
+                <div><b>{{ entry.subscriptionType }}</b></div>
+              </div>
+              <div [class.failed]='entry.status === 1'
+                   [class.success]='entry.status === 0'
+              >{{ entry.status === 0 ? 'Success' : 'Failed' }}</div>
             </div>
             <mat-divider></mat-divider>
           </ng-container>

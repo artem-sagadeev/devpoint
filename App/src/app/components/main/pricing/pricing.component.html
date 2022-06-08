@@ -1,6 +1,20 @@
 <div class='container'>
-  <h1 [routerLink]='link' class='entity-name' *ngIf='entity'>{{ entity.name }}</h1>
+  <div class='message'>
+    <div class="alert alert-success" role="alert" *ngIf='successMessage'>
+      {{ successMessage }}
+    </div>
+    <app-devpoint-errors [errors]='errors'></app-devpoint-errors>
+  </div>
+  <div class='entity-name-container'>
+    <a [routerLink]='link' class='entity-name' *ngIf='entity'>{{ entity.name }}</a>
+  </div>
   <h1 style='text-align: center'>Pricing</h1>
+    <div class='auto-renewal'>
+      <div class='auto-renewal-wrapper'>
+        <div class='label'>Enable auto-renewal</div>
+        <mat-slide-toggle color='primary' [checked]='isAutoRenewable' (change)='onAutoRenewableChange($event)'></mat-slide-toggle>
+      </div>
+    </div>
     <div class='tariff-layout'>
       <div class='tariff-container'>
         <p class='tariff-banner'></p>
@@ -13,10 +27,10 @@
                                devpoint-style='transparent-outline'
                                size='large'
                                class='cta'
-                               [disabled]='currentSubscription?.tariff?.id === 0'
-                               (click)='onSubscribe(0)'
+                               [disabled]='currentSubscription?.tariff?.subscriptionLevelId === 2'
+                               (click)='onSubscribe(2)'
           >
-            {{ currentSubscription?.tariff?.id === 0 ? 'Current tariff' : (currentSubscription?.tariff?.id ?? 0) > 0 ? 'Downgrade' : 'Subscribe' }}
+            {{ currentSubscription?.tariff?.subscriptionLevelId === 2 ? 'Current tariff' : (currentSubscription?.tariff?.subscriptionLevelId ?? 2) > 2 ? 'Downgrade' : 'Subscribe' }}
           </app-devpoint-button>
           <p class='tariff-description'>Gives access to paid publications.
           </p>
@@ -42,10 +56,10 @@
                                devpoint-style='transparent-outline'
                                size='large'
                                class='cta'
-                               [disabled]='currentSubscription?.tariff?.id === 1'
-                               (click)='onSubscribe(1)'
+                               [disabled]='currentSubscription?.tariff?.subscriptionLevelId === 3'
+                               (click)='onSubscribe(3)'
           >
-            {{ currentSubscription?.tariff?.id === 1 ? 'Current tariff' : currentSubscription?.tariff?.id === 2 ? 'Downgrade' : currentSubscription?.tariff?.id === 0 ? 'Upgrade' : 'Subscribe' }}
+            {{ currentSubscription?.tariff?.subscriptionLevelId === 3 ? 'Current tariff' : currentSubscription?.tariff?.subscriptionLevelId === 4 ? 'Downgrade' : currentSubscription?.tariff?.subscriptionLevelId === 2 ? 'Upgrade' : 'Subscribe' }}
           </app-devpoint-button>
           <p class='tariff-description'>Gives access to paid publications.
           </p>
@@ -74,10 +88,10 @@
                                devpoint-style='transparent-outline'
                                size='large'
                                class='cta'
-                               [disabled]='currentSubscription?.tariff?.id === 2'
-                               (click)='onSubscribe(2)'
+                               [disabled]='currentSubscription?.tariff?.subscriptionLevelId === 4'
+                               (click)='onSubscribe(4)'
           >
-            {{ currentSubscription?.tariff?.id === 2 ? 'Current tariff' : currentSubscription?.tariff?.id === 0 || currentSubscription?.tariff?.id === 1 ? 'Upgrade' : 'Subscribe' }}
+            {{ currentSubscription?.tariff?.subscriptionLevelId === 4 ? 'Current tariff' : (currentSubscription?.tariff?.subscriptionLevelId ?? 4) < 4 ? 'Upgrade' : 'Subscribe' }}
           </app-devpoint-button>
           <p class='tariff-description'>Gives access to paid publications.
           </p>

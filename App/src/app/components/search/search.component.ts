@@ -49,6 +49,8 @@ export class SearchComponent implements OnInit {
   take: number = 4;
   page: number = 0;
 
+  follow: boolean = false;
+
   pageSize: number = 4 * 3;
   pageOptions = [4 * 3, 8 * 3, 16 * 3];
 
@@ -73,7 +75,10 @@ export class SearchComponent implements OnInit {
       map((value) => this._filter(value)),
     );
 
-    this.onSearchChange();
+    this.route.queryParams.subscribe((params) => {
+      this.follow = params['follow'] ?? false;
+      this.onSearchChange();
+    });
   }
 
   private async fetchNames() {
@@ -105,13 +110,28 @@ export class SearchComponent implements OnInit {
     const typeCount = this.getTypesCount();
     forkJoin([
       this.searchingDevelopers
-        ? this.app.getDevelopers(this.search, this.take, this.page * this.take)
+        ? this.app.getDevelopers(
+            this.search,
+            this.take,
+            this.page * this.take,
+            this.follow,
+          )
         : of(null),
       this.searchingProjects
-        ? this.app.getProjects(this.search, this.take, this.page * this.take)
+        ? this.app.getProjects(
+            this.search,
+            this.take,
+            this.page * this.take,
+            this.follow,
+          )
         : of(null),
       this.searchingCompanies
-        ? this.app.getCompanies(this.search, this.take, this.page * this.take)
+        ? this.app.getCompanies(
+            this.search,
+            this.take,
+            this.page * this.take,
+            this.follow,
+          )
         : of(null),
     ]).subscribe(([developers, projects, companies]) => {
       this.totalDevCount = developers?.totalCount ?? 0;
