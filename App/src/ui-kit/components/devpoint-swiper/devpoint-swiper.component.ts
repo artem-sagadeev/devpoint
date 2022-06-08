@@ -14,6 +14,7 @@ export class DevpointSwiperComponent implements OnInit {
   @Input() routerParams?: any;
   @Input() public addLink?: boolean = true;
   @Input() label?: string;
+  @Input() hide?: boolean = false;
 
   constructor() {}
 

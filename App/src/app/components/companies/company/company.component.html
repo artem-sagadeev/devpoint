@@ -4,7 +4,7 @@
 
 <div class="projects-container container" *ngIf='company'>
   <mat-accordion>
-    <mat-expansion-panel hideToggle *ngIf='projects'>
+    <mat-expansion-panel hideToggle (expandedChange)='hideProjects = !$event' *ngIf='projects'>
       <mat-expansion-panel-header>
         <div class='swiper-info'>
           <div>Projects</div> <div class='swiper-count'>{{ projects.length }}</div>
@@ -15,11 +15,12 @@
                            [addLink]='isOwned'
                            [items]='projects'
                            label='Projects'
+                           [hide]='hideProjects'
       >
       </app-devpoint-swiper>
     </mat-expansion-panel>
 
-    <mat-expansion-panel hideToggle *ngIf='developers'>
+    <mat-expansion-panel hideToggle (expandedChange)='hideDevelopers = !$event' *ngIf='developers'>
       <mat-expansion-panel-header>
         <div class='swiper-info'>
           <div>Developers</div> <div class='swiper-count'>{{ developers.length }}</div>
@@ -30,6 +31,7 @@
                            [addLink]='isOwned'
                            [items]='developers'
                            label='Developers'
+                           [hide]='hideDevelopers'
       >
       </app-devpoint-swiper>
     </mat-expansion-panel>

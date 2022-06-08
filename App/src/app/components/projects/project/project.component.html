@@ -4,7 +4,7 @@
 
 <div class="developers-container container" *ngIf='developers && project'>
   <mat-accordion>
-    <mat-expansion-panel hideToggle>
+    <mat-expansion-panel hideToggle (expandedChange)='hideDevelopers = !$event'>
       <mat-expansion-panel-header>
         <div class='swiper-info'>
           <div>Developers</div> <div class='swiper-count'>{{ developers.length }}</div>
@@ -15,6 +15,7 @@
                            [addLink]='isOwned'
                            [items]='developers'
                            label='Developers'
+                           [hide]='hideDevelopers'
       >
       </app-devpoint-swiper>
     </mat-expansion-panel>

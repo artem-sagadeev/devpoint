@@ -37,6 +37,9 @@ export class DeveloperComponent implements OnInit {
   developer?: Developer;
   currentUser?: Developer;
 
+  hideProjects: boolean = true;
+  hideCompanies: boolean = true;
+
   projects: DevpointMiniPreviewProps[] = [];
   companies: DevpointMiniPreviewProps[] = [];
 

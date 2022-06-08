@@ -23,6 +23,9 @@ export class CompanyComponent implements OnInit {
   company?: Company;
   companyId?: string;
 
+  hideProjects: boolean = true;
+  hideDevelopers: boolean = true;
+
   projects: DevpointMiniPreviewProps[] = [];
   developers: DevpointMiniPreviewProps[] = [];
 

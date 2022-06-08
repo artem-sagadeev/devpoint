@@ -39,6 +39,8 @@ export class ProjectComponent implements OnInit {
     null,
   );
 
+  hideDevelopers: boolean = true;
+
   developers: DevpointMiniPreviewProps[] = [];
 
   constructor(

@@ -29,18 +29,22 @@ a:hover {
   transition: fill 0.16s ease-in-out;
 }
 
+.on-hide {
+  fill: transparent!important;
+}
+
 .nav-button:hover .on-hover {
   fill: black;
 }
 
 .button-prev {
-  top: calc(50%);
-  left: calc(10% + 6px);;
+  top: calc(50% + 12px);
+  left: 0;
   right: auto;
 }
 
 .button-next {
-  top: calc(50%);
-  right: calc(10% + 12px);
+  top: calc(50% + 12px);
+  right: 0;
   left: auto;
 }
