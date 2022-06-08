@@ -5,7 +5,7 @@ namespace Web.API.Controllers.Payments.DTOs;
 public class WalletDto
 {
     public int Id { get; set; }
-    public int Amount { get; set; }
+    public double Amount { get; set; }
 
     public WalletDto(Wallet wallet)
     {

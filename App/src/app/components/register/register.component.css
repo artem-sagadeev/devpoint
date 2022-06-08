@@ -9,9 +9,9 @@
 
 .register {
     background-image: url('/assets/img/register-background.png');
-    height: 843px;
     background-repeat: round;
     background-size: 100%;
+    min-height: calc(100vh - 70px);
 }
 
 .register .form-control{
@@ -20,6 +20,19 @@
     border-radius: 20px;
     border-color: #5a5a5a;
     border-style: solid;
+}
+
+.register .form-control.error {
+  border-color: #cf222e;
+}
+
+.text-danger {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 20px;
+  padding: 3px 12px;
+  margin-top: 4px;
+  display: inline-block;
+  backdrop-filter: blur(3px);
 }
 
 .register label{
@@ -32,10 +45,8 @@
     margin: auto;
 }
 
-.btn-github{
-    background-color: white;
-    font-weight: bold;
-    margin: 27px auto 14px auto;
-    display: block;
+app-devpoint-button {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
 }
-

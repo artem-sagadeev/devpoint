@@ -4,7 +4,7 @@ namespace Services.Developers.Developers;
 
 public interface IDeveloperService
 {
-    public Task<List<Developer>> GetAllDevelopers();
+    public IQueryable<Developer> GetAllDevelopers();
     
     public Task<List<Developer>> GetDevelopers(List<Guid> developerIds);
 
@@ -20,7 +20,7 @@ public interface IDeveloperService
 
     public Task<List<Tag>> GetDeveloperTags(Guid developerId);
  
-    public Task<Guid> CreateDeveloper(string name);
+    public Task<Developer> CreateDeveloper(string name, string description);
 
     public Task UpdateName(Guid developerId, string name);
 
@@ -28,5 +28,5 @@ public interface IDeveloperService
 
     public Task UpdateCompanies(Guid developerId, List<Guid> companyIds);
 
-    public Task UpdateTags(Guid developerId, List<int> tagIds);
+    public Task UpdateTags(Guid developerId, List<Tag> tags);
 }

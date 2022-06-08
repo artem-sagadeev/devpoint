@@ -1,31 +1,107 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { RouterModule } from '@angular/router';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HeaderComponent } from './components/shared/header/header.component';
-import { HomeComponent } from './components/main/home/home.component';
-import { FooterComponent } from './components/shared/footer/footer.component';
-import { LoginComponent } from './components/login/login.component';
-import { RegisterComponent } from './components/register/register.component';
-import { AboutUsComponent } from './components/main/about-us/about-us.component';
-import { PricingComponent } from './components/main/pricing/pricing.component';
-import { Service } from './services/shared.service';
-import { HttpClientModule } from '@angular/common/http';
-import { DeveloperPreviewComponent } from './components/developers/developer-preview/developer-preview.component';
-import { DeveloperComponent } from './components/developers/developer/developer.component';
-import { SearchComponent } from './components/search/search.component';
-import { ProjectComponent } from './components/projects/project/project.component';
-import { ProjectPreviewComponent } from './components/projects/project-preview/project-preview.component';
-import { CompanyComponent } from './components/companies/company/company.component';
-import { CompanyPreviewComponent } from './components/companies/company-preview/company-preview.component';
-import { ProfileComponent } from './components/account/profile/profile.component';
-import { WalletComponent } from './components/account/wallet/wallet.component';
-import { SettingsComponent } from './components/account/settings/settings.component';
-import { SubscriptionsComponent } from './components/account/subscriptions/subscriptions.component';
+import { UiKitModule } from '@ui-kit';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import {
+  HeaderComponent,
+  HomeComponent,
+  FooterComponent,
+  LoginComponent,
+  RegisterComponent,
+  AboutUsComponent,
+  PricingComponent,
+  DeveloperPreviewComponent,
+  DeveloperComponent,
+  SearchComponent,
+  ProjectComponent,
+  ProjectPreviewComponent,
+  CompanyComponent,
+  CompanyPreviewComponent,
+  ProfileComponent,
+  WalletComponent,
+  SubscriptionsComponent,
+  PostComponent,
+  PostPreviewComponent,
+  PreviewBaseComponent,
+} from './components';
+import { SwiperModule } from 'swiper/angular';
+import { PostsContainerComponent } from './components/post/posts-container/posts-container.component';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { MarkdownModule } from 'ngx-markdown';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { AddPostComponent } from './components/post/add-post/add-post.component';
+import { SubscriptionPartialComponent } from './components/account/subscriptions/subscription-partial/subscription-partial.component';
+import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDividerModule } from '@angular/material/divider';
+import { UnsubscribeConfirmModalComponent } from './components/account/subscriptions/subscription-partial/unsubscribe-confirm-modal/unsubscribe-confirm-modal.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { SubscribeConfirmModalComponent } from './components/main/pricing/subscribe-confirm-modal/subscribe-confirm-modal.component';
+import { NuMarkdownModule } from '@ng-util/markdown';
+import { LocalStorageService } from './services/local-storage.service';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { CreateProjectComponent } from './components/projects/create-project/create-project.component';
+import { CreateCompanyComponent } from './components/companies/create-company/create-company.component';
+import { EditCompanyComponent } from './components/companies/edit-company/edit-company.component';
+import { EditProjectComponent } from './components/projects/edit-project/edit-project.component';
+import { EditPostComponent } from './components/post/edit-post/edit-post.component';
+import { TextFieldModule } from '@angular/cdk/text-field';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatIconModule } from '@angular/material/icon';
+import { ProfileEditComponent } from './components/account/profile-edit/profile-edit.component';
+import { TagsInputComponent } from './components/tags-input/tags-input.component';
+import { DeveloperEntryComponent } from './components/developers/developer-entry/developer-entry.component';
+import { DeleteConfirmationComponent } from './components/companies/edit-company/delete-confirmation/delete-confirmation.component';
+import { AddDeveloperModalComponent } from './components/companies/edit-company/add-developer-modal/add-developer-modal.component';
+import { JwtService } from './services/jwt.service';
+import { UserService } from './services/user.service';
+import { ApiService } from './services/api.service';
+import { AppService } from './services/app.service';
+import { HttpTokenInterceptor } from './interceptors/http.token.interceptor';
+import { AuthResolver } from './resolvers/auth.resolver';
+import { AuthGuard } from './guards/auth.guard';
+import { NoAuthGuard } from './guards/no-auth.guard';
+import { CustomValidationService } from './services/custom-validation.service';
+import { Error404Component } from './components/error404/error404.component';
+import { Error403Component } from './components/error403/error403.component';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @NgModule({
+  imports: [
+    HttpClientModule,
+    BrowserModule,
+    AppRoutingModule,
+    UiKitModule,
+    SwiperModule,
+    InfiniteScrollModule,
+    MarkdownModule.forRoot(),
+    MatPaginatorModule,
+    BrowserAnimationsModule,
+    FormsModule,
+    MatAutocompleteModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatMenuModule,
+    MatProgressSpinnerModule,
+    MatDividerModule,
+    MatDialogModule,
+    NuMarkdownModule.forRoot(),
+    MatButtonToggleModule,
+    TextFieldModule,
+    MatFormFieldModule,
+    MatChipsModule,
+    MatIconModule,
+    MatExpansionModule,
+    MatSlideToggleModule,
+  ],
   declarations: [
     AppComponent,
     HeaderComponent,
@@ -37,7 +113,6 @@ import { SubscriptionsComponent } from './components/account/subscriptions/subsc
     PricingComponent,
     DeveloperPreviewComponent,
     DeveloperComponent,
-    DeveloperPreviewComponent,
     SearchComponent,
     ProjectComponent,
     ProjectPreviewComponent,
@@ -45,27 +120,40 @@ import { SubscriptionsComponent } from './components/account/subscriptions/subsc
     CompanyPreviewComponent,
     ProfileComponent,
     WalletComponent,
-    SettingsComponent,
-    SubscriptionsComponent
+    SubscriptionsComponent,
+    PostComponent,
+    PostPreviewComponent,
+    PreviewBaseComponent,
+    PostsContainerComponent,
+    AddPostComponent,
+    SubscriptionPartialComponent,
+    UnsubscribeConfirmModalComponent,
+    SubscribeConfirmModalComponent,
+    CreateProjectComponent,
+    CreateCompanyComponent,
+    EditCompanyComponent,
+    EditProjectComponent,
+    EditPostComponent,
+    ProfileEditComponent,
+    TagsInputComponent,
+    DeveloperEntryComponent,
+    DeleteConfirmationComponent,
+    AddDeveloperModalComponent,
+    Error404Component,
+    Error403Component,
   ],
-  imports: [
-    HttpClientModule,
-    BrowserModule,
-    AppRoutingModule,
-    RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'login', component: LoginComponent },
-      { path: 'register', component: RegisterComponent },
-      { path: 'about-us', component: AboutUsComponent },
-      { path: 'pricing', component: PricingComponent },
-      { path: 'search', component: SearchComponent },
-      { path: 'developer/:id', component: DeveloperComponent},
-      { path: 'project/:id', component: DeveloperComponent},
-      { path: 'company/:id', component: DeveloperComponent},
-      { path: 'wallet', component: WalletComponent }
-    ])
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: HttpTokenInterceptor, multi: true },
+    LocalStorageService,
+    JwtService,
+    UserService,
+    ApiService,
+    AppService,
+    AuthResolver,
+    AuthGuard,
+    NoAuthGuard,
+    CustomValidationService,
   ],
-  providers: [Service],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

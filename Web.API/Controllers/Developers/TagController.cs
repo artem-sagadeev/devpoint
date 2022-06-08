@@ -20,9 +20,9 @@ public class TagController : Controller
     public async Task<IActionResult> GetAllTags()
     {
         var tags = await _tagService.GetAllTags();
-        var result = tags.Select(t => new TagDto(t));
+        var result = tags.Select(t => new TagDto(t)).ToList();
 
-        return Ok(result);
+        return Json(result);
     }
 
     [HttpGet]

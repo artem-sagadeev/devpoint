@@ -3,6 +3,7 @@ using Domain.Developers.Entities;
 using Domain.Payments.Entities;
 using Domain.Subscriptions.Entities;
 using Domain.Subscriptions.Entities.Subscriptions;
+using Domain.Users.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -12,14 +13,15 @@ public class ApplicationContext : DbContext
 {
     private readonly IConfiguration _configuration;
     
+    public DbSet<User> Users { get; set; }
+
     public DbSet<Developer> Developers { get; set; }
     public DbSet<Project> Projects { get; set; }
     public DbSet<Company> Companies { get; set; }
     public DbSet<Tag> Tags { get; set; }
 
-    public DbSet<CompanySubscription> CompanySubscriptions { get; set; }
-    public DbSet<ProjectSubscription> ProjectSubscriptions { get; set; }
-    public DbSet<DeveloperSubscription> DeveloperSubscriptions { get; set; }
+    public DbSet<Follow> Follows { get; set; }
+    public DbSet<Subscription> Subscriptions { get; set; }
     public DbSet<SubscriptionLevel> SubscriptionLevels { get; set; }
     public DbSet<Tariff> Tariffs { get; set; }
     

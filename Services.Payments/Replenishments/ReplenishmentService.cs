@@ -16,9 +16,9 @@ public class ReplenishmentService : IReplenishmentService
         _walletService = walletService;
     }
 
-    public async Task<List<Replenishment>> GetAllReplenishments()
+    public IQueryable<Replenishment> GetAllReplenishments()
     {
-        var replenishments = await _context.Replenishments.ToListAsync();
+        var replenishments = _context.Replenishments;
 
         return replenishments;
     }
@@ -47,13 +47,14 @@ public class ReplenishmentService : IReplenishmentService
         return replenishment.Wallet;
     }
 
-    public async Task<int> CreateReplenishment(int amount, int walletId)
+    public async Task<Replenishment> CreateReplenishment(int amount, int walletId)
     {
         var wallet = await _walletService.GetWallet(walletId);
         var replenishment = new Replenishment(amount, wallet);
         _context.Replenishments.Add(replenishment);
+        wallet.Amount += amount;
         await _context.SaveChangesAsync();
 
-        return replenishment.Id;
+        return replenishment;
     }
 }

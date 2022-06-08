@@ -56,16 +56,6 @@ public class CommentController : Controller
         return Ok(result);
     }
 
-    [HttpGet]
-    [Route("{commentId:int}/post")]
-    public async Task<IActionResult> GetCommentPost(int commentId)
-    {
-        var post = await _commentService.GetCommentPost(commentId);
-        var result = new PostDto(post);
-
-        return Ok(result);
-    }
-
     [HttpPost]
     [Route("create")]
     public async Task<IActionResult> CreateComment(string text, Guid authorId, int postId)

@@ -4,7 +4,7 @@ namespace Services.Developers.Companies;
 
 public interface ICompanyService
 {
-    public Task<List<Company>> GetAllCompanies();
+    public IQueryable<Company> GetAllCompanies();
 
     public Task<List<Company>> GetCompanies(List<Guid> companyIds);
 
@@ -18,8 +18,8 @@ public interface ICompanyService
 
     public Task<List<Tag>> GetCompanyTags(Guid companyId);
 
-    public Task<Guid> CreateCompany(string name, Guid ownerId);
-    
+    public Task<Guid> CreateCompany(string name, string description, Guid ownerId, List<Tag> tags);
+
     public Task UpdateName(Guid companyId, string name);
 
     public Task UpdateCoordinates(Guid companyId, decimal latitude, decimal longitude);
@@ -28,5 +28,5 @@ public interface ICompanyService
 
     public Task UpdateProjects(Guid companyId, List<Guid> projectIds);
 
-    public Task UpdateTags(Guid companyId, List<int> tagIds);
+    public Task UpdateTags(Guid companyId, List<Tag> tags);
 }

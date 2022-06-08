@@ -1,3 +1,4 @@
+using Domain.Developers.Entities;
 using Domain.Subscriptions.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Services.Subscriptions.Tariffs;
@@ -58,7 +59,7 @@ public class TariffController : Controller
 
     [HttpPost]
     [Route("create")]
-    public async Task<IActionResult> CreateTariff(int pricePerMonth, SubscriptionType subscriptionType,
+    public async Task<IActionResult> CreateTariff(int pricePerMonth, EntityType subscriptionType,
         int subscriptionLevelId)
     {
         var tariffId = await _tariffService.CreateTariff(pricePerMonth, subscriptionType, subscriptionLevelId);

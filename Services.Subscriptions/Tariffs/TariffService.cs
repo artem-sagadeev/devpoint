@@ -1,4 +1,5 @@
 using Data.Core;
+using Domain.Developers.Entities;
 using Domain.Subscriptions.Entities;
 using Microsoft.EntityFrameworkCore;
 using Services.Subscriptions.SubscriptionLevels;
@@ -37,6 +38,14 @@ public class TariffService : ITariffService
         return tariff;
     }
 
+    public async Task<Tariff> GetTariff(int subLevelId, EntityType subscriptionType)
+    {
+        var tariff = await _context.Tariffs.FirstOrDefaultAsync(t =>
+            t.SubscriptionLevelId == subLevelId && t.SubscriptionType == subscriptionType);
+
+        return tariff;
+    }
+
     public async Task<SubscriptionLevel> GetTariffSubscriptionLevel(int tariffId)
     {
         var tariff = await GetTariff(tariffId);
@@ -45,7 +54,7 @@ public class TariffService : ITariffService
         return tariff.SubscriptionLevel;
     }
 
-    public async Task<int> CreateTariff(int pricePerMonth, SubscriptionType subscriptionType, int subscriptionLevelId)
+    public async Task<int> CreateTariff(int pricePerMonth, EntityType subscriptionType, int subscriptionLevelId)
     {
         var subscriptionLevel = await _subscriptionLevelService.GetSubscriptionLevel(subscriptionLevelId);
         var tariff = new Tariff(pricePerMonth, subscriptionType, subscriptionLevel);

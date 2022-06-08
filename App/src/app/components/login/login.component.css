@@ -9,9 +9,9 @@
 
 .login {
     background-image: url('/assets/img/login-background.png');
-    height: 843px;
     background-repeat: round;
     background-size: 100%;
+    min-height: calc(100vh - 70px);
 }
 
 /*.login-main{
@@ -26,13 +26,6 @@
     border-radius: 20px;
     border-color: #5a5a5a;
     border-style: solid;
-}
-
-.btn-github{
-    background-color: white;
-    font-weight: bold;
-    margin: 27px auto 14px auto;
-    display: block;
 }
 
 #account{
@@ -51,4 +44,7 @@
     font-size: 16px;
 }
 
-
+app-devpoint-button {
+  display: flex;
+  justify-content: center;
+}

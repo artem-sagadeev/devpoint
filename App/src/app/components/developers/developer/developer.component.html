@@ -1,11 +1,49 @@
-<div class="container">
-    <app-developer-preview [developer]="developer"></app-developer-preview>
+<div class="container" *ngIf='developer'>
+  <app-developer-preview [developer]="developer" [isCurrent]='isProfile' large></app-developer-preview>
 </div>
 
-<div class="projects-slider container">
-    Projects
+<div class="projects-container container" *ngIf='developer'>
+  <mat-accordion>
+    <mat-expansion-panel hideToggle *ngIf='projects'>
+      <mat-expansion-panel-header>
+        <div class='swiper-info'>
+          <div>Projects</div> <div class='swiper-count'>{{ projects.length }}</div>
+        </div>
+      </mat-expansion-panel-header>
+      <app-devpoint-swiper createLink='/create-project'
+                           [routerParams]="{type: 'developer', id: developer.id }"
+                           [addLink]='isProfile'
+                           [items]='projects'
+                           label='Projects'
+      >
+      </app-devpoint-swiper>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel hideToggle *ngIf='companies'>
+      <mat-expansion-panel-header>
+        <div class='swiper-info'>
+          <div>Companies</div> <div class='swiper-count'>{{ companies.length }}</div>
+        </div>
+      </mat-expansion-panel-header>
+      <app-devpoint-swiper [addLink]='false'
+                           [items]='companies'
+                           label='Companies'
+      >
+      </app-devpoint-swiper>
+    </mat-expansion-panel>
+  </mat-accordion>
 </div>
 
-<div class="container">
-    Posts
+<div class='container' *ngIf='developer && isProfile'>
+  <app-devpoint-button fullWidth
+                       routerLink='/add-post'
+                       [queryParams]="{type: 'developer', id: developer.id }"
+  >
+    Add post
+  </app-devpoint-button>
 </div>
+
+
+
+<app-posts-container [getRequest]='getPostsRequest'>
+</app-posts-container>

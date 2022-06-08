@@ -117,24 +117,36 @@ namespace Data.Core.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid>("DeveloperId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ProjectId")
+                    b.Property<int>("EntityType")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OwnerId")
                         .HasColumnType("uuid");
 
                     b.Property<int>("RequiredSubscriptionLevelId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Text")
+                    b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DeveloperId");
-
-                    b.HasIndex("ProjectId");
 
                     b.HasIndex("RequiredSubscriptionLevelId");
 
@@ -146,6 +158,14 @@ namespace Data.Core.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<decimal?>("Latitude")
                         .HasColumnType("numeric");
@@ -160,6 +180,9 @@ namespace Data.Core.Migrations
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uuid");
 
+                    b.Property<int>("SubscriberCount")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OwnerId");
@@ -173,9 +196,20 @@ namespace Data.Core.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("SubscriberCount")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -191,12 +225,23 @@ namespace Data.Core.Migrations
                     b.Property<Guid?>("CompanyId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("SubscriberCount")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -232,10 +277,16 @@ namespace Data.Core.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Amount")
+                    b.Property<double>("Amount")
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Status")
                         .HasColumnType("integer");
 
-                    b.Property<int>("SubscriptionId")
+                    b.Property<int>("TariffId")
                         .HasColumnType("integer");
 
                     b.Property<int>("WalletId")
@@ -243,7 +294,7 @@ namespace Data.Core.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SubscriptionId");
+                    b.HasIndex("TariffId");
 
                     b.HasIndex("WalletId");
 
@@ -258,8 +309,11 @@ namespace Data.Core.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Amount")
-                        .HasColumnType("integer");
+                    b.Property<double>("Amount")
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("WalletId")
                         .HasColumnType("integer");
@@ -279,8 +333,8 @@ namespace Data.Core.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Amount")
-                        .HasColumnType("integer");
+                    b.Property<double>("Amount")
+                        .HasColumnType("double precision");
 
                     b.Property<Guid>("DeveloperId")
                         .HasColumnType("uuid");
@@ -300,8 +354,11 @@ namespace Data.Core.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Amount")
-                        .HasColumnType("integer");
+                    b.Property<double>("Amount")
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("WalletId")
                         .HasColumnType("integer");
@@ -311,6 +368,30 @@ namespace Data.Core.Migrations
                     b.HasIndex("WalletId");
 
                     b.ToTable("Withdrawals");
+                });
+
+            modelBuilder.Entity("Domain.Subscriptions.Entities.Follow", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("EntityType")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("FollowerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Target")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FollowerId");
+
+                    b.ToTable("Follows");
                 });
 
             modelBuilder.Entity("Domain.Subscriptions.Entities.SubscriptionLevel", b =>
@@ -349,6 +430,16 @@ namespace Data.Core.Migrations
                         {
                             Id = 4,
                             Name = "Pro"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Team member"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "Owner"
                         });
                 });
 
@@ -360,17 +451,19 @@ namespace Data.Core.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("EntityType")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsAutoRenewal")
                         .HasColumnType("boolean");
 
                     b.Property<Guid>("SubscriberId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TargetId")
                         .HasColumnType("uuid");
 
                     b.Property<int>("TariffId")
@@ -382,9 +475,7 @@ namespace Data.Core.Migrations
 
                     b.HasIndex("TariffId");
 
-                    b.ToTable("Subscription");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("Subscription");
+                    b.ToTable("Subscriptions");
                 });
 
             modelBuilder.Entity("Domain.Subscriptions.Entities.Tariff", b =>
@@ -395,8 +486,8 @@ namespace Data.Core.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("PricePerMonth")
-                        .HasColumnType("integer");
+                    b.Property<double>("PricePerMonth")
+                        .HasColumnType("double precision");
 
                     b.Property<int>("SubscriptionLevelId")
                         .HasColumnType("integer");
@@ -414,87 +505,153 @@ namespace Data.Core.Migrations
                         new
                         {
                             Id = 1,
-                            PricePerMonth = 100,
+                            PricePerMonth = 0.0,
                             SubscriptionLevelId = 1,
                             SubscriptionType = 1
                         },
                         new
                         {
                             Id = 2,
-                            PricePerMonth = 100,
+                            PricePerMonth = 9.9900000000000002,
                             SubscriptionLevelId = 2,
                             SubscriptionType = 1
                         },
                         new
                         {
                             Id = 3,
-                            PricePerMonth = 100,
+                            PricePerMonth = 19.989999999999998,
                             SubscriptionLevelId = 3,
                             SubscriptionType = 1
                         },
                         new
                         {
                             Id = 4,
-                            PricePerMonth = 100,
+                            PricePerMonth = 39.990000000000002,
                             SubscriptionLevelId = 4,
                             SubscriptionType = 1
                         },
                         new
                         {
                             Id = 5,
-                            PricePerMonth = 100,
-                            SubscriptionLevelId = 1,
-                            SubscriptionType = 0
+                            PricePerMonth = 0.0,
+                            SubscriptionLevelId = 5,
+                            SubscriptionType = 1
                         },
                         new
                         {
                             Id = 6,
-                            PricePerMonth = 100,
-                            SubscriptionLevelId = 2,
-                            SubscriptionType = 0
+                            PricePerMonth = 0.0,
+                            SubscriptionLevelId = 6,
+                            SubscriptionType = 1
                         },
                         new
                         {
                             Id = 7,
-                            PricePerMonth = 100,
-                            SubscriptionLevelId = 3,
+                            PricePerMonth = 0.0,
+                            SubscriptionLevelId = 1,
                             SubscriptionType = 0
                         },
                         new
                         {
                             Id = 8,
-                            PricePerMonth = 100,
-                            SubscriptionLevelId = 4,
+                            PricePerMonth = 9.9900000000000002,
+                            SubscriptionLevelId = 2,
                             SubscriptionType = 0
                         },
                         new
                         {
                             Id = 9,
-                            PricePerMonth = 100,
+                            PricePerMonth = 19.989999999999998,
+                            SubscriptionLevelId = 3,
+                            SubscriptionType = 0
+                        },
+                        new
+                        {
+                            Id = 10,
+                            PricePerMonth = 39.990000000000002,
+                            SubscriptionLevelId = 4,
+                            SubscriptionType = 0
+                        },
+                        new
+                        {
+                            Id = 11,
+                            PricePerMonth = 0.0,
+                            SubscriptionLevelId = 5,
+                            SubscriptionType = 0
+                        },
+                        new
+                        {
+                            Id = 12,
+                            PricePerMonth = 0.0,
+                            SubscriptionLevelId = 6,
+                            SubscriptionType = 0
+                        },
+                        new
+                        {
+                            Id = 13,
+                            PricePerMonth = 0.0,
                             SubscriptionLevelId = 1,
                             SubscriptionType = 2
                         },
                         new
                         {
-                            Id = 10,
-                            PricePerMonth = 100,
+                            Id = 14,
+                            PricePerMonth = 9.9900000000000002,
                             SubscriptionLevelId = 2,
                             SubscriptionType = 2
                         },
                         new
                         {
-                            Id = 11,
-                            PricePerMonth = 100,
+                            Id = 15,
+                            PricePerMonth = 19.989999999999998,
                             SubscriptionLevelId = 3,
                             SubscriptionType = 2
                         },
                         new
                         {
-                            Id = 12,
-                            PricePerMonth = 100,
+                            Id = 16,
+                            PricePerMonth = 39.990000000000002,
                             SubscriptionLevelId = 4,
                             SubscriptionType = 2
+                        },
+                        new
+                        {
+                            Id = 17,
+                            PricePerMonth = 0.0,
+                            SubscriptionLevelId = 5,
+                            SubscriptionType = 2
+                        },
+                        new
+                        {
+                            Id = 18,
+                            PricePerMonth = 0.0,
+                            SubscriptionLevelId = 6,
+                            SubscriptionType = 2
                         });
+                });
+
+            modelBuilder.Entity("Domain.Users.Entities.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("DeveloperId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Login")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeveloperId");
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("ProjectTag", b =>
@@ -510,42 +667,6 @@ namespace Data.Core.Migrations
                     b.HasIndex("TagsId");
 
                     b.ToTable("ProjectTag");
-                });
-
-            modelBuilder.Entity("Domain.Subscriptions.Entities.Subscriptions.CompanySubscription", b =>
-                {
-                    b.HasBaseType("Domain.Subscriptions.Entities.Subscriptions.Subscription");
-
-                    b.Property<Guid>("CompanyId")
-                        .HasColumnType("uuid");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasDiscriminator().HasValue("CompanySubscription");
-                });
-
-            modelBuilder.Entity("Domain.Subscriptions.Entities.Subscriptions.DeveloperSubscription", b =>
-                {
-                    b.HasBaseType("Domain.Subscriptions.Entities.Subscriptions.Subscription");
-
-                    b.Property<Guid>("DeveloperId")
-                        .HasColumnType("uuid");
-
-                    b.HasIndex("DeveloperId");
-
-                    b.HasDiscriminator().HasValue("DeveloperSubscription");
-                });
-
-            modelBuilder.Entity("Domain.Subscriptions.Entities.Subscriptions.ProjectSubscription", b =>
-                {
-                    b.HasBaseType("Domain.Subscriptions.Entities.Subscriptions.Subscription");
-
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uuid");
-
-                    b.HasIndex("ProjectId");
-
-                    b.HasDiscriminator().HasValue("ProjectSubscription");
                 });
 
             modelBuilder.Entity("CompanyDeveloper", b =>
@@ -635,12 +756,6 @@ namespace Data.Core.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Developers.Entities.Project", "Project")
-                        .WithMany()
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Domain.Subscriptions.Entities.SubscriptionLevel", "RequiredSubscriptionLevel")
                         .WithMany()
                         .HasForeignKey("RequiredSubscriptionLevelId")
@@ -648,8 +763,6 @@ namespace Data.Core.Migrations
                         .IsRequired();
 
                     b.Navigation("Developer");
-
-                    b.Navigation("Project");
 
                     b.Navigation("RequiredSubscriptionLevel");
                 });
@@ -684,9 +797,9 @@ namespace Data.Core.Migrations
 
             modelBuilder.Entity("Domain.Payments.Entities.Bill", b =>
                 {
-                    b.HasOne("Domain.Subscriptions.Entities.Subscriptions.Subscription", "Subscription")
+                    b.HasOne("Domain.Subscriptions.Entities.Tariff", "Tariff")
                         .WithMany()
-                        .HasForeignKey("SubscriptionId")
+                        .HasForeignKey("TariffId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -696,7 +809,7 @@ namespace Data.Core.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Subscription");
+                    b.Navigation("Tariff");
 
                     b.Navigation("Wallet");
                 });
@@ -734,6 +847,17 @@ namespace Data.Core.Migrations
                     b.Navigation("Wallet");
                 });
 
+            modelBuilder.Entity("Domain.Subscriptions.Entities.Follow", b =>
+                {
+                    b.HasOne("Domain.Developers.Entities.Developer", "Follower")
+                        .WithMany()
+                        .HasForeignKey("FollowerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Follower");
+                });
+
             modelBuilder.Entity("Domain.Subscriptions.Entities.Subscriptions.Subscription", b =>
                 {
                     b.HasOne("Domain.Developers.Entities.Developer", "Subscriber")
@@ -764,6 +888,17 @@ namespace Data.Core.Migrations
                     b.Navigation("SubscriptionLevel");
                 });
 
+            modelBuilder.Entity("Domain.Users.Entities.User", b =>
+                {
+                    b.HasOne("Domain.Developers.Entities.Developer", "Developer")
+                        .WithMany()
+                        .HasForeignKey("DeveloperId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Developer");
+                });
+
             modelBuilder.Entity("ProjectTag", b =>
                 {
                     b.HasOne("Domain.Developers.Entities.Project", null)
@@ -777,39 +912,6 @@ namespace Data.Core.Migrations
                         .HasForeignKey("TagsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Domain.Subscriptions.Entities.Subscriptions.CompanySubscription", b =>
-                {
-                    b.HasOne("Domain.Developers.Entities.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Company");
-                });
-
-            modelBuilder.Entity("Domain.Subscriptions.Entities.Subscriptions.DeveloperSubscription", b =>
-                {
-                    b.HasOne("Domain.Developers.Entities.Developer", "Developer")
-                        .WithMany()
-                        .HasForeignKey("DeveloperId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Developer");
-                });
-
-            modelBuilder.Entity("Domain.Subscriptions.Entities.Subscriptions.ProjectSubscription", b =>
-                {
-                    b.HasOne("Domain.Developers.Entities.Project", "Project")
-                        .WithMany()
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("Domain.Content.Entities.Post", b =>

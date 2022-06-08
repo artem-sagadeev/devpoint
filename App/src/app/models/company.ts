@@ -1,7 +1,9 @@
-import { Tag } from "./tag";
+import { Entity, EntityType } from './entity';
 
-export class Company {
-    id: string = ""
-    name: string = "";
-    tags: Tag[] = []
+export class Company extends Entity {
+  override get type(): EntityType {
+    return EntityType.Company;
+  }
+
+  ownerId: string = '';
 }

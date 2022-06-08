@@ -1,5 +1,16 @@
+using Data.Core;
+using Domain.Developers.Entities;
+using Domain.Payments.Entities;
+using Domain.Subscriptions.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Services.Developers.Companies;
+using Services.Developers.Developers;
+using Services.Developers.Projects;
+using Services.Payments.Bills;
+using Services.Payments.Wallets;
 using Services.Subscriptions.Subscriptions;
+using Services.Subscriptions.Tariffs;
 using Web.API.Controllers.Developers.DTOs;
 using Web.API.Controllers.Subscriptions.DTOs;
 
@@ -10,30 +21,122 @@ namespace Web.API.Controllers.Subscriptions;
 public class SubscriptionController : Controller
 {
     private readonly ISubscriptionService _subscriptionService;
+    private readonly IBillService _billService;
+    private readonly IWalletService _walletService;
+    private readonly ITariffService _tariffService;
+    private readonly ICompanyService _companyService;
+    private readonly IProjectService _projectService;
+    private readonly IDeveloperService _developerService;
+    private readonly ApplicationContext _context;
 
-    public SubscriptionController(ISubscriptionService subscriptionService)
+    public SubscriptionController(
+        ISubscriptionService subscriptionService, 
+        IBillService billService, IWalletService walletService, 
+        ITariffService tariffService, ICompanyService companyService, 
+        IProjectService projectService, IDeveloperService developerService, 
+        ApplicationContext context)
     {
         _subscriptionService = subscriptionService;
+        _billService = billService;
+        _walletService = walletService;
+        _tariffService = tariffService;
+        _companyService = companyService;
+        _projectService = projectService;
+        _developerService = developerService;
+        _context = context;
     }
 
     [HttpGet]
-    [Route("")]
-    public async Task<IActionResult> GetAllSubscriptions()
+    [Route("company")]
+    public async Task<IActionResult> GetCompanySubscriptions()
     {
-        var subscriptions = await _subscriptionService.GetAllSubscriptions();
-        var result = subscriptions.Select(subscription => new SubscriptionDto(subscription));
+        var devId = User.GetDevId();
+        if (devId == null)
+            return Unauthorized();
 
-        return Ok(result);
+        var query = _subscriptionService
+            .GetAllSubscriptions()
+            .Where(sub => sub.SubscriberId == devId && 
+                                    sub.EntityType == EntityType.Company)
+            .Include(sub => sub.Tariff);
+
+        var fullQuery =
+            from sub in query
+            join company in _companyService.GetAllCompanies()
+                on sub.TargetId equals company.Id
+            select new { sub, company };
+
+        var subscriptions = await fullQuery.ToListAsync();
+        var result = subscriptions
+            .Select(o => new SubscriptionDto(o.sub)
+            {
+                Entity = EntityDto.FromCompany(o.company)
+            })
+            .ToList();
+
+        return Json(result);
     }
-
+    
     [HttpGet]
-    [Route("{subscriptionIds}")]
-    public async Task<IActionResult> GetSubscriptions(List<int> subscriptionIds)
+    [Route("project")]
+    public async Task<IActionResult> GetProjectSubscriptions()
     {
-        var subscriptions = await _subscriptionService.GetSubscriptions(subscriptionIds);
-        var result = subscriptions.Select(subscription => new SubscriptionDto(subscription));
+        var devId = User.GetDevId();
+        if (devId == null)
+            return Unauthorized();
 
-        return Ok(result);
+        var query = _subscriptionService
+            .GetAllSubscriptions()
+            .Where(sub => sub.SubscriberId == devId && 
+                          sub.EntityType == EntityType.Project)
+            .Include(sub => sub.Tariff);
+
+        var fullQuery =
+            from sub in query
+            join project in _projectService.GetAllProjects()
+                on sub.TargetId equals project.Id
+            select new { sub, project };
+
+        var subscriptions = await fullQuery.ToListAsync();
+        var result = subscriptions
+            .Select(o => new SubscriptionDto(o.sub)
+            {
+                Entity = EntityDto.FromProject(o.project)
+            })
+            .ToList();
+
+        return Json(result);
+    }
+    
+    [HttpGet]
+    [Route("developer")]
+    public async Task<IActionResult> GetDeveloperSubscriptions()
+    {
+        var devId = User.GetDevId();
+        if (devId == null)
+            return Unauthorized();
+
+        var query = _subscriptionService
+            .GetAllSubscriptions()
+            .Where(sub => sub.SubscriberId == devId && 
+                          sub.EntityType == EntityType.Developer)
+            .Include(sub => sub.Tariff);
+
+        var fullQuery =
+            from sub in query
+            join developer in _developerService.GetAllDevelopers()
+                on sub.TargetId equals developer.Id
+            select new { sub, developer };
+
+        var subscriptions = await fullQuery.ToListAsync();
+        var result = subscriptions
+            .Select(o => new SubscriptionDto(o.sub)
+            {
+                Entity = EntityDto.FromDeveloper(o.developer)
+            })
+            .ToList();
+
+        return Json(result);
     }
 
     [HttpGet]
@@ -47,33 +150,43 @@ public class SubscriptionController : Controller
     }
     
     [HttpGet]
-    [Route("{projectSubscriptionId:int}")]
-    public async Task<IActionResult> GetProjectSubscription(int projectSubscriptionId)
+    [Route("find")]
+    public async Task<IActionResult> GetSubscription(Guid targetId, EntityType type)
     {
-        var subscription = await _subscriptionService.GetProjectSubscription(projectSubscriptionId);
-        var result = new SubscriptionDto(subscription);
+        var devId = User.GetDevId();
+        if (devId == null)
+            return Unauthorized();
 
-        return Ok(result);
-    }
-    
-    [HttpGet]
-    [Route("{developerSubscriptionId:int}")]
-    public async Task<IActionResult> GetDeveloperSubscription(int developerSubscriptionId)
-    {
-        var subscription = await _subscriptionService.GetDeveloperSubscription(developerSubscriptionId);
-        var result = new SubscriptionDto(subscription);
+        var subscription = await _subscriptionService.FindSubscription(devId.Value, targetId, type);
+        if (subscription == null)
+            return NotFound();
 
-        return Ok(result);
-    }
-    
-    [HttpGet]
-    [Route("{companySubscriptionId:int}")]
-    public async Task<IActionResult> GetCompanySubscription(int companySubscriptionId)
-    {
-        var subscription = await _subscriptionService.GetCompanySubscription(companySubscriptionId);
-        var result = new SubscriptionDto(subscription);
+        EntityDto entityDto;
 
-        return Ok(result);
+        switch (subscription.EntityType)
+        {
+            case EntityType.Developer:
+                var developer = await _developerService.GetDeveloper(subscription.TargetId);
+                entityDto = EntityDto.FromDeveloper(developer);
+                break;
+            case EntityType.Project:
+                var project = await _projectService.GetProject(subscription.TargetId);
+                entityDto = EntityDto.FromProject(project);
+                break;
+            case EntityType.Company:
+                var company = await _companyService.GetCompany(subscription.TargetId);
+                entityDto = EntityDto.FromCompany(company);
+                break;
+            default:
+                return BadRequest();
+        }
+
+        var result = new SubscriptionDto(subscription)
+        {
+            Entity = entityDto
+        };
+
+        return Json(result);
     }
 
     [HttpGet]
@@ -97,35 +210,83 @@ public class SubscriptionController : Controller
     }
 
     [HttpPost]
-    [Route("create/project-subscription")]
-    public async Task<IActionResult> CreateProjectSubscription(DateTime endTime, bool isAutoRenewal, int tariffId,
-        Guid subscriberId, Guid projectId)
+    [Route("create")]
+    public async Task<IActionResult> CreateSubscription(CreateSubscriptionDto createSubscriptionDto)
     {
-        var subscriptionId = await _subscriptionService
-            .CreateProjectSubscription(endTime, isAutoRenewal, tariffId, subscriberId, projectId);
+        var devId = User.GetDevId();
+        if (devId == null)
+            return Unauthorized();
 
-        return Ok(subscriptionId);
+        var tariff =
+            await _tariffService.GetTariff(createSubscriptionDto.SubscriptionLevelId, createSubscriptionDto.Type);
+        if (tariff == null)
+            return BadRequest("Tariff does not exist");
+
+        var existingSubscription = await _subscriptionService.FindSubscription(devId.Value,
+            createSubscriptionDto.TargetId, createSubscriptionDto.Type);
+        
+        var subscription = await _subscriptionService
+            .CreateSubscription(
+                DateTime.UtcNow.AddMonths(1), createSubscriptionDto.IsAutoRenewal, tariff.Id, 
+                devId.Value, createSubscriptionDto.TargetId, createSubscriptionDto.Type);
+        
+        var wallet = await _walletService.GetDeveloperWallet(devId.Value) ?? 
+                     await _walletService.CreateWallet(devId.Value);
+
+        var bill = await _billService.CreateBill(wallet, subscription);
+        if (bill.Status == PaymentStatus.Failed)
+            return BadRequest("Insufficient Funds");
+
+        if (existingSubscription != null)
+        {
+            _context.Remove(existingSubscription);
+            await _context.SaveChangesAsync();
+        }
+
+        return Ok(bill);
+    }
+
+    [HttpPut]
+    [Route("update")]
+    public async Task<IActionResult> UpdateSubscription([FromBody] UpdateSubscriptionDto updateSubscriptionDto)
+    {
+        var devId = User.GetDevId();
+        if (devId == null)
+            return Unauthorized();
+
+        var subscription = await _subscriptionService.GetSubscription(updateSubscriptionDto.SubscriptionId);
+
+        if (subscription == null)
+            return NotFound();
+
+        if (subscription.SubscriberId != devId)
+            return Forbid();
+
+        subscription.IsAutoRenewal = updateSubscriptionDto.IsAutoRenewable;
+        await _context.SaveChangesAsync();
+
+        return Ok();
     }
     
-    [HttpPost]
-    [Route("create/developer-subscription")]
-    public async Task<IActionResult> CreateDeveloperSubscription(DateTime endTime, bool isAutoRenewal, int tariffId,
-        Guid subscriberId, Guid projectId)
+    [HttpDelete]
+    [Route("{subscriptionId:int}/cancel")]
+    public async Task<IActionResult> CancelSubscription(int subscriptionId)
     {
-        var subscriptionId = await _subscriptionService
-            .CreateDeveloperSubscription(endTime, isAutoRenewal, tariffId, subscriberId, projectId);
+        var devId = User.GetDevId();
+        if (devId == null)
+            return Unauthorized();
 
-        return Ok(subscriptionId);
-    }
-    
-    [HttpPost]
-    [Route("create/company-subscription")]
-    public async Task<IActionResult> CreateCompanySubscription(DateTime endTime, bool isAutoRenewal, int tariffId,
-        Guid subscriberId, Guid projectId)
-    {
-        var subscriptionId = await _subscriptionService
-            .CreateCompanySubscription(endTime, isAutoRenewal, tariffId, subscriberId, projectId);
+        var subscription = await _subscriptionService.GetSubscription(subscriptionId);
 
-        return Ok(subscriptionId);
+        if (subscription == null)
+            return NotFound();
+
+        if (subscription.SubscriberId != devId)
+            return Forbid();
+
+        _context.Remove(subscription);
+        await _context.SaveChangesAsync();
+
+        return Ok();
     }
 }

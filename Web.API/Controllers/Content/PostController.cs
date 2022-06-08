@@ -1,5 +1,8 @@
+using Data.Core;
+using Domain.Developers.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Services.Content.Posts;
+using Services.Subscriptions.Subscriptions;
 using Web.API.Controllers.Content.DTOs;
 using Web.API.Controllers.Developers.DTOs;
 using Web.API.Controllers.Subscriptions.DTOs;
@@ -11,30 +14,14 @@ namespace Web.API.Controllers.Content;
 public class PostController : Controller
 {
     private readonly IPostService _postService;
+    private readonly ISubscriptionService _subscriptionService;
+    private readonly ApplicationContext _context;
 
-    public PostController(IPostService postService)
+    public PostController(IPostService postService, ISubscriptionService subscriptionService, ApplicationContext context)
     {
         _postService = postService;
-    }
-
-    [HttpGet]
-    [Route("")]
-    public async Task<IActionResult> GetAllPosts()
-    {
-        var posts = await _postService.GetAllPosts();
-        var result = posts.Select(p => new PostDto(p));
-
-        return Ok(result);
-    }
-
-    [HttpGet]
-    [Route("{postIds}")]
-    public async Task<IActionResult> GetPosts(List<int> postIds)
-    {
-        var posts = await _postService.GetPosts(postIds);
-        var result = posts.Select(p => new PostDto(p));
-        
-        return Ok(result);
+        _subscriptionService = subscriptionService;
+        _context = context;
     }
 
     [HttpGet]
@@ -42,9 +29,29 @@ public class PostController : Controller
     public async Task<IActionResult> GetPost(int postId)
     {
         var post = await _postService.GetPost(postId);
-        var result = new PostDto(post);
+        if (post == null)
+            return NotFound();
         
-        return Ok(result);
+        var devId = User.GetDevId();
+        var subLevel = 0;
+        switch (post.EntityType)
+        {
+            case EntityType.Developer:
+                subLevel = await _subscriptionService.UserDeveloperSubscriptionLevel(devId, post.OwnerId);
+                break;
+            case EntityType.Project:
+                subLevel = await _subscriptionService.UserProjectSubscriptionLevel(devId, post.OwnerId);
+                break;
+            case EntityType.Company:
+                subLevel = await _subscriptionService.UserCompanySubscriptionLevel(devId, post.OwnerId);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+        
+        var result = new PostDto(post, _subscriptionService.HasSufficientSubscriptionLevel(post, devId, subLevel));
+        
+        return Json(result);
     }
 
     [HttpGet]
@@ -66,17 +73,7 @@ public class PostController : Controller
 
         return Ok(result);
     }
-    
-    [HttpGet]
-    [Route("{postId:int}/project")]
-    public async Task<IActionResult> GetPostProject(int postId)
-    {
-        var project = await _postService.GetPostProject(postId);
-        var result = new ProjectDto(project);
-        
-        return Ok(result);
-    }
-    
+
     [HttpGet]
     [Route("{postId:int}/comments")]
     public async Task<IActionResult> GetPostComments(int postId)
@@ -89,18 +86,47 @@ public class PostController : Controller
 
     [HttpPost]
     [Route("create")]
-    public async Task<IActionResult> CreatePost(string text, int subscriptionLevelId, Guid developerId, Guid projectId)
+    public async Task<IActionResult> CreatePost([FromBody] CreatePostDto createPostDto)
     {
-        var postId = await _postService.CreatePost(text, subscriptionLevelId, developerId, projectId);
+        var postId = await _postService.CreatePost(createPostDto.Title, createPostDto.Text, createPostDto.SubscriptionLevelId, createPostDto.DeveloperId, createPostDto.Type, createPostDto.OwnerId);
 
         return Ok(postId);
     }
 
     [HttpPut]
-    [Route("{postId:int}/update/text")]
-    public async Task<IActionResult> UpdateText(int postId, string text)
+    [Route("{postId:int}/update")]
+    public async Task<IActionResult> Update(int postId, UpdateEntityDto updateEntityDto)
     {
-        await _postService.UpdateText(postId, text);
+        var post = await _postService.GetPost(postId);
+        if (post == null)
+            return NotFound();
+        
+        var cDevId = User.GetDevId();
+        if (cDevId == null)
+            return Unauthorized("Unauthorized");
+
+        if (post.DeveloperId != cDevId.Value)
+            return StatusCode(403, "Forbidden! Only owner can modify posts");
+        
+        if (updateEntityDto.Name != null)
+            post.Title = updateEntityDto.Name;
+
+        if (updateEntityDto.ImagePath != null)
+        {
+            if (!string.IsNullOrWhiteSpace(post.ImagePath))
+            {
+                var pathToRemove = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
+                var fullPath = Path.Combine(pathToRemove, post.ImagePath);
+                System.IO.File.Delete(fullPath);
+            }
+
+            post.ImagePath = updateEntityDto.ImagePath;
+        }
+
+        if (updateEntityDto.Description != null)
+            post.Content = updateEntityDto.Description;
+
+        await _context.SaveChangesAsync();
 
         return Ok();
     }

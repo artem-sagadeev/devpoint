@@ -38,6 +38,31 @@ public class PostService : IPostService
         return posts;
     }
 
+    public IQueryable<Post> GetDeveloperPosts(Guid developerId)
+    {
+        var posts = _context.Posts
+            .Where(post => post.EntityType == EntityType.Developer && post.OwnerId == developerId);
+
+        return posts;
+    }
+
+    public IQueryable<Post> GetCompanyPosts(Guid companyId)
+    {
+        var posts = _context.Posts
+            .Where(post => post.EntityType == EntityType.Company && post.OwnerId == companyId);
+
+        return posts;
+    }
+
+    public IQueryable<Post> GetProjectPosts(Guid projectId)
+    {
+        var posts = _context.Posts
+            .Where(post => post.EntityType == EntityType.Project && post.OwnerId == projectId);
+
+        return posts;
+    }
+
+
     public async Task<Post> GetPost(int postId)
     {
         var post = await _context.Posts.FindAsync(postId);
@@ -60,15 +85,7 @@ public class PostService : IPostService
 
         return post.Developer;
     }
-
-    public async Task<Project> GetPostProject(int postId)
-    {
-        var post = await GetPost(postId);
-        await _context.Entry(post).Reference(p => p.Project).LoadAsync();
-
-        return post.Project;
-    }
-
+    
     public async Task<List<Comment>> GetPostComments(int postId)
     {
         var post = await GetPost(postId);
@@ -77,12 +94,14 @@ public class PostService : IPostService
         return post.Comments;
     }
 
-    public async Task<int> CreatePost(string text, int subscriptionLevelId, Guid developerId, Guid projectId)
+    public async Task<int> CreatePost(string title, string text, int subscriptionLevelId, Guid developerId, EntityType type, Guid ownerId)
     {
         var subscriptionLevel = await _subscriptionLevelService.GetSubscriptionLevel(subscriptionLevelId);
         var developer = await _developerService.GetDeveloper(developerId);
-        var project = await _projectService.GetProject(projectId);
-        var post = new Post(text, subscriptionLevel, developer, project);
+        var post = new Post(text, subscriptionLevel, developer, type, ownerId)
+        {
+            Title = title
+        };
         _context.Posts.Add(post);
         await _context.SaveChangesAsync();
 
@@ -92,7 +111,7 @@ public class PostService : IPostService
     public async Task UpdateText(int postId, string text)
     {
         var post = await GetPost(postId);
-        post.Text = text;
+        post.Content = text;
         await _context.SaveChangesAsync();
     }
 

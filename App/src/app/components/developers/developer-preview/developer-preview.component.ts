@@ -4,13 +4,23 @@ import { Developer } from 'src/app/models/developer';
 @Component({
   selector: 'app-developer-preview',
   templateUrl: './developer-preview.component.html',
-  styleUrls: ['./developer-preview.component.css']
+  styleUrls: ['./developer-preview.component.css'],
 })
 export class DeveloperPreviewComponent implements OnInit {
-  @Input() developer: Developer = new Developer();
+  private _isLarge: boolean = false;
 
-  constructor() { }
-
-  ngOnInit(): void {
+  @Input()
+  set large(value: boolean | '') {
+    this._isLarge = value === '' || value;
   }
+  get large(): boolean {
+    return this._isLarge;
+  }
+
+  @Input() developer: Developer = new Developer();
+  @Input() isCurrent: boolean = false;
+
+  constructor() {}
+
+  ngOnInit(): void {}
 }

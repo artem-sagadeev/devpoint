@@ -20,9 +20,9 @@ public class BillService : IBillService
         _subscriptionService = subscriptionService;
     }
 
-    public async Task<List<Bill>> GetAllBills()
+    public IQueryable<Bill> GetAllBills()
     {
-        var bills = await _context.Bills.ToListAsync();
+        var bills = _context.Bills;
 
         return bills;
     }
@@ -49,22 +49,36 @@ public class BillService : IBillService
         return bill.Wallet;
     }
 
-    public async Task<Subscription> GetBillSubscription(int billId)
-    {
-        var bill = await GetBill(billId);
-        await _context.Entry(bill).Reference(b => b.Subscription).LoadAsync();
-
-        return bill.Subscription;
-    }
-
-    public async Task<int> CreateBill(int amount, int walletId, int subscriptionId)
+    public async Task<Bill> CreateBill(int walletId, int subscriptionId)
     {
         var wallet = await _walletService.GetWallet(walletId);
         var subscription = await _subscriptionService.GetSubscription(subscriptionId);
-        var bill = new Bill(amount, wallet, subscription);
-        _context.Bills.Add(bill);
+        return await CreateBill(wallet, subscription);
+    }
+
+    public async Task<Bill> CreateBill(Wallet wallet, Subscription subscription)
+    {
+        await _context.Entry(subscription).Reference(sub => sub.Tariff).LoadAsync();
+        var amount = subscription.Tariff.PricePerMonth;
+        if (amount <= 0)
+            return null;
+
+        Bill bill;
+        if (wallet.Amount < amount)
+        {
+            bill = new Bill(amount, wallet, subscription.Tariff, PaymentStatus.Failed);
+            _context.Bills.Add(bill);
+            _context.Remove(subscription);
+        }
+        else
+        {
+            bill = new Bill(amount, wallet, subscription.Tariff, PaymentStatus.Success);
+            _context.Bills.Add(bill);
+            wallet.Amount -= amount;
+        }
+
         await _context.SaveChangesAsync();
 
-        return bill.Id;
+        return bill;
     }
 }

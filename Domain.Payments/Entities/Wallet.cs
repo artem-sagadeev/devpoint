@@ -5,7 +5,7 @@ namespace Domain.Payments.Entities;
 public class Wallet
 {
     public int Id { get; set; }
-    public int Amount { get; set; }
+    public double Amount { get; set; }
     public Developer Developer { get; set; }
     
     public Wallet(Developer developer)
