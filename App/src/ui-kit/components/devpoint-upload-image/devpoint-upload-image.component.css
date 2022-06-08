@@ -97,6 +97,23 @@
   border: 2px solid var(--btn-main-color);
 }
 
+.upload-droparea.error {
+  border: 1px solid #cf222e;
+}
+
+.error {
+  color: #cf222e;
+  fill: #cf222e;
+}
+
+.error::placeholder {
+  color: #cf222e;
+}
+
+.text-danger {
+  margin-left: 3px;
+}
+
 .upload-label-container path {
   transition: fill .2s ease-out .1s;
 }
