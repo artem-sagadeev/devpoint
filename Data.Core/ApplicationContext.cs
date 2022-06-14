@@ -11,8 +11,6 @@ namespace Data.Core;
 
 public class ApplicationContext : DbContext
 {
-    private readonly IConfiguration _configuration;
-    
     public DbSet<User> Users { get; set; }
 
     public DbSet<Developer> Developers { get; set; }
@@ -33,14 +31,11 @@ public class ApplicationContext : DbContext
     public DbSet<Wallet> Wallets { get; set; }
     public DbSet<Withdrawal> Withdrawals { get; set; }
 
-    public ApplicationContext(DbContextOptions<ApplicationContext> options, IConfiguration configuration) : base(options)
-    {
-        _configuration = configuration;
-    }
+    public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) { }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql(_configuration.GetConnectionString("devpoint_core_db"));
+        optionsBuilder.UseNpgsql(Environment.GetEnvironmentVariable("DB_CONNECTION_STRING")!);
     }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)

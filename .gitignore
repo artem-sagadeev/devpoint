@@ -5,7 +5,8 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-Web.API/Resources/
+Web.API/wwwroot/*
+
 # User-specific files
 *.rsuser
 *.suo

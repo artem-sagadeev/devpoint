@@ -260,7 +260,7 @@ public class DeveloperController : Controller
         {
             if (!string.IsNullOrWhiteSpace(developer.ImagePath))
             {
-                var pathToRemove = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
+                var pathToRemove = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
                 var fullPath = Path.Combine(pathToRemove, developer.ImagePath);
                 System.IO.File.Delete(fullPath);
             }

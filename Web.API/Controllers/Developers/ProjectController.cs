@@ -263,7 +263,7 @@ public class ProjectController : Controller
         {
             if (!string.IsNullOrWhiteSpace(project.ImagePath))
             {
-                var pathToRemove = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
+                var pathToRemove = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
                 var fullPath = Path.Combine(pathToRemove, project.ImagePath);
                 System.IO.File.Delete(fullPath);
             }

@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
       <UserSecretsId>8c7c6e47-950f-4f6e-9d4b-dc10659ccb5a</UserSecretsId>
+      <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
   </PropertyGroup>
 
     <ItemGroup>
@@ -25,7 +26,17 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Resources" />
+      <None Remove="Resources\97AdD7FfG5PWmGDDq2C2.jpeg" />
+      <None Remove="Resources\39861f76i503qae5dpqu.jpg" />
+      <None Remove="Resources\a4cd346AWQQzntM1Jmx2.png" />
+      <None Remove="Resources\ac6b2669fz3gHOERbTVl.png" />
+      <None Remove="Resources\c0E86715HmUY0wWcj3M2.png" />
+      <None Remove="Resources\EC833497HicdXLigMr5h.jpg" />
+      <None Remove="Resources\Eface635pjmPt2iiQpSs.jpg" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot" />
     </ItemGroup>
 
 </Project>
