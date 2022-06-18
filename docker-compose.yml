@@ -5,12 +5,24 @@ networks:
     driver: bridge
 
 services:
+  devpoint_frontend:
+    image: devpoint_frontend:latest
+    depends_on:
+      - "devpoint_backend"
+    build:
+      context: .
+      dockerfile: App/Dockerfile
+    ports:
+      - "8080:4200"
+    networks:
+      - devpoint-network
+  
   devpoint_backend:
     image: devpoint_backend:latest
     depends_on:
       - "devpoint_database"
     build:
-      context: ../
+      context: .
       dockerfile: Web.API/Dockerfile
     ports:
       - "8000:80"
