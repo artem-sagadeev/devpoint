@@ -10,13 +10,11 @@ services:
     depends_on:
       - "devpoint_backend"
     build:
-      context: .
-      dockerfile: App/Dockerfile
+      context: ./App
+      dockerfile: Dockerfile
     ports:
-      - "8080:4200"
-    networks:
-      - devpoint-network
-  
+      - "4200:4200"
+
   devpoint_backend:
     image: devpoint_backend:latest
     depends_on:
