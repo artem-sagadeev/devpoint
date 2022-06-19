@@ -115,7 +115,7 @@ public class PostController : Controller
         {
             if (!string.IsNullOrWhiteSpace(post.ImagePath))
             {
-                var pathToRemove = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                var pathToRemove = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
                 var fullPath = Path.Combine(pathToRemove, post.ImagePath);
                 System.IO.File.Delete(fullPath);
             }

@@ -89,7 +89,7 @@ public class StorageController : Controller
 
     async Task<string> SaveFile(IFormFile file)
     {
-        var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+        var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
 
         var ext = Path.GetExtension(ContentDispositionHeaderValue
             .Parse(file.ContentDisposition).FileName.ToString()

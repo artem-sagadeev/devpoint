@@ -25,18 +25,4 @@
       <ProjectReference Include="..\Services.Users\Services.Users.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <None Remove="Resources\97AdD7FfG5PWmGDDq2C2.jpeg" />
-      <None Remove="Resources\39861f76i503qae5dpqu.jpg" />
-      <None Remove="Resources\a4cd346AWQQzntM1Jmx2.png" />
-      <None Remove="Resources\ac6b2669fz3gHOERbTVl.png" />
-      <None Remove="Resources\c0E86715HmUY0wWcj3M2.png" />
-      <None Remove="Resources\EC833497HicdXLigMr5h.jpg" />
-      <None Remove="Resources\Eface635pjmPt2iiQpSs.jpg" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="wwwroot" />
-    </ItemGroup>
-
 </Project>

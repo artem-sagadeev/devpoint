@@ -262,7 +262,7 @@ public class CompanyController : Controller
         {
             if (!string.IsNullOrWhiteSpace(company.ImagePath))
             {
-                var pathToRemove = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                var pathToRemove = Path.Combine(Directory.GetCurrentDirectory(), "Resourcess");
                 var fullPath = Path.Combine(pathToRemove, company.ImagePath);
                 System.IO.File.Delete(fullPath);
             }

@@ -1,8 +1,10 @@
-FROM node:latest AS builder
-COPY . ./app
-WORKDIR /app
+FROM node:latest AS build
+WORKDIR /usr/src/app
+COPY package.json package-lock.json ./
 RUN npm install
-RUN $(npm bin)/ng build --prod
+COPY . .
+RUN npm run build
 
 FROM nginx:latest
-COPY --from=builder /app/dist/app/ /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY --from=build /usr/src/app/dist/app /usr/share/nginx/html
