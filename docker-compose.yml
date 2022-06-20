@@ -6,7 +6,8 @@ networks:
 
 services:
   devpoint.frontend:
-    image: devpoint.frontend:latest
+    container_name: devpoint.frontend
+    image: ${DOCKER_REGISTRY-}devpoint.frontend:latest
     depends_on:
       - "devpoint.api"
     build:
@@ -16,7 +17,8 @@ services:
       - "4200:4200"
 
   devpoint.api:
-    image: devpoint.api:latest
+    container_name: devpoint.api
+    image: ${DOCKER_REGISTRY-}devpoint.api:latest
     depends_on:
       - "devpoint.db"
       - "gateway"
@@ -31,6 +33,7 @@ services:
       - devpoint.network
   
   devpoint.db:
+    container_name: devpoint.db
     image: postgres:latest
     ports:
       - "5432"
@@ -45,12 +48,15 @@ services:
       - devpoint.network
 
   gateway:
-    image: gateway:latest
+    container_name: gateway
+    image: ${DOCKER_REGISTRY-}gateway:latest
     build:
       context: .
       dockerfile: Gateway/Dockerfile
     ports:
       - "8000:80"
+    networks:
+      - devpoint.network
     
 volumes:
   db_volume:
