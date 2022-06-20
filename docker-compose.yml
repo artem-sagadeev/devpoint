@@ -7,23 +7,23 @@ networks:
 services:
   devpoint.frontend:
     container_name: devpoint.frontend
-    image: ${DOCKER_REGISTRY-}devpoint.frontend:latest
+    image: devpoint.frontend:latest
     depends_on:
       - "devpoint.api"
     build:
-      context: ./App
+      context: ./Devpoint/App
       dockerfile: Dockerfile
     ports:
       - "4200:4200"
 
   devpoint.api:
     container_name: devpoint.api
-    image: ${DOCKER_REGISTRY-}devpoint.api:latest
+    image: devpoint.api:latest
     depends_on:
       - "devpoint.db"
       - "gateway"
     build:
-      context: .
+      context: ./Devpoint
       dockerfile: Web.API/Dockerfile
     ports:
       - "8001:80"
@@ -49,7 +49,7 @@ services:
 
   gateway:
     container_name: gateway
-    image: ${DOCKER_REGISTRY-}gateway:latest
+    image: gateway:latest
     build:
       context: .
       dockerfile: Gateway/Dockerfile
