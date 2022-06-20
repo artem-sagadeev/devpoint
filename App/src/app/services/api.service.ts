@@ -7,7 +7,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
   providedIn: 'root',
 })
 export class ApiService {
-  readonly ApiUrl = 'http://localhost:8000';
+  readonly ApiUrl = 'http://localhost:8000/devpoint';
 
   constructor(private http: HttpClient) {}
 

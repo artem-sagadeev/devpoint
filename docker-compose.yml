@@ -1,35 +1,36 @@
 version: '3.4'
 
 networks:
-  devpoint-network:
+  devpoint.network:
     driver: bridge
 
 services:
-  devpoint_frontend:
-    image: devpoint_frontend:latest
+  devpoint.frontend:
+    image: devpoint.frontend:latest
     depends_on:
-      - "devpoint_backend"
+      - "devpoint.api"
     build:
       context: ./App
       dockerfile: Dockerfile
     ports:
       - "4200:4200"
 
-  devpoint_backend:
-    image: devpoint_backend:latest
+  devpoint.api:
+    image: devpoint.api:latest
     depends_on:
-      - "devpoint_database"
+      - "devpoint.db"
+      - "gateway"
     build:
       context: .
       dockerfile: Web.API/Dockerfile
     ports:
-      - "8000:80"
+      - "8001:80"
     environment:
-      DB_CONNECTION_STRING: "host=devpoint_database;port=5432;database=devpoint_db;username=postgres;password=postgres"
+      DB_CONNECTION_STRING: "host=devpoint.db;port=5432;database=devpoint_db;username=postgres;password=postgres"
     networks:
-      - devpoint-network
+      - devpoint.network
   
-  devpoint_database:
+  devpoint.db:
     image: postgres:latest
     ports:
       - "5432"
@@ -41,6 +42,15 @@ services:
       POSTGRES_PASSWORD: "postgres"
       POSTGRES_DB: "devpoint_db"
     networks:
-      - devpoint-network
+      - devpoint.network
+
+  gateway:
+    image: gateway:latest
+    build:
+      context: .
+      dockerfile: Gateway/Dockerfile
+    ports:
+      - "8000:80"
+    
 volumes:
   db_volume:
